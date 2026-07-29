@@ -1,7 +1,7 @@
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const locations={home:{name:'자취방',cls:'home'},store:{name:'편의점',cls:'store'},practice:{name:'연습실',cls:'practice'},park:{name:'공원',cls:'park'},stage:{name:'공연장',cls:'stage'}};
-const baseState={day:1,slot:0,time:0,location:'home',level:1,exp:0,rank:'무명 가수',weather:'sun',housing:0,endingPrompted:{},pendingEnding:null,stats:{hp:80,vocal:22,compose:16,looks:35,fame:0,fans:0,money:800000,stress:10},equipment:{mic:false,amp:false,battery:false},equipmentDamage:{mic:false,amp:false},items:{bakcas:1},manager:{hired:false,bond:0,wedding:false},band:{formed:false,bond:60,members:{guitar:null,bass:null,piano:null,drums:null}},albums:[],endings:[],history:[],dialogue:null,seenEvents:[],soloStreak:0,outfit:0,ownedOutfits:[0],performanceCount:0,stalker:{active:false,resolved:false,encounters:0,safety:0},arrogance:{lastDay:-99,count:0,lesson:0},specialEvents:{iziViral:false,waitedMoreViral:false,day30Hair:false,day60Workout:false,day90Live:false,day120Chat:false,day150Birthday:false,day180Archive:false,day210Demo:false,day240Meme:false,day300Promise:false},specialScene:{active:false,key:null},cooldowns:{managerTalk:-99,audition:-99,concert:-99,broadcast:-99,fanmeeting:-99,album:-99},milestones:{firstAudition:false,firstConcert:false,firstBroadcast:false,firstFanmeeting:false,firstAlbum:false,managerHired:false,bandFormed:false,stalkerResolved:false,randomSeen:[]},historyKeys:[],lastAction:null,prologueSeen:false};
-let state=structuredClone(baseState);let deferredPrompt=null;let audioCtx=null;let motionTimer=null;let burstTimer=null;let memoryGameActive=false;
+const baseState={day:1,slot:0,time:0,location:'home',level:1,exp:0,rank:'무명 가수',weather:'sun',housing:0,endingPrompted:{},pendingEnding:null,stats:{hp:80,vocal:22,compose:16,looks:35,fame:0,fans:0,money:800000,stress:10},equipment:{mic:false,amp:false,battery:false},equipmentDamage:{mic:false,amp:false},items:{bakcas:1},manager:{hired:false,bond:0,wedding:false},band:{formed:false,bond:60,members:{guitar:null,bass:null,piano:null,drums:null}},albums:[],endings:[],history:[],dialogue:null,seenEvents:[],soloStreak:0,outfit:0,ownedOutfits:[0],performanceCount:0,stalker:{active:false,resolved:false,encounters:0,safety:0},arrogance:{lastDay:-99,count:0,lesson:0},specialEvents:{iziViral:false,waitedMoreViral:false,day30Hair:false,day60Workout:false,day90Live:false,day120Chat:false,day150Birthday:false,day180Archive:false,day210Demo:false,day240Meme:false,day300Promise:false,hiddenGameOst:false,hiddenRadioDj:false,hiddenDingo:false,mysteriousMerchantPurchased:false},specialScene:{active:false,key:null},cooldowns:{managerTalk:-99,audition:-99,concert:-99,broadcast:-99,fanmeeting:-99,album:-99},milestones:{firstAudition:false,firstConcert:false,firstBroadcast:false,firstFanmeeting:false,firstAlbum:false,managerHired:false,bandFormed:false,stalkerResolved:false,randomSeen:[]},historyKeys:[],lastAction:null,prologueSeen:false};
+let state=structuredClone(baseState);let deferredPrompt=null;let audioCtx=null;let motionTimer=null;let burstTimer=null;let memoryGameActive=false;let activeTrainingAbort=null;
 let audioMaster=null,bgmGain=null,sfxGain=null,bgmTimer=null,bgmStep=0;
 let choiceLock=false,endingMusicMode=false,endingMusicName='';
 let audioSettings={bgm:true,sfx:true,volume:.42};
@@ -206,8 +206,8 @@ function normalizeState(){
  state.band.formed=Object.values(state.band.members).every(Boolean);
  if(!state.endingPrompted)state.endingPrompted={};
  if(state.pendingEnding===undefined)state.pendingEnding=null;
- state.outfit=Math.max(0,Math.min(5,Number(state.outfit)||0));
- state.ownedOutfits=[...new Set([0,...((Array.isArray(state.ownedOutfits)?state.ownedOutfits:[]).map(Number).filter(x=>x>=0&&x<=5))])];
+ state.outfit=Math.max(0,Math.min(6,Number(state.outfit)||0));
+ state.ownedOutfits=[...new Set([0,...((Array.isArray(state.ownedOutfits)?state.ownedOutfits:[]).map(Number).filter(x=>x>=0&&x<=6))])];
  if(!state.ownedOutfits.includes(state.outfit))state.outfit=0;
  state.performanceCount=Math.max(0,Number(state.performanceCount)||0);
  state.stalker={active:!!state.stalker?.active,resolved:!!state.stalker?.resolved,encounters:Math.max(0,Number(state.stalker?.encounters)||0),safety:Number(state.stalker?.safety)||0};
@@ -223,7 +223,7 @@ function normalizeState(){
  state.endings=[...new Set((state.endings||[]).map(migrateEndingName))];
  if(state.pendingEnding?.name==='가수 엔딩')state.pendingEnding.name='월드 스타 엔딩';
  if(state.endingPrompted['가수 엔딩']){state.endingPrompted['월드 스타 엔딩']=true;delete state.endingPrompted['가수 엔딩'];}
- state.specialEvents={iziViral:!!state.specialEvents?.iziViral,waitedMoreViral:!!state.specialEvents?.waitedMoreViral,day30Hair:!!state.specialEvents?.day30Hair,day60Workout:!!state.specialEvents?.day60Workout,day90Live:!!state.specialEvents?.day90Live,day120Chat:!!state.specialEvents?.day120Chat,day150Birthday:!!state.specialEvents?.day150Birthday,day180Archive:!!state.specialEvents?.day180Archive,day210Demo:!!state.specialEvents?.day210Demo,day240Meme:!!state.specialEvents?.day240Meme,day300Promise:!!state.specialEvents?.day300Promise};
+ state.specialEvents={iziViral:!!state.specialEvents?.iziViral,waitedMoreViral:!!state.specialEvents?.waitedMoreViral,day30Hair:!!state.specialEvents?.day30Hair,day60Workout:!!state.specialEvents?.day60Workout,day90Live:!!state.specialEvents?.day90Live,day120Chat:!!state.specialEvents?.day120Chat,day150Birthday:!!state.specialEvents?.day150Birthday,day180Archive:!!state.specialEvents?.day180Archive,day210Demo:!!state.specialEvents?.day210Demo,day240Meme:!!state.specialEvents?.day240Meme,day300Promise:!!state.specialEvents?.day300Promise,hiddenGameOst:!!state.specialEvents?.hiddenGameOst,hiddenRadioDj:!!state.specialEvents?.hiddenRadioDj,hiddenDingo:!!state.specialEvents?.hiddenDingo,mysteriousMerchantPurchased:!!state.specialEvents?.mysteriousMerchantPurchased};
  state.specialScene={active:false,key:null};
  state.level=fameLevel();
  delete state.romance;
@@ -328,7 +328,7 @@ function setChoiceLock(locked){
 function displayDialogue(name,text,choices=[]){
  const wrap=$('#characterWrap'),art=$('#characterArt'),box=document.querySelector('.dialogue-box'),plate=$('#speakerName');
  plate.textContent=name;$('#dialogueText').textContent=text;
- const isManager=name==='후라보노';const outfitImages=['outfit-black.png','outfit-white.png','outfit-check.png','outfit-leather.png','outfit-hoodie.png','outfit-stage.png'];const src=isManager?'assets/images/hurabono.png':`assets/images/${outfitImages[state.outfit||0]}`;
+ const isManager=name==='후라보노';const outfitImages=['outfit-black.png','outfit-white.png','outfit-check.png','outfit-leather.png','outfit-hoodie.png','outfit-stage.png','outfit-mystery.png'];const src=isManager?'assets/images/hurabono.png':`assets/images/${outfitImages[state.outfit||0]}`;
  if(art.getAttribute('src')!==src){art.setAttribute('src',src);wrap.classList.add('speaker-enter');$('#scene').classList.add('character-switch');setTimeout(()=>{wrap.classList.remove('speaker-enter');$('#scene').classList.remove('character-switch')},560)}
  wrap.classList.toggle('manager-mode',isManager);art.alt=isManager?'후라보노':'류현상';
  box.classList.remove('dialogue-pop');plate.classList.remove('speaker-pop');void box.offsetWidth;box.classList.add('dialogue-pop');plate.classList.add('speaker-pop');
@@ -359,7 +359,7 @@ function maybeArroganceEvent(){
  const choices=scene.choices.map(([label,fn])=>[label,()=>{const result=fn();addHistory(`🎭 후라보노 제지 · ${scene.title} — ${label}`);return result}]);showDialogue('돌발 스토리 · 후라보노',`【${scene.title}】\n\n${scene.text}`,choices);
  return true;
 }
-function maybeStoryEvent(){if(state.skipNextStory){state.skipNextStory=false;return false}if(maybeFixedDaySpecialEvent())return true;if(maybeArroganceEvent())return true;if(Math.random()>.52)return false;const pool=storyEvents.filter(ev=>ev.id!=='secret-date'&&(!ev.place||ev.place===state.location)&&(!ev.condition||ev.condition())&&!state.seenEvents.includes(ev.id));if(!pool.length)return false;const ev=pool[Math.floor(Math.random()*pool.length)];state.seenEvents.push(ev.id);if(state.seenEvents.length>28)state.seenEvents.shift();playSfx('event');$('#eventBadge').classList.remove('hidden');setTimeout(()=>$('#eventBadge').classList.add('hidden'),2600);const choices=ev.choices.map(([label,fn])=>[label,()=>{const result=fn();addHistory(`📖 특별 이야기 · ${ev.title} — ${label}`,`story:${ev.id}`);return result}]);showDialogue('돌발 스토리',`【${ev.title}】\n\n${ev.text}`,choices);return true}
+function maybeStoryEvent(){if(state.skipNextStory){state.skipNextStory=false;return false}if(maybeFixedDaySpecialEvent())return true;if(maybeMysteriousMerchantEvent())return true;if(maybeHiddenRandomSpecialEvent())return true;if(maybeArroganceEvent())return true;if(Math.random()>.52)return false;const pool=storyEvents.filter(ev=>ev.id!=='secret-date'&&(!ev.place||ev.place===state.location)&&(!ev.condition||ev.condition())&&!state.seenEvents.includes(ev.id));if(!pool.length)return false;const ev=pool[Math.floor(Math.random()*pool.length)];state.seenEvents.push(ev.id);if(state.seenEvents.length>28)state.seenEvents.shift();playSfx('event');$('#eventBadge').classList.remove('hidden');setTimeout(()=>$('#eventBadge').classList.add('hidden'),2600);const choices=ev.choices.map(([label,fn])=>[label,()=>{const result=fn();addHistory(`📖 특별 이야기 · ${ev.title} — ${label}`,`story:${ev.id}`);return result}]);showDialogue('돌발 스토리',`【${ev.title}】\n\n${ev.text}`,choices);return true}
 function doAction(key){
  const s=state.stats;
  const f={
@@ -471,6 +471,98 @@ function maybeStartWaitedMoreViralEvent(band,hpCost){
  if(!costHp(hpCost))return true;
  startWaitedMoreViralStory();
  return true;
+}
+const MYSTERY_OUTFIT_PRICE=44444444;
+function finishMysteriousMerchantEvent(message){
+ state.specialScene={active:false,key:null};
+ state.dialogue={name:'류현상',text:message};
+ setChoiceLock(false);save(false);render();
+}
+function runMysteriousMerchantEvent(){
+ state.specialScene={active:true,key:'mysteriousMerchant'};
+ const scenes=[
+  {name:'나레이션',text:'해가 완전히 저문 뒤였다. 류현상이 다음 일정을 위해 골목을 지나던 순간, 분명 조금 전까지 비어 있던 길 한가운데에 낯선 상인이 서 있었다. 넓은 삿갓과 여러 겹의 검은 로프가 얼굴을 전부 가리고 있었고, 등에 멘 커다란 보따리에서는 금속이 맞부딪히는 듯한 희미한 소리가 들렸다.'},
+  {name:'이름 모를 상인',text:'“자네… 이거 하나 사지 않겠나?” 상인은 인사도, 자기소개도 없이 낮게 말했다. 류현상이 대답하기도 전에 그는 보따리 깊숙한 곳으로 손을 넣었다. 이상하게도 보따리 안쪽에서는 밤의 골목과 어울리지 않는 눈부신 빛이 새어 나왔다.'},
+  {name:'나레이션',text:'상인이 꺼낸 것은 옷처럼 보였다. 그러나 천인지 금속인지조차 구분할 수 없었다. 검은 표면 위로 금빛과 푸른빛이 물결처럼 지나갔고, 움직이지 않는데도 별가루 같은 빛이 계속 흘러내렸다. 옷깃 안쪽에 붙은 표찰에는 이름 대신 물음표 세 개만 적혀 있었다. 「???」.'},
+  {name:'이름 모를 상인',text:'“다시 오지 않을 기회야….” 상인은 가격이 적힌 낡은 나무패를 내밀었다. 44,444,444원. 장난이라고 보기에는 눈앞의 옷이 너무 선명했고, 믿기에는 모든 것이 지나치게 수상했다. 류현상은 빛나는 옷과 얼굴 없는 상인을 번갈아 바라봤다.'},
+  {name:'류현상',text:'“옷 한 벌에 사천사백사십사만 사천사백사십사 원… 미친 가격인데.” 그는 그렇게 말하면서도 쉽게 시선을 떼지 못했다. 이 옷을 입고 무대에 오르면 누구든 자신을 바라볼 것 같은 불길하고도 강렬한 확신이 들었다. 수상해 보이지만… 정말 살까?'}
+ ];
+ let page=0;const area=$('#choiceArea');
+ const draw=()=>{
+  const scene=scenes[page];state.dialogue={name:scene.name,text:scene.text};render();area.innerHTML='';area.classList.remove('hidden');
+  const prev=document.createElement('button');prev.textContent='이전 장면';prev.disabled=page===0;area.appendChild(prev);
+  prev.onclick=()=>{if(page>0){page--;draw()}};
+  if(page<scenes.length-1){
+   const next=document.createElement('button');next.textContent='다음 장면';area.appendChild(next);next.onclick=()=>{page++;draw()};setChoiceLock(false);return;
+  }
+  const buy=document.createElement('button');buy.textContent=`산다 · ${MYSTERY_OUTFIT_PRICE.toLocaleString()}원`;
+  const refuse=document.createElement('button');refuse.textContent='안 산다';area.append(buy,refuse);setChoiceLock(true);
+  buy.onclick=()=>{
+   if(state.stats.money<MYSTERY_OUTFIT_PRICE){
+    toast(`돈이 부족합니다. ${(MYSTERY_OUTFIT_PRICE-state.stats.money).toLocaleString()}원이 더 필요합니다.`);
+    state.dialogue={name:'이름 모를 상인',text:'“값을 치를 수 있을 때 다시 만나게 될지도 모르지….” 상인은 옷을 다시 보따리 속으로 넣었다. 아직 구매하지 않았으므로, 이 수상한 상인은 언젠가 다시 나타날 수 있다.'};render();draw();return;
+   }
+   const before=snapshotStats();stat('money',-MYSTERY_OUTFIT_PRICE);stat('fame',1000);
+   if(!state.ownedOutfits.includes(6))state.ownedOutfits.push(6);
+   state.specialEvents.mysteriousMerchantPurchased=true;
+   addHistory('🕯 수상한 상인 · 44,444,444원을 지불하고 이름 없는 의상 「???」을 구매했다. 인지도가 10레벨 상승했다.','special:mysteriousMerchantPurchased');
+   playSfx('success');
+   const changes=describeStatChanges(before);
+   finishMysteriousMerchantEvent('상인은 돈을 세어 보지도 않고 보따리를 닫았다. “좋은 선택이었는지는 무대가 알려 줄 걸세.” 다음 순간 골목의 불빛이 한 번 깜빡였고, 상인은 흔적도 없이 사라졌다. 옷장에는 이름 없는 의상 「???」만이 남았다.');
+   if(changes)setTimeout(()=>toast(changes),280);
+  };
+  refuse.onclick=()=>{
+   finishMysteriousMerchantEvent('류현상은 고개를 저었다. “아무리 봐도 사기잖아.” 상인은 낮게 웃으며 빛나는 옷을 다시 보따리 속에 넣었다. “후회하면… 다시 만날 수도 있겠지.” 구매하지 않았으므로 이 상인은 훗날 다시 나타날 수 있다.');
+  };
+ };
+ playSfx('event');draw();
+}
+function maybeMysteriousMerchantEvent(){
+ if(state.specialEvents?.mysteriousMerchantPurchased||Math.random()>=.01)return false;
+ runMysteriousMerchantEvent();return true;
+}
+const hiddenRandomSpecialEvents=[
+ {key:'hiddenGameOst',sceneKey:'hiddenGameOst',title:'🎮 게임 OST 제안 · 천도박멸',condition:()=>state.day>=50,history:'🎮 숨겨진 특별 이벤트 · 판타지 웹툰 「천도박멸」의 OST 제작과 녹음 제안을 받아 새로운 영역에 도전했다.',reward:()=>{stat('compose',5);stat('vocal',3);stat('fame',45);stat('fans',900);stat('money',800000);stat('stress',3)},scenes:[
+  {name:'나레이션',text:'쉰 날이 지난 어느 저녁, 류현상에게 낯선 계정으로 장문의 메시지가 도착했다. 처음에는 흔한 홍보나 협찬 문의라고 생각해 대충 넘기려 했지만, 메시지에는 그가 올린 자작곡과 버스킹 영상의 특정 구간을 정확히 언급한 감상이 적혀 있었다. 보낸 사람은 판타지 웹툰을 연재 중인 남자 작가였다.'},
+  {name:'웹툰 작가',text:'“안녕하세요. 저는 판타지 웹툰 「천도박멸」을 그리고 있습니다. 작품의 다음 대형 에피소드에 사용할 OST를 준비 중인데, 류현상 님의 목소리가 주인공의 분위기와 아주 잘 맞는다고 생각했습니다. 단순히 노래만 부르는 것이 아니라, 작품에 맞는 곡을 직접 제작하고 녹음해 주실 수 있을까요?”'},
+  {name:'류현상',text:'현상은 제목부터 여러 번 읽었다. “천도박멸… 제목이 세긴 하네.” 웹툰은 인간계와 천계의 균형이 무너진 뒤, 봉인된 힘을 가진 주인공이 운명에 맞서는 이야기였다. 검과 마법, 배신과 구원, 멸망 직전의 세계가 이어지는 무거운 판타지였다. 평소 자신이 쓰던 사랑 노래와는 완전히 다른 결이었다.'},
+  {name:'나레이션',text:'며칠 뒤 두 사람은 카페에서 만났다. 작가는 인물 설정표와 전투 장면 콘티, 다음 화의 감정선을 펼쳐 놓고 설명했다. 류현상은 처음에는 팔짱을 낀 채 조용히 듣기만 했지만, 주인공이 모든 것을 잃고도 다시 검을 드는 장면에서 눈빛이 달라졌다. 실패한 뒤 다시 시작한 자신의 기억과 묘하게 겹쳐 보였기 때문이다.'},
+  {name:'류현상',text:'“웅장한 곡으로만 가면 흔해질 것 같아요. 초반에는 거의 속삭이듯 시작하고, 후렴에서 세계가 무너지는 느낌으로 확 커지게 하죠. 주인공이 강해서 싸우는 게 아니라, 무서운데도 다시 일어나는 사람처럼 들려야 해요.” 작가는 잠시 놀란 표정으로 바라보다가 빠르게 메모를 시작했다.'},
+  {name:'나레이션',text:'현상은 밤마다 작품을 다시 읽으며 멜로디를 만들었다. 검이 부딪히는 장면에는 날카로운 리듬을, 주인공이 동료를 떠올리는 장면에는 길게 남는 피아노 선율을 넣었다. 가이드 보컬을 녹음할 때는 평소보다 낮고 거친 음색을 사용했고, 마지막 고음에서는 마치 봉인이 깨지는 것처럼 감정을 밀어 올렸다.'},
+  {name:'웹툰 작가',text:'최종 녹음이 끝난 뒤 작가는 헤드폰을 벗지 못한 채 한동안 침묵했다. “제가 그리려던 장면이 노래로 먼저 완성된 것 같아요.” 현상은 쑥스러운 듯 시선을 피하며 대답했다. “과장은 됐고, 독자들이 장면에 집중할 수 있으면 됐어요.” 말은 까칠했지만 입가에는 만족스러운 미소가 남아 있었다.'},
+  {name:'나레이션',text:'「천도박멸」 OST 공개 소식은 웹툰 독자와 기존 팬들 사이에서 빠르게 퍼졌다. 류현상은 처음으로 다른 창작자의 세계를 음악으로 확장하는 경험을 했다. 이번 제안은 단순한 외주가 아니라, 그가 가수이자 작곡가로 새로운 영역에 발을 들인 사건이 되었다.'}
+ ]},
+ {key:'hiddenRadioDj',sceneKey:'hiddenRadioDj',title:'🎙 라디오 고정 게스트 제안',condition:()=>state.day>=100,history:'📻 숨겨진 특별 이벤트 · 라디오 고정 게스트가 되어 청취자의 사연에 맞춘 노래를 부르는 라디오 버스킹을 시작했다.',reward:()=>{stat('vocal',4);stat('fans',1800);stat('fame',70);stat('money',500000);stat('stress',-2)},scenes:[
+  {name:'나레이션',text:'백 일이 지난 어느 날, 후라보노가 평소보다 이른 시간에 류현상을 깨웠다. 지역 음악 라디오 프로그램에서 고정 게스트 제안이 들어왔다는 소식이었다. 매주 한 번 스튜디오에 출연해 청취자의 사연을 읽고, 그 사연에 어울리는 노래를 짧게 라이브로 들려주는 코너였다.'},
+  {name:'류현상',text:'“내가 말을 많이 해야 하는 거면 안 해.” 현상은 이불을 뒤집어쓴 채 즉시 거절하려 했다. 후라보노는 태연하게 대답했다. “형이 말을 잘해서 부르는 게 아니라, 말이 짧아서 부르는 거래요. 사연 듣고 한마디 한 다음 노래하면 된대요.” 현상은 그 설명이 칭찬인지 아닌지 판단하지 못한 채 한동안 침묵했다.'},
+  {name:'나레이션',text:'첫 녹화 날, 밝은 낮의 라디오 스튜디오는 생각보다 편안했다. DJ 소라는 긴장을 풀어 주려 가벼운 질문부터 던졌다. 현상은 준비한 답보다 늘 한 문장씩 짧게 대답했지만, 억지로 꾸미지 않은 말투가 오히려 청취자들에게 솔직하게 들렸다.'},
+  {name:'DJ 소라',text:'“오늘 사연은 꿈을 포기할까 고민하는 스물아홉 살 청취자분의 이야기예요. 몇 번을 실패했는데 다시 시작할 용기가 나지 않는다고 합니다. 현상 씨는 어떤 말을 해 주고 싶으세요?”'},
+  {name:'류현상',text:'현상은 대본을 내려다보다가 천천히 마이크 쪽으로 몸을 기울였다. “저도 한 번 크게 망하고 도망친 적 있어요. 다시 시작해도 잘된다는 보장은 없죠. 그래도 안 하면 실패한 장면에서 시간이 멈춰 버립니다. 아주 조금이라도 다시 해 보는 편이… 덜 억울하더라고요.”'},
+  {name:'나레이션',text:'그는 사연에 맞춰 조용한 기타 반주를 시작했다. 라디오 스튜디오는 작은 버스킹 무대가 되었고, 청취자는 보이지 않았지만 수많은 사람이 각자의 방과 차 안에서 그 노래를 듣고 있었다. 곡이 끝난 뒤 실시간 메시지 창에는 “오늘 다시 이력서를 써 보겠다”, “노래 듣고 울었다”는 반응이 이어졌다.'},
+  {name:'DJ 소라',text:'“말을 못 한다고 하셨는데, 필요한 말은 다 하시네요.” DJ가 웃으며 말하자 현상은 민망한 듯 안경을 고쳐 썼다. “다음부터는 노래만 시키세요.” 하지만 방송이 끝난 뒤 그는 다음 주 사연 목록을 누구보다 먼저 챙겨 보았다.'},
+  {name:'나레이션',text:'라디오 버스킹 코너는 고정 코너로 편성되었다. 류현상은 매주 다른 사람의 사연을 음악으로 받아 적었다. 무대에서 관객의 얼굴을 보며 노래하는 것과는 또 다른 방식으로, 그의 목소리는 누군가의 가장 조용한 시간에 도착하기 시작했다.'}
+ ]},
+ {key:'hiddenDingo',sceneKey:'hiddenDingo',title:'🎬 딩고 · 더 넥스트 라이징 보이스',condition:()=>fameLevel()>=60,history:'🎬 숨겨진 특별 이벤트 · 딩고 「더 넥스트 라이징 보이스」에 출연해 「기다린만큼, 더」 라이브 영상 조회수 1위를 달성했다.',reward:()=>{stat('vocal',5);stat('fans',12000);stat('fame',280);stat('money',1500000);stat('stress',4)},scenes:[
+  {name:'나레이션',text:'인지도 레벨 60을 넘긴 뒤, 음악 콘텐츠 채널 딩고에서 연락이 왔다. 차세대 남성 보컬을 소개하는 프로젝트 「더 넥스트 라이징 보이스」의 후보로 류현상이 추천됐다는 내용이었다. 여러 가수의 라이브 영상이 같은 기간 공개되고, 조회수와 반응을 통해 가장 주목받는 목소리를 가리는 기획이었다.'},
+  {name:'후라보노',text:'“형, 이건 꼭 해야 해요. 라이브 한 번으로 지금까지 형을 몰랐던 사람들이 전부 볼 수 있어요.” 현상은 제안서를 한참 읽다가 물었다. “후보라는 건 떨어질 수도 있다는 거잖아.” 후라보노는 웃으며 대답했다. “그러니까 형 성격에 딱 맞죠. 이겨야 기분 좋으니까.”'},
+  {name:'나레이션',text:'촬영곡은 명동 버스킹에서 큰 반응을 얻었던 「기다린만큼, 더」로 결정됐다. 화려한 세트나 관객 없이, 보라색 조명과 마이크 하나만 놓인 스튜디오였다. 숨길 장치가 없다는 점이 오히려 현상을 긴장시켰다. 작은 호흡 하나와 음정의 흔들림까지 전부 카메라에 남는 자리였다.'},
+  {name:'류현상',text:'촬영 직전 현상은 이어폰을 빼며 말했다. “보정 많이 하지 마세요. 라이브라고 해 놓고 다 만지면 의미 없잖아요.” 제작진은 당황하면서도 고개를 끄덕였다. 까칠한 요구였지만, 그만큼 자신의 목소리로 정면 승부하고 싶다는 뜻이었다.'},
+  {name:'나레이션',text:'반주가 시작되자 스튜디오는 순식간에 조용해졌다. 현상은 첫 소절을 낮게 눌러 부른 뒤, 후렴으로 갈수록 감정을 점점 크게 밀어 올렸다. 명동 거리의 소음 속에서 불렀을 때와 달리 이번에는 아주 작은 떨림까지 선명하게 들렸다. 마지막 음이 끝난 뒤 제작진 누구도 바로 말을 꺼내지 못했다.'},
+  {name:'제작진',text:'“컷 하겠습니다.”라는 말이 떨어진 뒤에야 스태프들이 박수를 쳤다. 현상은 만족스럽지 않은 표정으로 “한 번 더 가도 돼요?”라고 물었지만, 감독은 첫 테이크가 가장 좋다며 그대로 사용하겠다고 했다. 완벽을 원하는 현상에게는 불안한 결정이었지만, 그 불완전한 생생함이 영상의 핵심이 되었다.'},
+  {name:'나레이션',text:'영상 공개 첫날부터 댓글과 공유가 폭발했다. “왜 이제 알았지”, “버스킹 영상보다 음색이 더 잘 들린다”, “다음 라이징 보이스는 이 사람”이라는 반응이 이어졌다. 며칠 뒤 류현상의 영상은 프로젝트 참가자 중 조회수 1위를 기록했다.'},
+  {name:'후라보노',text:'후라보노는 조회수 화면을 보여 주며 소리쳤다. “형, 더 넥스트 라이징 보이스 1위예요!” 현상은 한동안 숫자를 바라보다가 태연한 척 말했다. “당연한 거 아니야?” 후라보노는 즉시 받아쳤다. “방금 전까지 조회수 새로고침만 백 번 한 사람이요?” 현상은 대답 대신 휴대전화를 뒤집어 놓았다.'},
+  {name:'나레이션',text:'딩고 라이브는 류현상을 버스킹 영상 속 화제의 인물이 아니라, 라이브 실력으로 기억되는 가수로 바꾸어 놓았다. 한 곡의 영상이 새로운 관객을 데려왔고, 그의 다음 무대를 기다리는 사람들의 수는 다시 크게 늘어났다.'}
+ ]}
+];
+function runHiddenRandomSpecialEvent(def){
+ state.specialScene={active:true,key:def.sceneKey};
+ const before=snapshotStats();let page=0;const area=$('#choiceArea');
+ const draw=()=>{const scene=def.scenes[page];state.dialogue={name:scene.name,text:scene.text};render();area.innerHTML='';const prev=document.createElement('button');prev.textContent='이전 장면';prev.disabled=page===0;const next=document.createElement('button');next.textContent=page===def.scenes.length-1?'특별 스토리 마치기':'다음 장면';area.append(prev,next);area.classList.remove('hidden');prev.onclick=()=>{if(page>0){page--;draw()}};next.onclick=()=>{if(page<def.scenes.length-1){page++;draw();return}def.reward();state.specialEvents[def.key]=true;state.specialScene={active:false,key:null};addHistory(def.history,`hidden:${def.key}`);state.dialogue={name:'나레이션',text:`숨겨진 특별 이벤트 「${def.title}」가 끝났다.`};playSfx('success');save(false);render();const changes=describeStatChanges(before);if(changes)setTimeout(()=>toast(changes),280)}};playSfx('event');draw();
+}
+function maybeHiddenRandomSpecialEvent(){
+ const pool=hiddenRandomSpecialEvents.filter(def=>!state.specialEvents?.[def.key]&&def.condition());
+ if(!pool.length||Math.random()>=.30)return false;
+ runHiddenRandomSpecialEvent(pick(pool));return true;
 }
 const fixedDaySpecialEvents=[
  {day:30,key:'day30Hair',sceneKey:'day30Hair',label:'30일 특별 이벤트 · 염색 고민',history:'💭 30일 특별 이벤트 · 노란 긴생머리로 염색할지 고민하다 결국 휴대전화를 껐다.',stat:()=>{stat('looks',1);stat('stress',1)},scenes:[
@@ -681,9 +773,9 @@ function national(){
 }
 function openGear(){const items=[['중고 마이크',150000,'mic'],['입문용 앰프',300000,'amp'],['방수·전원 보호 케이스',400000,'battery']];showModal('버스킹 장비',items.map(([n,p,k])=>`<div class="info-card"><header><b>${n}</b><span>${p.toLocaleString()}원</span></header><button data-buygear="${k}" ${state.equipment[k]?'disabled':''}>${state.equipment[k]?'보유 중':'구입'}</button></div>`).join(''));$$('[data-buygear]').forEach(b=>b.onclick=()=>{const it=items.find(x=>x[2]===b.dataset.buygear);if(state.stats.money<it[1])return toast('돈이 부족합니다.');stat('money',-it[1]);state.equipment[it[2]]=true;playSfx('coin');save(false);closeModal();render()})}
 function openWardrobe(){
- const outfits=[['검은 셔츠',0,0],['흰 셔츠',180000,2],['체크 셔츠',240000,3],['가죽 재킷',480000,5],['후드티',320000,4],['무대 의상',1200000,8]];
- showModal('옷장',`<div class="card-list">${outfits.map(([x,price],i)=>{const owned=state.ownedOutfits.includes(i);return `<div class="info-card"><header><b>${x}</b><span>${i===0?'기본 의상':price.toLocaleString()+'원'}</span></header><button data-outfit="${i}" ${state.outfit===i?'disabled':''}>${state.outfit===i?'착용 중':owned?'갈아입기':'구매하기'}</button></div>`}).join('')}<div class="info-card"><header><b>헤어·스타일 관리</b><span>80,000원</span></header><p>체력 4를 사용하고 외모 +2. 외모 100까지 이용할 수 있습니다.</p><button id="styleCare" ${state.stats.looks>=100?'disabled':''}>${state.stats.looks>=100?'외모 최대':'관리받기'}</button></div></div>`);
- $$('[data-outfit]').forEach(b=>b.onclick=()=>{const i=+b.dataset.outfit,[name,price,bonus]=outfits[i];if(!state.ownedOutfits.includes(i)){if(state.stats.money<price)return toast('옷을 구매할 돈이 부족합니다.');stat('money',-price);state.ownedOutfits.push(i);if(bonus)stat('looks',bonus);toast(`${name}을 구매했습니다. 외모 +${bonus}`)}state.outfit=i;showDialogue('류현상',`${name}으로 갈아입었다. 거울을 보며 “옷이 사람을 만든다는데, 성격까지 부드러워지진 않겠지.”라고 중얼거렸다.`);save(false);closeModal();render()});
+ const outfits=[['검은 셔츠',0,0],['흰 셔츠',180000,2],['체크 셔츠',240000,3],['가죽 재킷',480000,5],['후드티',320000,4],['무대 의상',1200000,8],['???',0,0]];
+ showModal('옷장',`<div class="card-list">${outfits.map(([x,price],i)=>{const owned=state.ownedOutfits.includes(i);if(i===6&&!owned)return '';const special=i===6;return `<div class="info-card ${special?'mystery-outfit-card':''}"><header><b>${x}</b><span>${special?'수상한 상인의 의상':i===0?'기본 의상':price.toLocaleString()+'원'}</span></header>${special?'<p>착용하는 순간 외모가 최대치 100이 됩니다.</p>':''}<button data-outfit="${i}" ${state.outfit===i?'disabled':''}>${state.outfit===i?'착용 중':owned?'갈아입기':'구매하기'}</button></div>`}).join('')}<div class="info-card"><header><b>헤어·스타일 관리</b><span>80,000원</span></header><p>체력 4를 사용하고 외모 +2. 외모 100까지 이용할 수 있습니다.</p><button id="styleCare" ${state.stats.looks>=100?'disabled':''}>${state.stats.looks>=100?'외모 최대':'관리받기'}</button></div></div>`);
+ $$('[data-outfit]').forEach(b=>b.onclick=()=>{const i=+b.dataset.outfit,[name,price,bonus]=outfits[i];if(!state.ownedOutfits.includes(i)){if(state.stats.money<price)return toast('옷을 구매할 돈이 부족합니다.');stat('money',-price);state.ownedOutfits.push(i);if(bonus)stat('looks',bonus);toast(`${name}을 구매했습니다. 외모 +${bonus}`)}state.outfit=i;if(i===6){state.stats.looks=100;addHistory('✨ 의상 「???」 착용 · 외모가 최대치 100이 되었다.','outfit:mystery-equipped')}showDialogue('류현상',`${name}으로 갈아입었다. 거울을 보며 “옷이 사람을 만든다는데, 성격까지 부드러워지진 않겠지.”라고 중얼거렸다.`);save(false);closeModal();render()});
  const care=$('#styleCare');if(care)care.onclick=()=>{if(state.stats.money<80000)return toast('스타일 관리 비용이 부족합니다.');if(!costHp(4))return;stat('money',-80000);stat('looks',2);if(state.stats.looks>=100)addHistory('✨ 외모 100 달성 · 무대 스타일이 완성됐다.','milestone:looks100');closeModal();showDialogue('류현상','머리와 의상을 정돈했다. 낯선 사람과 눈을 마주치는 일은 여전히 어렵지만, 무대에 설 준비는 조금 더 단단해졌다.');advance(1)}
 }
 function openAlbum(){const albums=[['디지털 싱글',5000000],['미니앨범',20000000],['정규앨범',50000000]];showModal('앨범 제작',albums.map(([n,p],i)=>`<div class="info-card"><header><b>${n}</b><span>${p.toLocaleString()}원</span></header><p>보컬과 작곡 능력에 따라 팬과 수익이 증가합니다.</p><button data-album="${i}">발매하기</button></div>`).join(''));$$('[data-album]').forEach(b=>b.onclick=()=>releaseAlbum(albums[+b.dataset.album]))}
@@ -747,8 +839,82 @@ dialogues.practice.push('소리가 조금만 어긋나도 신경이 곤두선다
 dialogues.park.push('팬에게 무뚝뚝하게 답하고 나서 뒤늦게 손을 흔들었다. 사회성은 타이밍이 가장 어렵다.');
 dialogues.stage.push('예민함은 무대를 망치기도 하지만, 작은 소리까지 놓치지 않게 해 주기도 한다. 오늘은 후자로 쓰자.');
 function pickFanComment(big=false){const pool=[...fanComments,...(big||Math.random()<.18?superFanComments:[])];return pick(pool)}
-function trainingAction(type,hpCost){if(!costHp(hpCost))return;const base=4;if(Math.random()<.38){startMemoryGame(type,base);return}stat(type,base);state.exp+=8;showDialogue('류현상',type==='vocal'?pick(actionDialogue.vocal):pick(actionDialogue.compose));advance(1)}
-function startMemoryGame(type,baseGain){memoryGameActive=true;const symbols=['♪','♫','♬','𝄞','♩','𝄢','♭','♯','𝄐','𝄫'];const cards=[...symbols,...symbols].sort(()=>Math.random()-.5);let first=null,lock=false,matched=0,time=60,timer;showModal(type==='vocal'?'보컬 리듬 훈련':'작곡 음표 훈련',`<div class="memory-head"><b>1분 안에 같은 음악기호 10쌍을 맞추세요.</b><span id="memoryTimer">60초</span></div><div id="memoryGrid" class="memory-grid">${cards.map((x,i)=>`<button class="memory-card" data-i="${i}" data-symbol="${x}">?</button>`).join('')}</div>`);const finish=success=>{clearInterval(timer);memoryGameActive=false;closeModal(true);const gain=success?Math.round(baseGain*1.5):baseGain;stat(type,gain);state.exp+=success?12:8;showDialogue('류현상',success?`제한 시간 안에 모든 음악기호를 맞췄다. 집중력이 올라 ${type==='vocal'?'보컬':'작곡'} 능력치를 1.5배 획득했다.`:`시간 안에 끝내지는 못했지만 연습한 만큼 기본 능력치는 올랐다.`);toast(`${type==='vocal'?'보컬':'작곡'} +${gain}`);advance(1)};$$('.memory-card').forEach(btn=>btn.onclick=()=>{if(lock||btn.disabled||btn===first)return;btn.textContent=btn.dataset.symbol;btn.classList.add('open');if(!first){first=btn;return}if(first.dataset.symbol===btn.dataset.symbol){first.disabled=btn.disabled=true;first.classList.add('matched');btn.classList.add('matched');first=null;matched+=2;if(matched===20)finish(true)}else{lock=true;const prev=first;first=null;setTimeout(()=>{prev.textContent=btn.textContent='?';prev.classList.remove('open');btn.classList.remove('open');lock=false},550)}});timer=setInterval(()=>{time--;const el=$('#memoryTimer');if(el)el.textContent=`${time}초`;if(time<=0)finish(false)},1000)}
+function trainingAction(type,hpCost){
+ if(!costHp(hpCost))return;
+ const base=4;
+ if(Math.random()<.38){
+  if(Math.random()<.5)startMemoryGame(type,base);
+  else startReactionGame(type,base);
+  return;
+ }
+ stat(type,base);state.exp+=8;showDialogue('류현상',type==='vocal'?pick(actionDialogue.vocal):pick(actionDialogue.compose));advance(1)
+}
+function trainingLabel(type){return type==='vocal'?'보컬':'작곡'}
+function finishTrainingResult(type,baseGain,success,reason,successText){
+ const gain=success?Math.round(baseGain*1.5):baseGain;
+ stat(type,gain);state.exp+=success?12:8;
+ const fallbackText=reason==='closed'?'훈련 게임을 중간에 닫았다. 미니게임 보너스는 받지 못했지만, 진행한 연습만큼 기본 능력치는 올랐다.':'제한 시간 안에 끝내지는 못했지만 연습한 만큼 기본 능력치는 올랐다.';
+ showDialogue('류현상',success?successText:fallbackText);
+ toast(`${trainingLabel(type)} +${gain}`);advance(1)
+}
+function startMemoryGame(type,baseGain){
+ memoryGameActive=true;
+ const symbols=['♪','♫','♬','𝄞','♩','𝄢','♭','♯','𝄐','𝄫'];
+ const cards=[...symbols,...symbols].sort(()=>Math.random()-.5);
+ let first=null,lock=false,matched=0,time=60,timer=null,flipTimer=null,finished=false;
+ showModal(type==='vocal'?'보컬 리듬 훈련':'작곡 음표 훈련',`<div class="memory-head"><div><b>1분 안에 같은 음악기호 10쌍을 맞추세요.</b><small>중간에 닫으면 기본 능력치만 획득합니다.</small></div><span id="memoryTimer">60초</span></div><div id="memoryGrid" class="memory-grid">${cards.map((x,i)=>`<button class="memory-card" data-i="${i}" data-symbol="${x}" aria-label="뒤집히지 않은 음악기호 카드">?</button>`).join('')}</div>`);
+ const finish=(success,reason='time')=>{
+  if(finished)return;finished=true;
+  clearInterval(timer);if(flipTimer)clearTimeout(flipTimer);
+  memoryGameActive=false;activeTrainingAbort=null;closeModal(true);
+  finishTrainingResult(type,baseGain,success,reason,`제한 시간 안에 모든 음악기호를 맞췄다. 집중력이 올라 ${trainingLabel(type)} 능력치를 1.5배 획득했다.`)
+ };
+ activeTrainingAbort=()=>finish(false,'closed');
+ $$('.memory-card').forEach(btn=>btn.onclick=()=>{
+  if(finished||lock||btn.disabled||btn===first)return;
+  btn.textContent=btn.dataset.symbol;btn.classList.add('open');btn.setAttribute('aria-label',`음악기호 ${btn.dataset.symbol}`);
+  if(!first){first=btn;return}
+  if(first.dataset.symbol===btn.dataset.symbol){
+   first.disabled=btn.disabled=true;first.classList.add('matched');btn.classList.add('matched');first=null;matched+=2;
+   if(matched===20)finish(true,'success')
+  }else{
+   lock=true;const prev=first;first=null;
+   flipTimer=setTimeout(()=>{if(finished)return;prev.textContent=btn.textContent='?';prev.classList.remove('open');btn.classList.remove('open');prev.setAttribute('aria-label','뒤집히지 않은 음악기호 카드');btn.setAttribute('aria-label','뒤집히지 않은 음악기호 카드');lock=false},550)
+  }
+ });
+ timer=setInterval(()=>{time--;const el=$('#memoryTimer');if(el)el.textContent=`${time}초`;if(time<=0)finish(false,'time')},1000)
+}
+function startReactionGame(type,baseGain){
+ memoryGameActive=true;
+ const symbols=['♪','♫','♬','𝄞','♩','♭','♯'];
+ let hits=0,misses=0,time=20,finished=false,timer=null,spawnTimer=null,targetTimer=null;
+ showModal(type==='vocal'?'보컬 순발력 훈련':'작곡 순발력 훈련',`<div class="reaction-head"><div><b>빛나는 음표가 나타나면 빠르게 누르세요.</b><small>20초 안에 8번 성공하면 1.5배 보상을 받습니다. 닫으면 기본 능력치만 획득합니다.</small></div><div class="reaction-score"><span id="reactionHits">성공 0 / 8</span><strong id="reactionTimer">20초</strong></div></div><div id="reactionArena" class="reaction-arena" aria-label="순발력 훈련 영역"><button id="reactionTarget" class="reaction-target hidden" aria-label="빠르게 눌러야 하는 음표">♪</button><p id="reactionGuide">잠시 후 음표가 나타납니다.</p></div>`);
+ const target=$('#reactionTarget'),guide=$('#reactionGuide');
+ const update=()=>{const h=$('#reactionHits'),t=$('#reactionTimer');if(h)h.textContent=`성공 ${hits} / 8 · 놓침 ${misses}`;if(t)t.textContent=`${time}초`};
+ const clearGameTimers=()=>{clearInterval(timer);clearTimeout(spawnTimer);clearTimeout(targetTimer)};
+ const finish=(success,reason='time')=>{
+  if(finished)return;finished=true;clearGameTimers();memoryGameActive=false;activeTrainingAbort=null;closeModal(true);
+  finishTrainingResult(type,baseGain,success,reason,`나타나는 음표를 빠르게 눌러 순발력 훈련을 성공했다. 반응 속도가 올라 ${trainingLabel(type)} 능력치를 1.5배 획득했다.`)
+ };
+ const scheduleTarget=()=>{
+  if(finished)return;
+  const delay=260+Math.floor(Math.random()*520);
+  spawnTimer=setTimeout(()=>{
+   if(finished)return;
+   target.textContent=pick(symbols);target.style.left=`${10+Math.random()*80}%`;target.style.top=`${12+Math.random()*72}%`;target.classList.remove('hidden');
+   if(guide)guide.classList.add('hidden');
+   targetTimer=setTimeout(()=>{if(finished||target.classList.contains('hidden'))return;target.classList.add('hidden');misses++;update();scheduleTarget()},950)
+  },delay)
+ };
+ target.onclick=()=>{
+  if(finished||target.classList.contains('hidden'))return;
+  clearTimeout(targetTimer);target.classList.add('hit');hits++;update();playSfx('tap');
+  setTimeout(()=>{if(!target)return;target.classList.remove('hit');target.classList.add('hidden');if(hits>=8)finish(true,'success');else scheduleTarget()},120)
+ };
+ activeTrainingAbort=()=>finish(false,'closed');
+ update();scheduleTarget();
+ timer=setInterval(()=>{time--;update();if(time<=0)finish(hits>=8,hits>=8?'success':'time')},1000)
+}
 function checkStalkerEvent(){
  const lv=fameLevel();if(lv<40||state.stats.looks<100||state.stalker.resolved)return false;
  if(!state.stalker.active){state.stalker.active=true;addHistory('🚨 스토커 핵심 사건 시작 · 반복적으로 같은 인물이 공연장에 나타났다.','stalker:start')}
@@ -805,7 +971,7 @@ function offerEnding(name,text,force=false){if(state.endingPrompted[name]&&!forc
 function displayPendingEnding(){if(!state.pendingEnding)return;const {name,text}=state.pendingEnding;showDialogue('운명의 선택',text,[['최종 엔딩을 본다',()=>{state.pendingEnding=null;unlockEnding(name);runEndingStory(name,true);return `${name}을 선택했다.`}],['계속 성장한다',()=>{state.pendingEnding=null;save(false);return '아직 끝내지 않는다. 더 높은 무대를 향해 계속 나아가기로 했다.'}]])}
 function unlockEnding(name){if(!state.endings.includes(name)){state.endings.push(name);saveMetaEndings(state.endings);addHistory(`🏁 엔딩 해금 · ${name}`);save(false);toast(`${name} 해금!`)}}
 function showModal(title,html){const modal=$('#modal');if(modal.open)modal.close();$('#modalTitle').textContent=title;$('#modalBody').innerHTML=html;modal.showModal()}
-function closeModal(force=false){const modal=$('#modal');if(memoryGameActive&&!force){toast('카드 짝맞추기를 완료하거나 제한 시간이 끝날 때까지 닫을 수 없습니다.');return}if(modal.open)modal.close();if(endingMusicMode)exitEndingMusic()}
+function closeModal(force=false){const modal=$('#modal');if(memoryGameActive&&!force){if(typeof activeTrainingAbort==='function'){activeTrainingAbort();return}memoryGameActive=false}if(modal.open)modal.close();if(endingMusicMode)exitEndingMusic()}
 function getLocationDialoguePool(loc){
  if(loc!=='practice')return dialogues[loc];
  const members=Object.values(state.band.members).filter(Boolean);
@@ -820,7 +986,7 @@ function render(){
  $('#mobileResources').innerHTML=[['💰','돈',`${state.stats.money.toLocaleString()}원`],['👥','팬',`${state.stats.fans.toLocaleString()}명`],['✨','외모',state.stats.looks],['☁','스트레스',state.stats.stress],['⚡','박칵스',`${state.items.bakcas}개`]].map(([icon,label,value])=>`<div class="mobile-resource-chip"><span class="mobile-resource-icon">${icon}</span><span class="mobile-resource-label">${label}</span><b>${value}</b></div>`).join('');
  $('#scheduleList').innerHTML=`<li>현재: ${locations[state.location].name}</li><li>날씨: ${weatherLabel()} · ${dayType()}</li><li>집: ${housingInfo[state.housing][0]}</li><li>밴드 결속력: ${state.band.bond}</li><li>후라보노 관계: ${state.manager.bond}</li>`;
  $('#missionBox').innerHTML=`<p>팬 3,000명 달성</p><div class="progress"><span style="width:${Math.min(100,state.stats.fans/30)}%"></span></div><p>첫 앨범 발매 ${state.albums.length?'완료':'미완료'}</p>`;
- const outfitImages=['outfit-black.png','outfit-white.png','outfit-check.png','outfit-leather.png','outfit-hoodie.png','outfit-stage.png'];const art=$('#characterArt');if(art){const src=`assets/images/${outfitImages[state.outfit||0]}`;if(!art.src.endsWith(src))art.src=src;}const scene=$('#scene');const specialKey=state.specialScene?.active?state.specialScene.key:null;const specialClassMap={iziViral:' special-izi-viral',waitedMoreViral:' special-waited-more-viral',day30Hair:' special-day30-hair',day60Workout:' special-day60-workout',day90Live:' special-day90-live',day120Chat:' special-day120-chat',day150Birthday:' special-day150-birthday',day180Archive:' special-day180-archive',day210Demo:' special-day210-demo',day240Meme:' special-day240-meme',day300Promise:' special-day300-promise'};const specialLabelMap={iziViral:'수원역 · 특별 이벤트',waitedMoreViral:'명동 · 특별 이벤트',day30Hair:'자취방 · 30일 특별 이벤트',day60Workout:'자취방 · 60일 특별 이벤트',day90Live:'자취방 · 90일 특별 이벤트',day120Chat:'자취방 · 120일 특별 이벤트',day150Birthday:'생일 파티 · 150일 특별 이벤트',day180Archive:'자취방 · 180일 특별 이벤트',day210Demo:'연습실 · 210일 특별 이벤트',day240Meme:'자취방 · 240일 특별 이벤트',day300Promise:'공연장 · 300일 특별 이벤트'};const specialClass=specialKey?(specialClassMap[specialKey]||''):'';scene.className=`scene ${locations[state.location].cls} outfit-${state.outfit||0}${specialClass}`;scene.dataset.time=state.time;scene.style.setProperty('--spark-opacity',state.location==='stage'?'.58':state.location==='park'?'.46':'.32');bindScenePointer();$('#gameScreen').classList.toggle('story-lock',!!specialClass);$('#locationLabel').textContent=specialKey?(specialLabelMap[specialKey]||locations[state.location].name):locations[state.location].name;const basePool=getLocationDialoguePool(state.location);const d=state.dialogue||{name:'류현상',text:pick(basePool)};displayDialogue(d.name,d.text);if(state.pendingEnding)setTimeout(displayPendingEnding,0);
+ const outfitImages=['outfit-black.png','outfit-white.png','outfit-check.png','outfit-leather.png','outfit-hoodie.png','outfit-stage.png','outfit-mystery.png'];const art=$('#characterArt');if(art){const src=`assets/images/${outfitImages[state.outfit||0]}`;if(!art.src.endsWith(src))art.src=src;}const scene=$('#scene');const specialKey=state.specialScene?.active?state.specialScene.key:null;const specialClassMap={iziViral:' special-izi-viral',waitedMoreViral:' special-waited-more-viral',day30Hair:' special-day30-hair',day60Workout:' special-day60-workout',day90Live:' special-day90-live',day120Chat:' special-day120-chat',day150Birthday:' special-day150-birthday',day180Archive:' special-day180-archive',day210Demo:' special-day210-demo',day240Meme:' special-day240-meme',day300Promise:' special-day300-promise',hiddenGameOst:' special-hidden-game-ost',hiddenRadioDj:' special-hidden-radio-dj',hiddenDingo:' special-hidden-dingo',mysteriousMerchant:' special-mysterious-merchant'};const specialLabelMap={iziViral:'수원역 · 특별 이벤트',waitedMoreViral:'명동 · 특별 이벤트',day30Hair:'자취방 · 30일 특별 이벤트',day60Workout:'자취방 · 60일 특별 이벤트',day90Live:'자취방 · 90일 특별 이벤트',day120Chat:'자취방 · 120일 특별 이벤트',day150Birthday:'생일 파티 · 150일 특별 이벤트',day180Archive:'자취방 · 180일 특별 이벤트',day210Demo:'연습실 · 210일 특별 이벤트',day240Meme:'자취방 · 240일 특별 이벤트',day300Promise:'공연장 · 300일 특별 이벤트',hiddenGameOst:'카페 · 게임 OST 특별 이벤트',hiddenRadioDj:'라디오 스튜디오 · 특별 이벤트',hiddenDingo:'딩고 스튜디오 · 특별 이벤트',mysteriousMerchant:'이름 없는 골목 · 수상한 상인'};const specialClass=specialKey?(specialClassMap[specialKey]||''):'';scene.className=`scene ${locations[state.location].cls} outfit-${state.outfit||0}${specialClass}`;scene.dataset.time=state.time;scene.style.setProperty('--spark-opacity',state.location==='stage'?'.58':state.location==='park'?'.46':'.32');bindScenePointer();$('#gameScreen').classList.toggle('story-lock',!!specialClass);$('#locationLabel').textContent=specialKey?(specialLabelMap[specialKey]||locations[state.location].name):locations[state.location].name;const basePool=getLocationDialoguePool(state.location);const d=state.dialogue||{name:'류현상',text:pick(basePool)};displayDialogue(d.name,d.text);if(state.pendingEnding)setTimeout(displayPendingEnding,0);
  const locationMarkup=Object.entries(locations).map(([k,v])=>`<button data-loc="${k}" class="${state.location===k?'active':''}" aria-pressed="${state.location===k}">${v.name}</button>`).join('');
  $('#locationButtons').innerHTML=locationMarkup;
  $('#mobileLocationButtons').innerHTML=locationMarkup;
@@ -842,7 +1008,7 @@ function showBand(){showModal('밴드 멤버',Object.entries(state.band.members)
 $('#newGameBtn').onclick=()=>{const collected=loadMetaEndings();state=structuredClone(baseState);state.endings=collected;startPrologue()};
 $('#continueBtn').onclick=()=>{if(!load())return toast('저장된 게임이 없습니다.');$('#titleScreen').classList.remove('active');$('#gameScreen').classList.add('active');render()};
 $('#howBtn').onclick=()=>showModal('게임 설명','<p>류현상을 연습시키고 버스킹 장비를 구입해 팬과 인지도를 늘리세요. 밴드를 결성한 뒤에는 솔로 버스킹만 반복하지 말고 합주와 밴드 공연으로 결속력을 관리해야 합니다. 인지도 Lv.20부터 후라보노를 고용할 수 있으며, 고용하면 방송과 주요 이벤트가 열립니다. 인지도 Lv.31 이상부터는 류현상이 가끔 성공에 취해 꺼드럭대고 후라보노가 제지하는 선택형 스토리가 발생합니다. 날씨·평일·주말·공휴일에 따라 버스킹 성공률과 체력 소모, 장비 고장 확률이 달라집니다. 인지도 100마다 레벨이 오릅니다. 오디션·공연·방송은 7일, 앨범은 30일의 준비 기간이 필요합니다. 월드 스타 엔딩은 인지도 Lv.100, 보컬 85, 팬 5만 명, 후라보노와 완전체 밴드가 필요합니다.</p>');
-$('#closeModal').onclick=()=>closeModal();$('#modal').addEventListener('cancel',e=>{if(memoryGameActive){e.preventDefault();toast('카드 짝맞추기가 진행 중입니다.')}});$('#audioBtn').onclick=openAudioSettings;$('#menuBtn').onclick=()=>showModal('메뉴','<div class="card-list"><button id="manualSave">수동 저장</button><button id="backTitle">타이틀로 돌아가기</button></div>');
+$('#closeModal').onclick=()=>closeModal();$('#modal').addEventListener('cancel',e=>{if(memoryGameActive){e.preventDefault();closeModal()}});$('#audioBtn').onclick=openAudioSettings;$('#menuBtn').onclick=()=>showModal('메뉴','<div class="card-list"><button id="manualSave">수동 저장</button><button id="backTitle">타이틀로 돌아가기</button></div>');
 $('#modal').addEventListener('click',e=>{if(e.target===$('#modal'))closeModal()});
 $$('[data-phone]').forEach(b=>b.onclick=()=>openPhone(b.dataset.phone));
 $$('[data-tab]').forEach(b=>b.onclick=()=>{const t=b.dataset.tab;$$('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));if(t==='band')showBand();if(t==='album')openAlbum();if(t==='shop')openGear();if(t==='ending'){showModal('엔딩 컬렉션',state.endings.length?state.endings.map(x=>`<button class="info-card ending-replay" data-ending-replay="${x}"><b>${x}</b><small>다시 읽기</small></button>`).join(''):'아직 해금된 엔딩이 없습니다.');$$('[data-ending-replay]').forEach(x=>x.onclick=()=>runEndingStory(x.dataset.endingReplay));}if(t==='story')showModal('스토리 기록',state.history.length?`<div class="card-list story-history-list">${[...state.history].reverse().map(x=>`<div class="info-card story-history-item">${x}</div>`).join('')}</div>`:'류현상의 이야기는 이제 시작입니다.')});
@@ -861,5 +1027,31 @@ loadAudioSettings();
 const unlockAudio=()=>{ensureAudio();document.removeEventListener('pointerdown',unlockAudio);document.removeEventListener('keydown',unlockAudio)};
 document.addEventListener('pointerdown',unlockAudio,{once:true});document.addEventListener('keydown',unlockAudio,{once:true});
 document.addEventListener('click',e=>{if(e.target.closest('button')&&!e.target.closest('#toggleBgm,#toggleSfx,#audioBtn'))playSfx('click')});
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('#installBtn').classList.remove('hidden')});$('#installBtn').onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null}};
-if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',async()=>{try{const reg=await navigator.serviceWorker.register('service-worker.js?v=24',{updateViaCache:'none'});await reg.update();}catch(err){console.warn('서비스워커 등록 실패',err)}});
+const installBtn=$('#installBtn'),installHint=$('#installHint');
+const isStandalone=()=>window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
+const isIos=()=>/iphone|ipad|ipod/i.test(navigator.userAgent);
+const isMobileDevice=()=>/android|iphone|ipad|ipod/i.test(navigator.userAgent)||window.matchMedia('(max-width: 720px)').matches;
+function refreshInstallUi(){
+ if(!installBtn)return;
+ if(isStandalone()){installBtn.classList.add('hidden');installHint?.classList.add('hidden');return;}
+ if(isMobileDevice()){installBtn.classList.remove('hidden');installHint?.classList.remove('hidden');}
+}
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;refreshInstallUi()});
+window.addEventListener('appinstalled',()=>{deferredPrompt=null;refreshInstallUi();toast('홈 화면에 앱이 설치되었습니다.')});
+if(installBtn)installBtn.onclick=async()=>{
+ if(isStandalone())return toast('이미 앱으로 설치되어 있습니다.');
+ if(deferredPrompt){
+   deferredPrompt.prompt();
+   await deferredPrompt.userChoice;
+   deferredPrompt=null;
+   refreshInstallUi();
+   return;
+ }
+ if(isIos()){
+   showModal('아이폰·아이패드에 설치',`<div class="card-list"><div class="info-card"><b>Safari에서 설치하는 방법</b><p>1. 화면 아래의 <strong>공유 버튼(□↑)</strong>을 누릅니다.<br>2. 메뉴를 내려 <strong>홈 화면에 추가</strong>를 선택합니다.<br>3. 오른쪽 위 <strong>추가</strong>를 누르면 앱처럼 실행할 수 있습니다.</p></div><div class="info-card"><small>카카오톡·인스타그램 내부 브라우저에서는 메뉴가 보이지 않을 수 있습니다. 주소를 Safari로 열어 주세요.</small></div></div>`);
+ }else{
+   showModal('모바일 앱 설치 안내',`<div class="card-list"><div class="info-card"><b>Chrome에서 설치하는 방법</b><p>브라우저 오른쪽 위 <strong>⋮ 메뉴</strong>를 누른 뒤 <strong>앱 설치</strong> 또는 <strong>홈 화면에 추가</strong>를 선택하세요.</p></div><div class="info-card"><small>설치 항목이 없다면 GitHub Pages 주소를 Chrome에서 직접 열고 페이지를 한 번 새로고침해 주세요.</small></div></div>`);
+ }
+};
+refreshInstallUi();
+if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',async()=>{try{const reg=await navigator.serviceWorker.register('service-worker.js?v=31',{updateViaCache:'none'});await reg.update();refreshInstallUi()}catch(err){console.warn('서비스워커 등록 실패',err);refreshInstallUi()}});
