@@ -714,3 +714,89 @@ html,body,#app{width:100%;height:100%;height:100dvh;min-height:0!important;overf
 .mystery-outfit-card{border-color:rgba(232,190,83,.75)!important;background:linear-gradient(135deg,rgba(49,39,12,.72),rgba(12,23,35,.78))!important}
 .mystery-outfit-card b{letter-spacing:.18em;text-shadow:0 0 10px rgba(255,211,99,.68)}
 @media(max-width:720px){.scene.special-mysterious-merchant{background-position:center 28%!important;background-size:cover!important}.scene.special-mysterious-merchant .choices{grid-template-columns:1fr}}
+
+
+/* === v35 빠른 대화 타이핑 효과 === */
+#dialogueText.typing-active{
+  position:relative;
+  animation:subtitleMicroMove .18s ease-out both;
+}
+#dialogueText.typing-active::after{
+  content:'▍';
+  display:inline-block;
+  margin-left:2px;
+  opacity:.85;
+  transform:translateY(1px);
+  animation:typingCursor .48s steps(1,end) infinite;
+}
+#dialogueText.typing-finished{animation:subtitleSettle .16s ease-out both}
+.dialogue-box{cursor:pointer;touch-action:manipulation}
+@keyframes subtitleMicroMove{from{opacity:.72;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+@keyframes subtitleSettle{0%{transform:translateY(0)}50%{transform:translateY(-1px)}100%{transform:translateY(0)}}
+@keyframes typingCursor{0%,48%{opacity:.9}49%,100%{opacity:.15}}
+@media (prefers-reduced-motion:reduce){
+ #dialogueText.typing-active,#dialogueText.typing-finished{animation:none!important}
+ #dialogueText.typing-active::after{animation:none!important}
+}
+
+
+/* === v36 iPhone installed-PWA safe-area fix === */
+:root{
+  --app-safe-top: env(safe-area-inset-top, 0px);
+  --app-safe-right: env(safe-area-inset-right, 0px);
+  --app-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --app-safe-left: env(safe-area-inset-left, 0px);
+  --app-viewport-height: 100dvh;
+}
+html,body,#app{
+  height:var(--app-viewport-height,100dvh)!important;
+  max-height:var(--app-viewport-height,100dvh)!important;
+}
+.title-screen{
+  padding-top:calc(24px + var(--app-safe-top))!important;
+  padding-right:calc(24px + var(--app-safe-right))!important;
+  padding-bottom:calc(24px + var(--app-safe-bottom))!important;
+  padding-left:calc(24px + var(--app-safe-left))!important;
+}
+.toast{
+  top:calc(12px + var(--app-safe-top))!important;
+}
+@media (max-width:720px){
+  .game-screen.active{
+    box-sizing:border-box!important;
+    height:var(--app-viewport-height,100dvh)!important;
+    max-height:var(--app-viewport-height,100dvh)!important;
+    padding-top:var(--app-safe-top)!important;
+    padding-right:var(--app-safe-right)!important;
+    padding-bottom:var(--app-safe-bottom)!important;
+    padding-left:var(--app-safe-left)!important;
+  }
+  .topbar{
+    position:relative!important;
+    top:auto!important;
+    z-index:40!important;
+    overflow:visible!important;
+  }
+  .top-controls{
+    position:relative!important;
+    z-index:45!important;
+    pointer-events:auto!important;
+  }
+  .top-controls button,
+  .topbar button{
+    pointer-events:auto!important;
+    touch-action:manipulation!important;
+  }
+  .mobile-map{z-index:35!important}
+  .title-screen{
+    min-height:var(--app-viewport-height,100dvh)!important;
+    height:var(--app-viewport-height,100dvh)!important;
+    padding-top:calc(16px + var(--app-safe-top))!important;
+    padding-right:calc(16px + var(--app-safe-right))!important;
+    padding-bottom:calc(16px + var(--app-safe-bottom))!important;
+    padding-left:calc(16px + var(--app-safe-left))!important;
+  }
+}
+@supports not (height:100dvh){
+  :root{--app-viewport-height:100vh}
+}

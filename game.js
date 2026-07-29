@@ -1055,3 +1055,18 @@ if(installBtn)installBtn.onclick=async()=>{
 };
 refreshInstallUi();
 if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',async()=>{try{const reg=await navigator.serviceWorker.register('service-worker.js?v=31',{updateViaCache:'none'});await reg.update();refreshInstallUi()}catch(err){console.warn('서비스워커 등록 실패',err);refreshInstallUi()}});
+
+
+/* v36: iOS standalone PWA viewport synchronization */
+(function setupIOSViewportFix(){
+  const update=()=>{
+    const height=(window.visualViewport&&window.visualViewport.height)||window.innerHeight;
+    if(height>0)document.documentElement.style.setProperty('--app-viewport-height',`${Math.round(height)}px`);
+  };
+  update();
+  window.addEventListener('resize',update,{passive:true});
+  window.addEventListener('orientationchange',()=>setTimeout(update,120),{passive:true});
+  window.addEventListener('pageshow',update,{passive:true});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(update,60)});
+  if(window.visualViewport)window.visualViewport.addEventListener('resize',update,{passive:true});
+})();
