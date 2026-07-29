@@ -1,0 +1,65 @@
+{
+  "results": [
+    {
+      "name": "고용·영입 전 장소 대사 정합성",
+      "ok": true,
+      "detail": "[]"
+    },
+    {
+      "name": "후라보노 미고용 시 라디오 비활성",
+      "ok": true,
+      "detail": "[{\"key\": \"hiddenGameOst\", \"ok\": true}, {\"key\": \"hiddenRadioDj\", \"ok\": false}, {\"key\": \"hiddenDingo\", \"ok\": false}]"
+    },
+    {
+      "name": "후라보노 미고용 시 딩고 비활성",
+      "ok": true,
+      "detail": "[{\"key\": \"hiddenGameOst\", \"ok\": true}, {\"key\": \"hiddenRadioDj\", \"ok\": false}, {\"key\": \"hiddenDingo\", \"ok\": false}]"
+    },
+    {
+      "name": "OST는 독립 제안으로 가능",
+      "ok": true,
+      "detail": "[{\"key\": \"hiddenGameOst\", \"ok\": true}, {\"key\": \"hiddenRadioDj\", \"ok\": false}, {\"key\": \"hiddenDingo\", \"ok\": false}]"
+    },
+    {
+      "name": "고용 후 라디오·딩고 활성",
+      "ok": true,
+      "detail": "[{\"key\": \"hiddenGameOst\", \"ok\": true}, {\"key\": \"hiddenRadioDj\", \"ok\": true}, {\"key\": \"hiddenDingo\", \"ok\": true}]"
+    },
+    {
+      "name": "라이벌 5장 순차 완료",
+      "ok": true,
+      "detail": "[{\"trigger\": true, \"state\": {\"met\": true, \"stage\": 1, \"respect\": 10, \"lastEventDay\": 10}}, {\"trigger\": true, \"state\": {\"met\": true, \"stage\": 2, \"respect\": 20, \"lastEventDay\": 20}}, {\"trigger\": true, \"state\": {\"met\": true, \"stage\": 3, \"respect\": 30, \"lastEventDay\": 30}}, {\"trigger\": true, \"state\": {\"met\": true, \"stage\": 4, \"respect\": 40, \"lastEventDay\": 40}}, {\"trigger\": true, \"state\": {\"met\": true, \"stage\": 5, \"respect\": 50, \"lastEventDay\": 50}}]"
+    },
+    {
+      "name": "라이벌 연속 중복 방지",
+      "ok": true,
+      "detail": "False"
+    },
+    {
+      "name": "팬 이벤트 7일 쿨다운",
+      "ok": true,
+      "detail": "False"
+    },
+    {
+      "name": "SNS 하루 1회 제한",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "악기 저장 복원",
+      "ok": true,
+      "detail": "{\"acousticGuitar\": false, \"keyboard\": true, \"audioInterface\": false, \"studioMic\": true, \"monitorHeadphones\": false}"
+    },
+    {
+      "name": "훈련 보상 상한 7/11",
+      "ok": true,
+      "detail": "{\"baseV\": 7, \"baseC\": 7, \"bonusV\": 11, \"bonusC\": 11}"
+    },
+    {
+      "name": "고정 이벤트 미고용 모순 문구 제거",
+      "ok": true,
+      "detail": "[]"
+    }
+  ],
+  "errors": []
+}

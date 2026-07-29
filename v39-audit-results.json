@@ -1,0 +1,13 @@
+{
+  "referenced_assets": 28,
+  "missing_assets": [],
+  "has_daily_bakcas_limit": true,
+  "has_work_streak": true,
+  "bakcas_price_15000": true,
+  "daily_recovery_reduced": true,
+  "instrument_slots": true,
+  "growth_scaling": true,
+  "three_world_routes": true,
+  "year_ending_profile": true,
+  "manager_story_guard": true
+}

@@ -1,0 +1,140 @@
+{
+  "results": [
+    {
+      "name": "title opacity 50%",
+      "ok": true,
+      "detail": "rgba(5, 10, 20, 0.5)"
+    },
+    {
+      "name": "game screen active",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "SNS phone button exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "prehire stage pool no manager",
+      "ok": true,
+      "detail": "['무대 뒤에서는 모든 사람이 평소보다 조용했다. 케이블을 정리하는 스태프의 발소리까지 크게 들렸다. 류현상은 손바닥의 땀을 셔츠에 닦고 첫 음을 머릿속으로 반복했다.', '관객석은 어두워 얼굴이 보이지 않았다. 이상하게도 그 편이 편했다. 수백 명의 낯선 사람은 한 명의 냉정한 심사위원보다 덜 무서울 때가 있었다.', '조명이 켜지는 순간, 생활비와 악성 댓글과 월세가 잠시 머릿속에서 사라졌다. 무대 위에서는 노래 하나만 제대로 끝내면 됐다.', '대기실 거울에는 출연자들의 이름표가 줄지어 붙어 있었다. 가장 아래에 적힌 류현상의 이름이 낯설게 보였다. 언젠가는 가장 큰 글씨로 적힐 수 있을까.', '관객이 류현상의 이름을 외쳤다. 처음에는 몇 명뿐이었지만 곧 더 많은 목소리가 섞였다. 그는 안경을 고쳐 쓰며 그 소리를 오래 기억하려 했다.', '예민함은 무대를 망치기도 하지만, 작은 소리까지 놓치지 않게 해 주기도 한다. 오늘은 후자로 쓰자.']"
+    },
+    {
+      "name": "contextual helper filters manager",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "fan group distribution total",
+      "ok": true,
+      "detail": "{\"fans\": 1000, \"groups\": {\"regular\": 620, \"enthusiast\": 180, \"gay\": 80, \"overseas\": 120}, \"sum\": 1000}"
+    },
+    {
+      "name": "fan types receive values",
+      "ok": true,
+      "detail": "{\"fans\": 1000, \"groups\": {\"regular\": 620, \"enthusiast\": 180, \"gay\": 80, \"overseas\": 120}, \"sum\": 1000}"
+    },
+    {
+      "name": "five instruments shown",
+      "ok": true,
+      "detail": "5"
+    },
+    {
+      "name": "instrument training bonus capped",
+      "ok": true,
+      "detail": "{\"v\": 7, \"c\": 7}"
+    },
+    {
+      "name": "memory starts waiting",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "countdown begins at 3",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "cards disabled during countdown",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "memory timer starts after countdown",
+      "ok": true,
+      "detail": "60초"
+    },
+    {
+      "name": "memory close grants base only",
+      "ok": true,
+      "detail": "{\"before\": {\"day\": 1, \"v\": 22}, \"after\": {\"day\": 1, \"v\": 26}}"
+    },
+    {
+      "name": "reaction countdown exists",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "reaction timer waiting",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "reaction close grants base only",
+      "ok": true,
+      "detail": "{\"before\": {\"day\": 1, \"c\": 16}, \"after\": {\"day\": 1, \"c\": 20}}"
+    },
+    {
+      "name": "SNS scenarios visible",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "SNS post records and advances",
+      "ok": true,
+      "detail": "{\"posts\": 1, \"last\": 1, \"day\": 1}"
+    },
+    {
+      "name": "fan types displayed",
+      "ok": true,
+      "detail": "일반 팬\n753명\n열혈 팬\n212명\n게이 팬\n94명\n해외 팬\n121명\n팬 유형 안내\n\n팬 유형은 우열이나 능력치가 아니라 팬덤의 다양성을 보여 주는 분류입니다. 게이 팬은 희화화하지 않고 개별 취향과 전문성을 지닌 팬으로 등장합니다.\n\n분류된 팬 1,180명 / 전체 팬 2,180명"
+    },
+    {
+      "name": "rival story triggers at Lv30",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "rival story long first chapter",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "rival stage persists",
+      "ok": true,
+      "detail": "{\"met\": true, \"stage\": 1, \"respect\": 10, \"lastEventDay\": 1}"
+    },
+    {
+      "name": "old duplicate rival excluded",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "fame capped 10000",
+      "ok": true,
+      "detail": "10000"
+    },
+    {
+      "name": "looks/stress capped 100",
+      "ok": true,
+      "detail": "{\"hp\": 80, \"vocal\": 28, \"compose\": 20, \"looks\": 100, \"fame\": 10000, \"fans\": 2180, \"money\": 800000, \"stress\": 100}"
+    },
+    {
+      "name": "old save migration",
+      "ok": true,
+      "detail": "{\"fans\": 1234, \"fg\": {\"regular\": 1234, \"enthusiast\": 0, \"gay\": 0, \"overseas\": 0}, \"inst\": {\"acousticGuitar\": false, \"keyboard\": false, \"audioInterface\": false, \"studioMic\": false, \"monitorHeadphones\": false}, \"sns\": {\"lastPostDay\": -99, \"totalPosts\": 0, \"controversy\": 0, \"lastEventDay\": -99}, \"rival\": {\"met\": false, \"stage\": 0, \"respect\": 0, \"lastEventDay\": -99}}"
+    }
+  ],
+  "errors": []
+}
