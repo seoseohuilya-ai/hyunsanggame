@@ -1,16 +1,16 @@
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const locations={home:{name:'자취방',cls:'home'},store:{name:'편의점',cls:'store'},practice:{name:'연습실',cls:'practice'},park:{name:'공원',cls:'park'},stage:{name:'공연장',cls:'stage'}};
-const baseState={day:1,slot:0,time:0,location:'home',level:1,exp:0,rank:'무명 가수',weather:'sun',housing:0,endingPrompted:{},pendingEnding:null,stats:{hp:80,vocal:22,compose:16,looks:35,fame:0,fans:0,money:800000,stress:10},equipment:{mic:false,amp:false,battery:false},equipmentDamage:{mic:false,amp:false},instruments:{acousticGuitar:false,keyboard:false,audioInterface:false,studioMic:false,monitorHeadphones:false},fanGroups:{regular:0,enthusiast:0,gay:0,overseas:0},sns:{lastPostDay:-99,totalPosts:0,controversy:0,lastEventDay:-99},rival:{met:false,stage:0,respect:0,lastEventDay:-99},items:{bakcas:1,bakcasUsedToday:0,mealsToday:0},economy:{workStreak:0,lastWorkDay:-99},equippedInstruments:[],career:{peakFame:0,totalWork:0,totalConcerts:0,totalBroadcasts:0,totalBusking:0},manager:{hired:false,bond:0,wedding:false},band:{formed:false,bond:60,members:{guitar:null,bass:null,piano:null,drums:null}},albums:[],endings:[],history:[],dialogue:null,seenEvents:[],soloStreak:0,outfit:0,ownedOutfits:[0],performanceCount:0,stalker:{active:false,resolved:false,encounters:0,safety:0},arrogance:{lastDay:-99,count:0,lesson:0},specialEvents:{iziViral:false,waitedMoreViral:false,day30Hair:false,day60Workout:false,day90Live:false,day120Chat:false,day150Birthday:false,day180Archive:false,day210Demo:false,day240Meme:false,day300Promise:false,hiddenGameOst:false,hiddenRadioDj:false,hiddenDingo:false,mysteriousMerchantPurchased:false},specialScene:{active:false,key:null},cooldowns:{managerTalk:-99,audition:-99,concert:-99,broadcast:-99,fanmeeting:-99,album:-99,fanEvent:-99,snsPost:-99},milestones:{firstAudition:false,firstConcert:false,firstBroadcast:false,firstFanmeeting:false,firstAlbum:false,managerHired:false,bandFormed:false,stalkerResolved:false,randomSeen:[]},historyKeys:[],lastAction:null,prologueSeen:false};
+const baseState={day:1,slot:0,time:0,location:'home',level:1,exp:0,rank:'무명 가수',weather:'sun',housing:0,endingPrompted:{},pendingEnding:null,stats:{hp:80,vocal:22,compose:16,looks:35,fame:0,fans:0,money:800000,stress:10},equipment:{mic:false,amp:false,battery:false},equipmentDamage:{mic:false,amp:false},instruments:{acousticGuitar:false,keyboard:false,audioInterface:false,studioMic:false,monitorHeadphones:false},fanGroups:{regular:0,enthusiast:0,gay:0,overseas:0},sns:{lastPostDay:-99,totalPosts:0,controversy:0,lastEventDay:-99},rival:{met:false,stage:0,respect:0,lastEventDay:-99},items:{bakcas:1,bakcasUsedToday:0,mealsToday:0},economy:{workStreak:0,lastWorkDay:-99,debt:0,totalDebtRepaid:0,lastDebtNoticeDay:-99},equippedInstruments:[],career:{peakFame:0,totalWork:0,totalConcerts:0,totalBroadcasts:0,totalBusking:0},manager:{hired:false,bond:0,wedding:false},band:{formed:false,bond:60,members:{guitar:null,bass:null,piano:null,drums:null}},albums:[],endings:[],history:[],dialogue:null,seenEvents:[],soloStreak:0,outfit:0,ownedOutfits:[0],performanceCount:0,stalker:{active:false,resolved:false,encounters:0,safety:0},arrogance:{lastDay:-99,count:0,lesson:0},specialEvents:{iziViral:false,waitedMoreViral:false,day30Hair:false,day60Workout:false,day90Live:false,day120Chat:false,day150Birthday:false,day180Archive:false,day210Demo:false,day240Meme:false,day300Promise:false,hiddenGameOst:false,hiddenRadioDj:false,hiddenDingo:false,mysteriousMerchantPurchased:false},specialScene:{active:false,key:null},preparation:{stageReady:false,stageReadyDay:-99,buskingInsight:false,buskingInsightDay:-99},cooldowns:{managerTalk:-99,recruit:-99,audition:-99,concert:-99,broadcast:-99,fanmeeting:-99,album:-99,fanEvent:-99,snsPost:-99},milestones:{firstAudition:false,firstConcert:false,firstBroadcast:false,firstFanmeeting:false,firstAlbum:false,managerHired:false,bandFormed:false,stalkerResolved:false,randomSeen:[]},historyKeys:[],lastAction:null,prologueSeen:false};
 let state=structuredClone(baseState);let deferredPrompt=null;let audioCtx=null;let motionTimer=null;let burstTimer=null;let memoryGameActive=false;let activeTrainingAbort=null;
 let audioMaster=null,bgmGain=null,sfxGain=null,bgmTimer=null,bgmStep=0;
 let choiceLock=false,endingMusicMode=false,endingMusicName='';
 let audioSettings={bgm:true,sfx:true,volume:.42};
 const actions={
- home:[['휴식','주거 단계별 체력 회복','rest'],['작곡','작곡 +4','compose'],['식사','체력 +12 / 8천원','meal'],['옷장','의상 변경','wardrobe'],['박칵스','체력 +25 / 하루 2회','bakcas'],['이사','더 좋은 집으로 이동','moveHome']],
- store:[['편의점 알바','급여 4.5만원 / 연속근무 피로','work'],['박칵스 구입','1.5만원','buyBakcas'],['삼각김밥','체력 +8','snack'],['식사','체력 +12 / 8천원','meal'],['장비 점검','고장 방지','repair'],['휴식','체력 회복','rest']],
- practice:[['보컬 연습','보컬 +4','vocal'],['작곡 연습','작곡 +4','compose'],['밴드 합주','결속력 상승','rehearse'],['멤버 모집','밴드 결성','recruit'],['신곡 편곡','앨범 품질','arrange'],['후라보노 호출','매니저','manager']],
- park:[['버스킹','요일·날씨 영향','busking'],['밴드 버스킹','요일·날씨 영향','bandBusking'],['산책','스트레스 감소','walk'],['라이벌 관찰','보컬 +1','observe'],['장비 점검','고장 방지','repair'],['휴식','체력 회복','rest']],
- stage:[['오디션','데뷔 기회','audition'],['공연','팬·수익 증가','concert'],['방송 출연','인지도 증가','broadcast'],['앨범 발매','제작 및 발매','album'],['팬미팅','팬 증가','fanmeeting'],['대형 콘서트','월드 스타 엔딩 도전','national']]
+ home:[['깊은 휴식','집 등급에 따라 체력·스트레스 회복','rest'],['식사','체력 +12 / 8천원 / 하루 2회','meal'],['옷장','의상 변경·스타일 관리','wardrobe'],['박칵스','체력 회복 / 하루 2회','bakcas'],['이사','더 좋은 집으로 이동','moveHome'],['가계부·채무','보유금으로 채무 직접 상환','finance']],
+ store:[['편의점 알바','급여 4.5만원 / 연속근무 피로','work'],['야간 진열 보조','급여 2.5만원 / 낮은 체력 소모','stockWork'],['박칵스 구입','1.5만원','buyBakcas'],['삼각김밥','체력 +8 / 2,500원','snack'],['매장 홍보 방송','팬·인지도 증가','storePromo'],['단골 손님 응대','소액 팁·팬 증가','customerPractice']],
+ practice:[['보컬 연습','보컬 훈련','vocal'],['작곡 연습','작곡 훈련','compose'],['멤버 오디션','조건 충족 파트만 영입','recruit'],['밴드 합주','완전체 밴드 결속력 상승','rehearse'],['신곡 편곡','완전체 밴드 편곡 훈련','arrange'],['장비 점검','마이크·앰프 고장 수리','repair'],['앨범 제작','싱글·미니·정규앨범 발매','album']],
+ park:[['버스킹','요일·날씨 영향','busking'],['밴드 버스킹','완전체 밴드 공연','bandBusking'],['산책','스트레스 감소','walk'],['라이벌 관찰','보컬 분석 훈련','observe'],['공연 전단 홍보','비용·체력 소모 / 팬 증가','flyerPromo'],['관객 반응 조사','다음 버스킹 성공률 상승','audienceResearch']],
+ stage:[['무대 리허설','다음 오디션·공연·방송 보너스','stageRehearsal'],['오디션','데뷔 기회','audition'],['공연','팬·수익 증가','concert'],['방송 출연','인지도 증가','broadcast'],['팬미팅','팬 증가','fanmeeting'],['대형 콘서트','월드 스타 엔딩 도전','national']]
 };
 const dialogues={
  home:[
@@ -115,32 +115,32 @@ const actionDialogue={
 const storyEvents=[
  {id:'lost-wallet',place:'park',condition:()=>['busking','bandBusking'].includes(state.lastAction)&&state.equipment.mic&&state.equipment.amp,title:'벤치 위의 지갑',text:'버스킹 준비를 하던 중 벤치 위에서 두꺼운 지갑을 발견했다.',choices:[['주인을 기다린다',()=>{stat('fame',8);stat('stress',-4);return '잠시 뒤 달려온 주인이 연신 고개를 숙였다. 그는 지역 공연기획자였다.'}],['경찰서에 맡긴다',()=>{stat('fame',3);return '연습 시간은 줄었지만 마음은 편했다.'}]]},
  {id:'rain-busking',place:'park',condition:()=>['busking','bandBusking'].includes(state.lastAction)&&state.weather==='rain'&&state.equipment.mic&&state.equipment.amp,title:'갑작스러운 소나기',text:'첫 곡이 끝나기도 전에 비가 쏟아졌다. 관객들은 하나둘 뛰어가기 시작했다.',choices:[['끝까지 노래한다',()=>{if(state.stats.hp<12){stat('stress',8);return '목이 잠기고 감기에 걸릴 뻔했다.'}stat('hp',-12);stat('fans',180);stat('fame',18);return '몇 명의 관객이 우산을 들고 끝까지 자리를 지켰다. 영상은 밤새 퍼졌다.'}],['장비부터 지킨다',()=>{stat('stress',-2);return '공연은 중단했지만 장비는 무사했다.'}]]},
- {id:'child-request',place:'park',condition:()=>['busking','bandBusking'].includes(state.lastAction)&&state.equipment.mic&&state.equipment.amp,title:'어린 관객의 신청곡',text:'어린아이가 동전 몇 개를 내밀며 세상을 떠난 강아지가 좋아하던 노래를 불러 달라고 했다.',choices:[['정성껏 불러준다',()=>{stat('fans',90);stat('stress',-5);return '아이와 보호자가 눈물을 훔겼다. 돈보다 오래 남는 공연이었다.'}],['자작곡을 들려준다',()=>{stat('compose',2);stat('fans',45);return '아이는 이해하지 못한 듯했지만 끝까지 자리를 지켰다.'}]]},
+ {id:'child-request',place:'park',condition:()=>['busking','bandBusking'].includes(state.lastAction)&&state.equipment.mic&&state.equipment.amp,title:'어린 관객의 신청곡',text:'어린아이가 동전 몇 개를 내밀며 세상을 떠난 강아지가 좋아하던 노래를 불러 달라고 했다.',choices:[['정성껏 불러준다',()=>{stat('fans',90);stat('stress',-5);return '아이와 보호자가 눈물을 훔겼다. 돈보다 오래 남는 공연이었다.'}],['자작곡을 들려준다',()=>{gainSkill('compose',2,'event');stat('fans',45);return '아이는 이해하지 못한 듯했지만 끝까지 자리를 지켰다.'}]]},
  {id:'viral-comment',place:'home',condition:()=>state.performanceCount>0&&state.stats.fans>=50,title:'댓글 1,247개',text:'잠에서 깨 보니 어젯밤 영상에 댓글이 폭발적으로 달려 있었다. 칭찬만큼 악성 댓글도 많았다.',choices:[['모두 읽는다',()=>{stat('fame',25);stat('stress',14);return '사람들의 반응을 알게 됐지만 마음은 무거워졌다.'}],['휴대전화를 끈다',()=>{stat('stress',-8);return '오늘은 음악만 생각하기로 했다.'}]]},
- {id:'neighbor',place:'home',condition:()=>state.lastAction==='compose'&&state.time>=2,title:'벽 너머의 항의',text:'밤늦게 작곡하다가 이웃이 문을 두드렸다. 생각보다 몹시 화가 나 있다.',choices:[['진심으로 사과한다',()=>{stat('money',-30000);stat('stress',-2);return '작은 선물을 건네고 연습 시간을 조정했다.'}],['방음재를 설치한다',()=>{if(state.stats.money<120000){stat('stress',8);return '돈이 부족해 임시로 이불을 벽에 붙였다.'}stat('money',-120000);stat('compose',2);return '집에서도 더 편하게 작업할 수 있게 됐다.'}]]},
- {id:'old-guitar',place:'home',title:'낡은 기타의 편지',text:'중고 기타 케이스 안쪽에서 이전 주인이 남긴 짧은 편지를 발견했다. “포기하지 말 것.”',choices:[['책상 앞에 붙인다',()=>{stat('stress',-12);stat('compose',2);return '짧은 문장이 이상할 만큼 오래 마음에 남았다.'}],['곡의 소재로 쓴다',()=>{stat('compose',4);return '새 노래의 첫 문장이 완성됐다.'}]]},
+ {id:'neighbor',place:'home',condition:()=>state.lastAction==='compose'&&state.time>=2,title:'벽 너머의 항의',text:'밤늦게 작곡하다가 이웃이 문을 두드렸다. 생각보다 몹시 화가 나 있다.',choices:[['진심으로 사과한다',()=>{stat('money',-30000);stat('stress',-2);return '작은 선물을 건네고 연습 시간을 조정했다.'}],['방음재를 설치한다',()=>{if(state.stats.money<120000){stat('stress',8);return '돈이 부족해 임시로 이불을 벽에 붙였다.'}stat('money',-120000);gainSkill('compose',2,'event');return '집에서도 더 편하게 작업할 수 있게 됐다.'}]]},
+ {id:'old-guitar',place:'home',title:'낡은 기타의 편지',text:'중고 기타 케이스 안쪽에서 이전 주인이 남긴 짧은 편지를 발견했다. “포기하지 말 것.”',choices:[['책상 앞에 붙인다',()=>{stat('stress',-12);gainSkill('compose',2,'event');return '짧은 문장이 이상할 만큼 오래 마음에 남았다.'}],['곡의 소재로 쓴다',()=>{gainSkill('compose',4,'event');return '새 노래의 첫 문장이 완성됐다.'}]]},
  {id:'store-fan',place:'store',condition:()=>state.lastAction==='work'&&state.stats.fans>=100,title:'알아본 손님',text:'편의점 손님이 계산을 마치고도 떠나지 않더니 조심스럽게 사인을 부탁했다.',choices:[['친절하게 해준다',()=>{stat('fans',75);stat('looks',1);return '손님은 소중히 간직하겠다며 환하게 웃었다.'}],['근무 중이라 거절한다',()=>{stat('stress',-2);return '규칙은 지켰지만 손님의 표정이 조금 굳었다.'}]]},
  {id:'store-manager',place:'store',title:'새벽의 후라보노',text:'새벽 근무 중 후라보노가 따뜻한 캔커피를 들고 나타났다.',condition:()=>state.lastAction==='work'&&state.manager.hired&&state.time===3,choices:[['고맙다고 한다',()=>{state.manager.bond=clamp(state.manager.bond+8);return '후라보노는 형이 고맙다는 말을 할 줄도 아냐며 웃었다.'}],['왜 왔냐고 묻는다',()=>{state.manager.bond=clamp(state.manager.bond+3);return '일정 확인하러 왔다면서도 그는 한참 자리를 지켰다.'}]]},
  {id:'member-solo-offer',place:'practice',title:'솔로 제안',text:'기타리스트가 유명 세션팀에서 함께하자는 제안을 받았다고 털어놓았다.',condition:()=>state.band.formed,choices:[['진심으로 응원한다',()=>{state.band.bond=clamp(state.band.bond+12);return '멤버는 제안을 거절하고 밴드에 남겠다고 했다.'}],['팀을 먼저 생각하라고 한다',()=>{state.band.bond=clamp(state.band.bond-18);return '연습실 분위기가 싸늘해졌다.'}]]},
  {id:'late-member',place:'practice',title:'지각한 드러머',text:'드러머가 두 시간 늦게 도착했다. 아무 설명도 하지 않은 채 드럼 앞에 앉았다.',condition:()=>state.band.members.drums,choices:[['이유를 묻는다',()=>{state.band.bond=clamp(state.band.bond+5);return '가족 문제로 정신이 없었다는 사실을 알게 됐다.'}],['그냥 연습을 시작한다',()=>{state.band.bond=clamp(state.band.bond-6);return '합주는 끝났지만 서로의 마음은 멀어졌다.'}]]},
  {id:'broken-mic',place:'practice',condition:()=>state.equipment.mic,title:'마이크 파손',text:'연습 도중 마이크가 바닥에 떨어졌다. 누가 건드렸는지는 아무도 보지 못했다.',choices:[['공동 비용으로 수리한다',()=>{stat('money',-50000);if(state.band.formed)state.band.bond=clamp(state.band.bond+5);return '누구의 잘못인지 따지지 않자 분위기가 누그러졌다.'}],['범인을 찾는다',()=>{stat('stress',8);if(state.band.formed)state.band.bond=clamp(state.band.bond-8);return '마이크보다 더 큰 균열이 생겼다.'}]]},
- {id:'rival',place:'stage',condition:()=>state.lastAction==='audition'&&state.stats.vocal>=40&&state.stats.fame>=30,title:'라이벌의 도발',text:'오디션 대기실에서 유명 연습생이 장발과 안경을 훑어보며 콘셉트가 과하다고 비웃었다.',choices:[['무시한다',()=>{stat('vocal',2);return '무대에서 증명하는 편이 더 빠르다.'}],['차분하게 받아친다',()=>{stat('looks',2);stat('fame',5);return '주변 참가자들이 웃음을 터뜨렸다.'}]]},
+ {id:'rival',place:'stage',condition:()=>state.lastAction==='audition'&&state.stats.vocal>=40&&state.stats.fame>=30,title:'라이벌의 도발',text:'오디션 대기실에서 유명 연습생이 장발과 안경을 훑어보며 콘셉트가 과하다고 비웃었다.',choices:[['무시한다',()=>{gainSkill('vocal',2,'event');return '무대에서 증명하는 편이 더 빠르다.'}],['차분하게 받아친다',()=>{stat('looks',2);stat('fame',5);return '주변 참가자들이 웃음을 터뜨렸다.'}]]},
  {id:'lyric-forgot',place:'stage',title:'사라진 가사',text:'생방송 도중 갑자기 다음 가사가 떠오르지 않았다.',condition:()=>state.lastAction==='broadcast'&&state.milestones.firstBroadcast,choices:[['즉흥으로 이어간다',()=>{const ok=state.stats.compose+Math.random()*40>45;if(ok){stat('fame',70);stat('fans',700);return '즉흥 가사는 오히려 전설적인 장면이 됐다.'}stat('stress',12);return '어색하게 곡을 마무리했지만 큰 사고는 피했다.'}],['관객에게 마이크를 넘긴다',()=>{stat('fans',350);return '관객의 합창이 빈 가사를 채웠다.'}]]},
  {id:'fan-gift',place:'stage',title:'너무 비싼 선물',text:'팬이 고가의 시계를 선물로 보냈다. 편지에는 답장을 꼭 달라는 말이 적혀 있다.',condition:()=>['concert','fanmeeting'].includes(state.lastAction)&&state.stats.fans>=1000,choices:[['정중히 돌려보낸다',()=>{stat('fame',12);stat('fans',30);return '원칙 있는 대응이라는 평가를 받았다.'}],['감사히 받는다',()=>{stat('money',300000);stat('stress',6);return '기뻤지만 마음 한구석이 불편했다.'}]]},
  {id:'hurabono-sick',place:'stage',title:'후라보노의 과로',text:'공연 직전 후라보노가 계단에서 휘청거렸다. 며칠째 제대로 잠을 자지 못한 얼굴이다.',condition:()=>state.lastAction==='concert'&&state.manager.hired&&state.milestones.firstConcert,choices:[['공연을 미루고 병원에 간다',()=>{state.manager.bond=clamp(state.manager.bond+18);stat('money',-150000);return '공연은 손해를 봤지만 후라보노는 오래도록 그 선택을 기억했다.'}],['스태프에게 맡긴다',()=>{state.manager.bond=clamp(state.manager.bond-12);stat('fame',10);return '공연은 예정대로 진행됐지만 후라보노와의 거리가 멀어졌다.'}]]},
- {id:'fan-letter',place:'home',title:'한 통의 긴 편지',text:'노래 덕분에 힘든 시기를 버텼다는 팬의 편지가 도착했다.',condition:()=>state.stats.fans>=300,choices:[['직접 답장을 쓴다',()=>{stat('fans',80);stat('stress',-10);return '답장을 쓰며 내가 노래하는 이유를 다시 생각했다.'}],['새 노래로 답한다',()=>{stat('compose',3);return '편지를 책상 위에 두고 곡을 쓰기 시작했다.'}]]},
+ {id:'fan-letter',place:'home',title:'한 통의 긴 편지',text:'노래 덕분에 힘든 시기를 버텼다는 팬의 편지가 도착했다.',condition:()=>state.stats.fans>=300,choices:[['직접 답장을 쓴다',()=>{stat('fans',80);stat('stress',-10);return '답장을 쓰며 내가 노래하는 이유를 다시 생각했다.'}],['새 노래로 답한다',()=>{gainSkill('compose',3,'event');return '편지를 책상 위에 두고 곡을 쓰기 시작했다.'}]]},
  {id:'band-dinner',place:'store',title:'편의점 회식',text:'돈이 부족한 밴드는 편의점 테이블에 둘러앉아 컵라면으로 첫 회식을 열었다.',condition:()=>state.band.formed,choices:[['내가 계산한다',()=>{stat('money',-25000);state.band.bond=clamp(state.band.bond+14);return '값싼 식사였지만 누구도 먼저 자리를 뜨지 않았다.'}],['각자 계산한다',()=>{state.band.bond=clamp(state.band.bond+4);return '소박하지만 편안한 밤이었다.'}]]},
- {id:'wedding-song',place:'practice',title:'후라보노의 축가 부탁',text:'후라보노가 결혼식 축가로 어떤 노래가 좋을지 조심스럽게 물었다. 평소 계약 이야기만 하던 얼굴이 오늘따라 유난히 어색해 보였다.',condition:()=>state.manager.wedding,choices:[['새 곡을 써준다',()=>{stat('compose',5);state.manager.bond=clamp(state.manager.bond+15);return '류현상은 며칠 동안 잠을 줄여 축가를 완성했다. 후라보노는 첫 소절을 듣고 웃으려다 눈시울을 붉혔다. “형, 결혼식에서 저 울면 책임지세요.”'}],['대표곡을 부른다',()=>{state.manager.bond=clamp(state.manager.bond+8);return '후라보노는 고개를 끄덕였다. “형 노래면 뭐든 좋아요. 단, 결혼식에서 애드리브 5분은 안 됩니다.”'}]]},
+ {id:'wedding-song',place:'practice',title:'후라보노의 축가 부탁',text:'후라보노가 결혼식 축가로 어떤 노래가 좋을지 조심스럽게 물었다. 평소 계약 이야기만 하던 얼굴이 오늘따라 유난히 어색해 보였다.',condition:()=>state.manager.wedding,choices:[['새 곡을 써준다',()=>{gainSkill('compose',5,'event');state.manager.bond=clamp(state.manager.bond+15);return '류현상은 며칠 동안 잠을 줄여 축가를 완성했다. 후라보노는 첫 소절을 듣고 웃으려다 눈시울을 붉혔다. “형, 결혼식에서 저 울면 책임지세요.”'}],['대표곡을 부른다',()=>{state.manager.bond=clamp(state.manager.bond+8);return '후라보노는 고개를 끄덕였다. “형 노래면 뭐든 좋아요. 단, 결혼식에서 애드리브 5분은 안 됩니다.”'}]]},
  {id:'p-string',place:'practice',title:'P군의 기타 줄 장례식',text:'P군이 끊어진 기타 줄을 휴지 위에 가지런히 올려두고 있었다. R군이 왜 버리지 않느냐고 묻자 P군은 “세 번의 공연을 함께한 줄”이라고 진지하게 답했다.',condition:()=>!!state.band.members.guitar,choices:[['조용히 묵념한다',()=>{state.band.bond=clamp(state.band.bond+7);return '밴드 전원이 10초 동안 침묵했다. L군은 마지막에 “새 줄 필요함”이라고 말했다. 감동은 짧고 현실은 정확했다.'}],['당장 버리라고 한다',()=>{state.band.bond=clamp(state.band.bond-4);return 'P군은 말없이 줄을 케이스 안쪽에 넣었다. 그날 기타 솔로는 평소보다 20초 길었다.'}]]},
  {id:'l-one-word',place:'practice',title:'L군의 긴 연설',text:'합주가 끝난 뒤 L군이 “할 말 있음”이라고 말했다. 모두가 긴장해 둘러앉았다. L군은 잠시 생각하더니 입을 열었다.',condition:()=>!!state.band.members.bass,choices:[['끝까지 기다린다',()=>{state.band.bond=clamp(state.band.bond+6);return 'L군은 30초 침묵한 뒤 말했다. “오늘 좋았음.” 네 글자에 멤버들은 이상할 정도로 기뻐했다.'}],['먼저 무슨 일이냐고 재촉한다',()=>{state.band.bond=clamp(state.band.bond-2);return 'L군은 “됐음”이라고 답하고 베이스를 챙겼다. 방금 전보다 대화가 더 짧아졌다.'}]]},
- {id:'j-space-remix',place:'practice',title:'J군의 우주 편곡',text:'J군이 새 편곡 파일을 재생했다. 잔잔한 발라드는 신시사이저와 효과음이 가득한 우주 탐사 음악으로 변해 있었다. 파일명은 final_진짜최종_우주버전이었다.',condition:()=>!!state.band.members.piano,choices:[['한 번 공연해 본다',()=>{stat('compose',3);state.band.bond=clamp(state.band.bond+5);return '관객 반응은 반으로 갈렸지만 영상 댓글은 폭발했다. “이별했는데 화성까지 간 노래”라는 댓글이 가장 많은 추천을 받았다.'}],['원래 편곡으로 돌린다',()=>{state.band.bond=clamp(state.band.bond-2);return 'J군은 아쉬워했지만 파일을 닫았다. 다만 final_진짜최종_우주버전2가 새로 생긴 것을 아무도 눈치채지 못했다.'}]]},
+ {id:'j-space-remix',place:'practice',title:'J군의 우주 편곡',text:'J군이 새 편곡 파일을 재생했다. 잔잔한 발라드는 신시사이저와 효과음이 가득한 우주 탐사 음악으로 변해 있었다. 파일명은 final_진짜최종_우주버전이었다.',condition:()=>!!state.band.members.piano,choices:[['한 번 공연해 본다',()=>{gainSkill('compose',3,'event');state.band.bond=clamp(state.band.bond+5);return '관객 반응은 반으로 갈렸지만 영상 댓글은 폭발했다. “이별했는데 화성까지 간 노래”라는 댓글이 가장 많은 추천을 받았다.'}],['원래 편곡으로 돌린다',()=>{state.band.bond=clamp(state.band.bond-2);return 'J군은 아쉬워했지만 파일을 닫았다. 다만 final_진짜최종_우주버전2가 새로 생긴 것을 아무도 눈치채지 못했다.'}]]},
  {id:'r-noise',place:'practice',title:'R군과 소음 측정기',text:'연습실 관리자가 소음 측정기를 들고 찾아왔다. R군이 연주할 때마다 기계 숫자가 위험 구간까지 치솟았다. R군은 기계가 예민하다고 주장했다.',condition:()=>!!state.band.members.drums,choices:[['전자드럼을 빌린다',()=>{stat('money',-60000);state.band.bond=clamp(state.band.bond+4);return 'R군은 타격감이 부족하다며 투덜댔지만, 이웃 연습실에서 처음으로 박수가 들렸다. 아마 감사의 박수였을 것이다.'}],['R군에게 살살 치라고 한다',()=>{state.band.bond=clamp(state.band.bond-3);return 'R군은 정말 살살 쳤다. 문제는 곡 전체가 자장가처럼 변했다는 것이었다.'}]]},
  {id:'manager-hair',place:'home',title:'후라보노의 머리 관리 제안',text:'후라보노가 긴 머리를 한참 보더니 작은 빗과 헤어 오일을 내밀었다. “형, 콘셉트는 좋은데 바람 불면 얼굴이 안 보여요. 가수인지 커튼인지 구분이 안 됩니다.”',condition:()=>state.manager.hired,choices:[['관리를 맡긴다',()=>{stat('looks',3);state.manager.bond=clamp(state.manager.bond+5);return '후라보노는 능숙하게 머리를 정리했다. 류현상이 어디서 배웠냐고 묻자 그는 관리 영상 백 개를 봤다고 짧게 답했다.'}],['내버려 두라고 한다',()=>{state.manager.bond=clamp(state.manager.bond-2);return '후라보노는 오일을 책상 위에 두고 갔다. 다음 버스킹에서 바람이 불자 류현상은 조용히 그 오일을 떠올렸다.'}]]},
- {id:'wrong-delivery',place:'home',title:'잘못 배달된 마이크',text:'문 앞에 주문하지 않은 고급 마이크가 놓여 있었다. 송장에는 옆 동 이름과 비슷한 이름이 적혀 있었다. 지금 장비보다 몇 배는 비싸 보였다.',choices:[['바로 돌려준다',()=>{stat('fame',5);stat('stress',-3);return '주인은 근처 녹음실 엔지니어였다. 그는 고마움의 표시로 다음 녹음 때 한 번 도와주겠다고 약속했다.'}],['하루만 테스트한다',()=>{stat('vocal',2);stat('stress',7);return '소리는 놀라울 만큼 좋았다. 그러나 초인종이 울릴 때마다 심장이 더 크게 뛰었다. 결국 밤이 되기 전에 돌려줬다.'}]]},
+ {id:'wrong-delivery',place:'home',title:'잘못 배달된 마이크',text:'문 앞에 주문하지 않은 고급 마이크가 놓여 있었다. 송장에는 옆 동 이름과 비슷한 이름이 적혀 있었다. 지금 장비보다 몇 배는 비싸 보였다.',choices:[['바로 돌려준다',()=>{stat('fame',5);stat('stress',-3);return '주인은 근처 녹음실 엔지니어였다. 그는 고마움의 표시로 다음 녹음 때 한 번 도와주겠다고 약속했다.'}],['하루만 테스트한다',()=>{gainSkill('vocal',2,'event');stat('stress',7);return '소리는 놀라울 만큼 좋았다. 그러나 초인종이 울릴 때마다 심장이 더 크게 뛰었다. 결국 밤이 되기 전에 돌려줬다.'}]]},
  {id:'store-lottery',place:'store',title:'당첨 복권의 주인',text:'손님이 버리고 간 영수증 사이에서 당첨된 즉석복권이 발견됐다. 금액은 크지 않았지만 현재 생활비에는 충분히 의미가 있었다.',choices:[['CCTV로 손님을 찾는다',()=>{stat('fame',7);return '며칠 뒤 주인이 다시 찾아왔다. 그는 감사하다며 버스킹 공연을 회사 단체 채팅방에 공유했다.'}],['매장 분실물로 보관한다',()=>{stat('stress',-2);return '복권은 분실물 봉투 안에 들어갔다. 류현상은 계산대 아래에서 복권보다 자신의 통장 잔고를 더 오래 바라봤다.'}]]},
  {id:'store-idol-fan',place:'store',title:'다른 가수의 열성 팬',text:'한 손님이 계산대 앞에서 유명 아이돌의 장점을 15분 동안 설명했다. 마지막에는 류현상에게도 그 가수처럼 머리를 자르면 어떻겠냐고 조언했다.',choices:[['끝까지 친절하게 듣는다',()=>{stat('stress',4);stat('fans',20);return '손님은 친절한 직원이라며 매장 후기에 별 다섯 개를 남겼다. 류현상 이야기는 한 줄도 없었다.'}],['나는 가수라고 말한다',()=>{stat('fame',5);return '손님은 놀라 휴대전화로 검색했다. 조회수 23회의 영상이 화면에 떴고, 두 사람은 잠시 말이 없어졌다.'}]]},
  {id:'park-magician',place:'park',condition:()=>['busking','bandBusking'].includes(state.lastAction)&&state.equipment.mic&&state.equipment.amp,title:'마술사와 자리 경쟁',text:'늘 공연하던 자리에 거리 마술사가 먼저 장비를 펼쳐 놓았다. 그는 비둘기 두 마리와 큰 상자를 데려왔다. 류현상의 앰프보다 훨씬 눈에 띄었다.',choices:[['합동 공연을 제안한다',()=>{stat('fans',140);stat('fame',12);return '류현상이 노래하는 동안 마술사는 카드와 비둘기를 날렸다. 무슨 공연인지는 설명하기 어려웠지만 관객은 많이 모였다.'}],['다른 자리로 이동한다',()=>{stat('stress',-2);return '조용한 나무 아래에서 노래했다. 관객은 적었지만 마지막까지 듣는 사람은 더 오래 머물렀다.'}]]},
- {id:'park-grandma',place:'park',condition:()=>['busking','bandBusking'].includes(state.lastAction)&&state.equipment.mic&&state.equipment.amp,title:'할머니의 평가',text:'노래가 끝나자 산책하던 할머니가 다가왔다. “얼굴은 잘생겼는데 노래가 너무 슬퍼. 젊은 사람이 왜 맨날 헤어져?” 매우 정확한 질문이었다.',choices:[['밝은 노래를 즉석에서 부른다',()=>{stat('compose',2);stat('fans',60);return '류현상은 급하게 밝은 코드를 만들었다. 가사는 여전히 조금 슬펐지만 할머니는 박수를 쳤다.'}],['원래 감성이라고 설명한다',()=>{stat('looks',1);return '할머니는 고개를 저으며 귤 두 개를 건넸다. “그래도 밥은 먹고 다녀.” 오늘의 출연료였다.'}]]},
+ {id:'park-grandma',place:'park',condition:()=>['busking','bandBusking'].includes(state.lastAction)&&state.equipment.mic&&state.equipment.amp,title:'할머니의 평가',text:'노래가 끝나자 산책하던 할머니가 다가왔다. “얼굴은 잘생겼는데 노래가 너무 슬퍼. 젊은 사람이 왜 맨날 헤어져?” 매우 정확한 질문이었다.',choices:[['밝은 노래를 즉석에서 부른다',()=>{gainSkill('compose',2,'event');stat('fans',60);return '류현상은 급하게 밝은 코드를 만들었다. 가사는 여전히 조금 슬펐지만 할머니는 박수를 쳤다.'}],['원래 감성이라고 설명한다',()=>{stat('looks',1);return '할머니는 고개를 저으며 귤 두 개를 건넸다. “그래도 밥은 먹고 다녀.” 오늘의 출연료였다.'}]]},
  {id:'stage-makeup',place:'stage',condition:()=>['audition','concert','broadcast'].includes(state.lastAction)&&state.manager.hired&&state.stats.fame>=150,title:'처음 받는 무대 화장',text:'메이크업 아티스트가 류현상의 얼굴을 가까이 들여다보며 말했다. “피부는 좋은데 표정이 너무 어두워요.” 후라보노가 옆에서 “원래 저 표정입니다”라고 설명했다.',choices:[['웃는 연습을 한다',()=>{stat('looks',2);return '거울 앞에서 여러 번 웃어 봤지만 대부분 수상해 보였다. 마지막에 아주 조금 올라간 입꼬리만 남기기로 했다.'}],['평소 표정대로 간다',()=>{stat('fame',5);return '방송 후 팬들은 무표정이 콘셉트라며 좋아했다. 류현상은 콘셉트가 아니라는 말을 굳이 하지 않았다.'}]]},
  {id:'stage-name',place:'stage',condition:()=>['audition','concert','broadcast'].includes(state.lastAction)&&state.manager.hired&&state.stats.fame>=200,title:'예명 제안',text:'방송 작가가 류현상이라는 이름이 조금 무겁다며 짧은 예명을 제안했다. 후보는 “류”, “현”, 그리고 “블랙롱”이었다. 마지막 후보를 누가 적었는지는 모두 모른 척했다.',choices:[['본명을 지킨다',()=>{stat('fame',8);return '류현상은 이름을 바꾸지 않겠다고 말했다. 후라보노는 고개를 끄덕이며 블랙롱이라고 적힌 종이를 조용히 찢었다.'}],['류로 활동해 본다',()=>{stat('looks',2);stat('fame',4);return '하루 동안 류라고 불렸지만 스태프 절반이 누굴 부르는지 몰랐다. 다음 날 다시 류현상으로 돌아왔다.'}]]},
  {id:'band-group-photo',place:'stage',title:'밴드 단체 사진',text:'공연 후 단체 사진을 찍으려는데 누구도 자연스럽게 포즈를 취하지 못했다. P군은 기타만 보고, L군은 카메라를 피하고, J군은 손가락 하트를 만들었고, R군은 점프하려 했다.',condition:()=>state.lastAction==='concert'&&state.band.formed&&state.milestones.firstConcert,choices:[['각자 하고 싶은 대로 찍는다',()=>{state.band.bond=clamp(state.band.bond+8);stat('fans',100);return '사진은 통일감이 전혀 없었지만 이상하게 밴드의 성격이 그대로 담겼다. 팬들은 역대 최고의 단체 사진이라고 불렀다.'}],['정돈된 포즈를 시킨다',()=>{stat('looks',2);return '깔끔한 사진이 완성됐다. 다만 촬영이 끝나자 R군이 혼자 점프한 사진을 따로 올렸고 그 사진이 더 많이 공유됐다.'}]]},
@@ -204,8 +204,8 @@ function normalizeState(){
  state.equipmentDamage={mic:!!state.equipmentDamage?.mic,amp:!!state.equipmentDamage?.amp};
  state.instruments={acousticGuitar:!!state.instruments?.acousticGuitar,keyboard:!!state.instruments?.keyboard,audioInterface:!!state.instruments?.audioInterface,studioMic:!!state.instruments?.studioMic,monitorHeadphones:!!state.instruments?.monitorHeadphones};
  state.equippedInstruments=(Array.isArray(state.equippedInstruments)?state.equippedInstruments:[]).filter(k=>state.instruments[k]).slice(0,3);
- state.items={bakcas:Math.max(0,Number(state.items?.bakcas)||0),bakcasUsedToday:Math.max(0,Number(state.items?.bakcasUsedToday)||0)};
- state.economy={workStreak:Math.max(0,Number(state.economy?.workStreak)||0),lastWorkDay:Number(state.economy?.lastWorkDay??-99)};
+ state.items={bakcas:Math.max(0,Number(state.items?.bakcas)||0),bakcasUsedToday:Math.max(0,Number(state.items?.bakcasUsedToday)||0),mealsToday:Math.max(0,Number(state.items?.mealsToday)||0)};
+ state.economy={workStreak:Math.max(0,Number(state.economy?.workStreak)||0),lastWorkDay:Number(state.economy?.lastWorkDay??-99),debt:Math.max(0,Number(state.economy?.debt)||0),totalDebtRepaid:Math.max(0,Number(state.economy?.totalDebtRepaid)||0),lastDebtNoticeDay:Number(state.economy?.lastDebtNoticeDay??-99)};
  state.career={peakFame:Math.max(Number(state.career?.peakFame)||0,Number(state.stats.fame)||0),totalWork:Math.max(0,Number(state.career?.totalWork)||0),totalConcerts:Math.max(0,Number(state.career?.totalConcerts)||0),totalBroadcasts:Math.max(0,Number(state.career?.totalBroadcasts)||0),totalBusking:Math.max(0,Number(state.career?.totalBusking)||0)};
  const fg=state.fanGroups||{};state.fanGroups={regular:Math.max(0,Number(fg.regular)||0),enthusiast:Math.max(0,Number(fg.enthusiast)||0),gay:Math.max(0,Number(fg.gay)||0),overseas:Math.max(0,Number(fg.overseas)||0)};
  let grouped=Object.values(state.fanGroups).reduce((a,b)=>a+b,0);if(grouped===0&&state.stats.fans>0){state.fanGroups.regular=state.stats.fans;grouped=state.stats.fans}if(grouped>state.stats.fans&&grouped>0){const r=state.stats.fans/grouped;for(const k of Object.keys(state.fanGroups))state.fanGroups[k]=Math.floor(state.fanGroups[k]*r)}
@@ -221,7 +221,7 @@ function normalizeState(){
  state.performanceCount=Math.max(0,Number(state.performanceCount)||0);
  state.stalker={active:!!state.stalker?.active,resolved:!!state.stalker?.resolved,encounters:Math.max(0,Number(state.stalker?.encounters)||0),safety:Number(state.stalker?.safety)||0};
  state.arrogance={lastDay:Number(state.arrogance?.lastDay??-99),count:Math.max(0,Number(state.arrogance?.count)||0),lesson:Number(state.arrogance?.lesson)||0};
- const defaultCooldowns={managerTalk:-99,audition:-99,concert:-99,broadcast:-99,fanmeeting:-99,album:-99,fanEvent:-99,snsPost:-99};
+ const defaultCooldowns={managerTalk:-99,recruit:-99,audition:-99,concert:-99,broadcast:-99,fanmeeting:-99,album:-99,fanEvent:-99,snsPost:-99};
  state.cooldowns={...defaultCooldowns,...(state.cooldowns||{})};
  const defaultMilestones={firstAudition:false,firstConcert:false,firstBroadcast:false,firstFanmeeting:false,firstAlbum:false,managerHired:false,bandFormed:false,stalkerResolved:false,randomSeen:[]};
  state.milestones={...defaultMilestones,...(state.milestones||{})};
@@ -231,9 +231,11 @@ function normalizeState(){
  state.history=(Array.isArray(state.history)?state.history:[]).filter(x=>!/(자취방|편의점|연습실|공원|공연장)으로 이동$/.test(x));
  state.endings=[...new Set((state.endings||[]).map(migrateEndingName))];
  if(state.pendingEnding?.name==='가수 엔딩')state.pendingEnding.name='월드 스타 엔딩';
- if(state.endingPrompted['가수 엔딩']){state.endingPrompted['월드 스타 엔딩']=true;delete state.endingPrompted['가수 엔딩'];}
+ if(state.endingPrompted['가수 엔딩']){state.endingPrompted['월드 스타 엔딩']=true;delete state.endingPrompted['가수 엔딩'];}if(state.endingPrompted.year){state.endingPrompted['year:1']=true;delete state.endingPrompted.year;}
  state.specialEvents={iziViral:!!state.specialEvents?.iziViral,waitedMoreViral:!!state.specialEvents?.waitedMoreViral,day30Hair:!!state.specialEvents?.day30Hair,day60Workout:!!state.specialEvents?.day60Workout,day90Live:!!state.specialEvents?.day90Live,day120Chat:!!state.specialEvents?.day120Chat,day150Birthday:!!state.specialEvents?.day150Birthday,day180Archive:!!state.specialEvents?.day180Archive,day210Demo:!!state.specialEvents?.day210Demo,day240Meme:!!state.specialEvents?.day240Meme,day300Promise:!!state.specialEvents?.day300Promise,hiddenGameOst:!!state.specialEvents?.hiddenGameOst,hiddenRadioDj:!!state.specialEvents?.hiddenRadioDj,hiddenDingo:!!state.specialEvents?.hiddenDingo,mysteriousMerchantPurchased:!!state.specialEvents?.mysteriousMerchantPurchased};
  state.specialScene={active:false,key:null};
+ const prep=state.preparation||{};state.preparation={stageReady:!!prep.stageReady,stageReadyDay:Number(prep.stageReadyDay??-99),buskingInsight:!!prep.buskingInsight,buskingInsightDay:Number(prep.buskingInsightDay??-99)};
+ if(state.day-state.preparation.stageReadyDay>7)state.preparation.stageReady=false;if(state.day-state.preparation.buskingInsightDay>3)state.preparation.buskingInsight=false;
  state.level=fameLevel();
  delete state.romance;
  syncEndingCollection();
@@ -293,7 +295,23 @@ function addHistory(text,key=null){if(key&&state.historyKeys.includes(key))retur
 function cooldownReady(key,days,label){const last=Number(state.cooldowns?.[key]??-99);const elapsed=state.day-last;if(elapsed<days){toast(`${label}까지 ${days-elapsed}일 남았습니다.`);return false}return true}
 function markCooldown(key){state.cooldowns[key]=state.day}
 function distributeFanGrowth(delta){if(delta<=0)return;const lv=fameLevel();let overseas=lv>=55?.12:lv>=35?.05:.01;let gay=.08;let enthusiast=lv>=30?.18:.10;const amounts={overseas:Math.floor(delta*overseas),gay:Math.floor(delta*gay),enthusiast:Math.floor(delta*enthusiast)};amounts.regular=Math.max(0,Math.floor(delta)-amounts.overseas-amounts.gay-amounts.enthusiast);for(const [k,v] of Object.entries(amounts))state.fanGroups[k]=(state.fanGroups[k]||0)+v}
-function stat(name,delta){if(name==='fame'){state.stats.fame=Math.max(0,Math.min(10000,state.stats.fame+delta));if(state.career)state.career.peakFame=Math.max(state.career.peakFame||0,state.stats.fame);}else if(name==='money'||name==='fans'){state.stats[name]=Math.max(0,state.stats[name]+delta);if(name==='fans'&&delta>0)distributeFanGrowth(delta)}else state.stats[name]=clamp(state.stats[name]+delta)}
+function stat(name,delta){
+ if(name==='fame'){state.stats.fame=Math.max(0,Math.min(10000,state.stats.fame+delta));if(state.career)state.career.peakFame=Math.max(state.career.peakFame||0,state.stats.fame);return delta}
+ if(name==='money'){
+  if(delta>0&&state.economy?.debt>0){const repay=Math.min(state.economy.debt,Math.max(1,Math.floor(delta*.5)));state.economy.debt-=repay;state.economy.totalDebtRepaid=(state.economy.totalDebtRepaid||0)+repay;state.stats.money=Math.max(0,state.stats.money+delta-repay);if(repay>0)toast(`수입 중 ${repay.toLocaleString()}원이 채무 상환에 사용되었습니다.`);return delta-repay}
+  state.stats.money=Math.max(0,state.stats.money+delta);return delta
+ }
+ if(name==='fans'){
+  const before=state.stats.fans;state.stats.fans=Math.max(0,state.stats.fans+delta);const actual=state.stats.fans-before;
+  if(actual>0)distributeFanGrowth(actual);
+  if(actual<0){const total=Object.values(state.fanGroups||{}).reduce((a,b)=>a+(Number(b)||0),0);if(total>0){const target=state.stats.fans;let assigned=0;const keys=['overseas','gay','enthusiast','regular'];for(const k of keys){const next=k==='regular'?Math.max(0,target-assigned):Math.max(0,Math.floor((state.fanGroups[k]||0)/total*target));state.fanGroups[k]=next;assigned+=next}}}
+  return actual
+ }
+ state.stats[name]=clamp(state.stats[name]+delta);return delta
+}
+function addDebt(amount,reason='미납금'){amount=Math.max(0,Math.floor(Number(amount)||0));if(!amount)return 0;state.economy.debt=(state.economy.debt||0)+amount;state.economy.lastDebtNoticeDay=state.day;addHistory(`💳 채무 발생 · ${reason} ${amount.toLocaleString()}원`,`debt:${state.day}:${state.economy.debt}`);return amount}
+function chargeMonthlyUpkeep(){let upkeep=500000;if(state.manager.hired)upkeep+=250000;if(state.band.formed)upkeep+=400000;const paid=Math.min(state.stats.money,upkeep);state.stats.money-=paid;const unpaid=upkeep-paid;if(unpaid>0)addDebt(unpaid,'월 고정비 미납');toast(unpaid>0?`월 고정비 ${upkeep.toLocaleString()}원 중 ${unpaid.toLocaleString()}원이 채무로 남았습니다.`:`월 고정비 ${upkeep.toLocaleString()}원이 빠져나갔습니다.`)}
+function debtBlocked(label='이 활동'){if((state.economy?.debt||0)<=0)return false;toast(`채무 ${state.economy.debt.toLocaleString()}원을 먼저 줄여야 ${label}을 진행할 수 있습니다.`);return true}
 function costHp(n){if(state.stats.hp<n){toast('체력이 부족합니다.');return false}stat('hp',-n);return true}
 const weatherInfo={sun:{label:'☀ 햇빛',success:.10,hp:0,breakChance:0},rain:{label:'🌧 비',success:-.20,hp:6,breakChance:.18},snow:{label:'🌨 눈',success:-.15,hp:9,breakChance:.12}};
 const housingInfo=[['지하 단칸방',0],['1층 원룸',10000000],['복층 오피스텔',30000000],['아파트',50000000],['펜트하우스',100000000]];
@@ -304,6 +322,7 @@ function weatherLabel(){return weatherInfo[state.weather].label}
 function restAmount(){return 25+state.housing*5}
 function equipmentBreakCheck(){const info=weatherInfo[state.weather];if(info.breakChance<=0)return '';const protection=state.equipment.battery?.06:0;const chance=Math.max(0,info.breakChance-protection);const broken=[];if(state.equipment.amp&&!state.equipmentDamage.amp&&Math.random()<chance){state.equipmentDamage.amp=true;broken.push('앰프')}if(state.equipment.mic&&!state.equipmentDamage.mic&&Math.random()<chance*.55){state.equipmentDamage.mic=true;broken.push('마이크')}if(broken.length){save(false);return ` ${broken.join('·')}가 ${state.weather==='rain'?'빗물':'추위'} 때문에 고장 났다.`}return ''}
 function moveHome(){
+ if(debtBlocked('이사'))return;
  if(state.housing>=housingInfo.length-1)return toast('이미 펜트하우스에 살고 있습니다.');
  const next=housingInfo[state.housing+1];
  if(state.stats.money<next[1])return toast(`${next[0]} 이사 비용 ${next[1].toLocaleString()}원이 필요합니다.`);
@@ -312,7 +331,7 @@ function moveHome(){
  showDialogue('류현상',`${next[0]}으로 이사했다. 이제 휴식할 때 체력을 ${restAmount()} 회복한다.`);save(false);advance(1)
 }
 function advance(hours=1){state.time+=hours;while(state.time>=4){state.time-=4;state.day++;dailyTick()}save(false);checkProgress();render();setTimeout(()=>maybeStoryEvent(),180)}
-function dailyTick(){rollWeather();stat('hp',8);stat('stress',-4);state.items.bakcasUsedToday=0;state.items.mealsToday=0;if(state.economy.lastWorkDay!==state.day-1)state.economy.workStreak=0;if(state.day%30===0){let upkeep=500000;if(state.manager.hired)upkeep+=250000;if(state.band.formed)upkeep+=400000;stat('money',-upkeep);toast(`월 고정비 ${upkeep.toLocaleString()}원이 빠져나갔습니다.`)}randomEvent()}
+function dailyTick(){rollWeather();stat('hp',8);stat('stress',-4);state.items.bakcasUsedToday=0;state.items.mealsToday=0;if(state.economy.lastWorkDay!==state.day-1)state.economy.workStreak=0;if(state.day%30===0)chargeMonthlyUpkeep();randomEvent()}
 function randomEvent(){
  if(Math.random()>.22)return;
  const candidates=[
@@ -345,8 +364,8 @@ function displayDialogue(name,text,choices=[]){
  const area=$('#choiceArea');area.innerHTML='';area.classList.toggle('hidden',!choices.length);setChoiceLock(choices.length>0);choices.forEach(c=>{const b=document.createElement('button');b.textContent=c[0];b.onclick=()=>{area.classList.add('hidden');setChoiceLock(false);try{const before=snapshotStats();const result=c[1]();const changes=describeStatChanges(before);showDialogue(result&&result.name?result.name:name,result&&result.text?result.text:(typeof result==='string'?result:'선택을 마쳤다.'));save(false);render();checkProgress();if(changes)setTimeout(()=>toast(changes),250)}catch(err){console.error(err);setChoiceLock(true);toast('이벤트 처리 중 오류가 발생했습니다.')}};area.appendChild(b)});
 }
 function showDialogue(name,text,choices=[]){state.dialogue={name,text};displayDialogue(name,text,choices)}
-const motionLabels={rest:'휴식',sleep:'SLEEP',compose:'작곡',vocal:'보컬',work:'ALBA',busking:'BUSKING',bandBusking:'BAND LIVE',rehearse:'합주',recruit:'멤버 영입',arrange:'편곡',audition:'오디션',concert:'LIVE',broadcast:'ON AIR',fanmeeting:'팬미팅',date:'DATE',walk:'산책',observe:'관찰',repair:'CHECK',meal:'식사',snack:'간식',buyBakcas:'박칵스',bakcas:'BOOST'};
-const motionClassMap={rest:'rest',sleep:'sleep',compose:'compose',vocal:'vocal',work:'work',busking:'busking',bandBusking:'band',rehearse:'band',recruit:'band',arrange:'compose',audition:'audition',concert:'concert',broadcast:'concert',fanmeeting:'concert',date:'date',walk:'walk',observe:'observe',repair:'repair',meal:'rest',snack:'rest',buyBakcas:'rest',bakcas:'rest'};
+const motionLabels={stockWork:'진열 보조',finance:'가계부',flyerPromo:'전단 홍보',audienceResearch:'관객 조사',stageRehearsal:'리허설',storePromo:'홍보 방송',customerPractice:'응대 연습',rest:'휴식',sleep:'SLEEP',compose:'작곡',vocal:'보컬',work:'ALBA',busking:'BUSKING',bandBusking:'BAND LIVE',rehearse:'합주',recruit:'멤버 영입',arrange:'편곡',audition:'오디션',concert:'LIVE',broadcast:'ON AIR',fanmeeting:'팬미팅',date:'DATE',walk:'산책',observe:'관찰',repair:'CHECK',meal:'식사',snack:'간식',buyBakcas:'박칵스',bakcas:'BOOST'};
+const motionClassMap={stockWork:'work',finance:'rest',flyerPromo:'walk',audienceResearch:'observe',stageRehearsal:'concert',rest:'rest',sleep:'sleep',compose:'compose',vocal:'vocal',work:'work',busking:'busking',bandBusking:'band',rehearse:'band',recruit:'band',arrange:'compose',audition:'audition',concert:'concert',broadcast:'concert',fanmeeting:'concert',date:'date',walk:'walk',observe:'observe',repair:'repair',meal:'rest',snack:'rest',buyBakcas:'rest',bakcas:'rest'};
 function spawnMusicNotes(count=7){const layer=$('#musicNotes');if(!layer)return;for(let i=0;i<count;i++){const n=document.createElement('span');n.className='music-note';n.textContent=['♪','♫','♬'][Math.floor(Math.random()*3)];n.style.left=`${15+Math.random()*70}%`;n.style.setProperty('--drift',`${-70+Math.random()*140}px`);n.style.animationDelay=`${Math.random()*.45}s`;layer.appendChild(n);setTimeout(()=>n.remove(),3000)}}
 function spawnAudienceLights(count=18){const layer=$('#audienceLights');if(!layer)return;layer.innerHTML='';for(let i=0;i<count;i++){const l=document.createElement('i');l.className='audience-light';l.style.left=`${3+Math.random()*94}%`;l.style.bottom=`${2+Math.random()*19}%`;l.style.animationDelay=`${Math.random()*1.5}s`;layer.appendChild(l)}setTimeout(()=>layer.innerHTML='',2800)}
 function pulseScene(actionKey){const scene=$('#scene'),burst=$('#actionBurst'),wrap=$('#characterWrap');if(!scene||!burst)return;const motion=motionClassMap[actionKey]||'rest';scene.className=scene.className.replace(/\bmotion-[^\s]+/g,'').trim();void scene.offsetWidth;scene.classList.add(`motion-${motion}`);burst.textContent=motionLabels[actionKey]||'ACTION';burst.classList.remove('show');void burst.offsetWidth;burst.classList.add('show');wrap.classList.add('blink');setTimeout(()=>wrap.classList.remove('blink'),430);if(['busking','bandBusking','concert','audition','broadcast','fanmeeting'].includes(actionKey)){spawnMusicNotes(actionKey==='concert'?12:8);spawnAudienceLights(actionKey==='concert'?28:16)}clearTimeout(motionTimer);clearTimeout(burstTimer);motionTimer=setTimeout(()=>scene.className=scene.className.replace(/\bmotion-[^\s]+/g,'').trim(),1500);burstTimer=setTimeout(()=>burst.classList.remove('show'),1400)}
@@ -354,7 +373,7 @@ function bindScenePointer(){const scene=$('#scene');if(!scene||scene.dataset.bou
 const arroganceScenes=[
  {title:'시청률은 내가 올리는 거지',text:'생방송 대기실. 제작진이 오늘 시청률이 걱정된다고 말하자 류현상이 안경을 고쳐 쓰며 말했다. “내가 나가면 알아서 오르겠지. 요즘 내 이름 검색량 봤어?”\n\n방 안이 잠시 조용해졌다. 후라보노가 큐시트를 접으며 끼어들었다. “형, 시청률은 방송국이 올리고 형은 음정이나 올리세요. 리허설에서 두 번째 후렴 반음 낮았습니다.”',choices:[['농담이었다고 수습한다',()=>{state.manager.bond=clamp(state.manager.bond+5);state.arrogance.lesson++;stat('stress',-2);return '류현상은 헛기침을 했다. “알아. 분위기 풀려고 한 말이야.” 후라보노는 무표정으로 대답했다. “분위기가 더 얼었습니다. 그래도 수습하려는 노력은 인정할게요.”'}],['틀린 말은 아니라고 버틴다',()=>{state.manager.bond=clamp(state.manager.bond-7);state.arrogance.lesson--;stat('stress',5);return '류현상은 팔짱을 끼고 끝까지 고개를 들었다. 후라보노는 큐시트에 크게 적었다. “오늘의 금지어: 내가 나가면.” 방송 직전까지 둘 사이에는 싸늘한 침묵이 흘렀다.'}]]},
  {title:'팬들이 나 보러 온 거잖아',text:'공연장 입구에 긴 줄이 생기자 류현상이 창밖을 보며 중얼거렸다. “저 사람들 전부 나 보러 온 거잖아. 이 정도면 입장할 때 내 사진에 절이라도 해야 하는 거 아니야?”\n\n후라보노가 물병을 건넸다. “형, 절은커녕 입장 지연 때문에 화나서 매표소를 찾는 중이에요. 그리고 팬은 형을 높이려고 오는 사람이 아니라 음악을 같이 들으려고 오는 사람입니다.”',choices:[['팬들에게 직접 사과한다',()=>{state.manager.bond=clamp(state.manager.bond+6);state.arrogance.lesson++;stat('fans',120);stat('fame',6);return '류현상은 예정 시간보다 늦어진 이유를 직접 설명하고 기다려 준 팬들에게 고개를 숙였다. 팬들은 그의 어색하지만 진심 어린 사과에 더 큰 박수를 보냈다.'}],['스타는 기다리게 하는 법이라고 말한다',()=>{state.manager.bond=clamp(state.manager.bond-9);state.arrogance.lesson--;stat('fans',-180);stat('fame',-5);return '후라보노는 즉시 마이크를 빼앗았다. “그 말 한 번 더 하면 오늘 공연 제목을 ‘초심 찾기’로 바꿀 겁니다.” 온라인에는 지각보다 류현상의 태도를 지적하는 글이 더 많이 올라왔다.'}]]},
- {title:'멤버들이 나를 따라와야지',text:'합주가 끝난 뒤 류현상은 녹음 파일을 들으며 말했다. “이제 내 인지도가 이 정도인데 멤버들이 내 수준을 따라오려면 좀 더 연습해야겠어.”\n\nP군이 기타 줄을 닦던 손을 멈췄고, L군은 말없이 류현상을 바라봤다. 후라보노가 재생 버튼을 다시 눌렀다. “형, 방금 두 번째 마디 박자 놓친 사람이 누구인지 같이 들어볼까요?”',choices:[['내 실수부터 인정한다',()=>{state.manager.bond=clamp(state.manager.bond+5);state.band.bond=clamp(state.band.bond+8);state.arrogance.lesson++;stat('vocal',1);return '류현상은 문제의 마디를 세 번 다시 들은 뒤 짧게 사과했다. “내가 틀렸네. 다시 맞춰 보자.” 멤버들의 굳었던 표정이 풀렸고, 합주는 한 시간 더 이어졌다.'}],['가수의 감각은 다르다고 우긴다',()=>{state.manager.bond=clamp(state.manager.bond-6);state.band.bond=clamp(state.band.bond-12);state.arrogance.lesson--;stat('stress',7);return 'L군이 아주 짧게 말했다. “박자는 감각 아님.” 후라보노는 고개를 끄덕였다. 그날 합주는 평소보다 일찍 끝났고, 단체 채팅방은 밤까지 조용했다.'}]]},
+ {title:'멤버들이 나를 따라와야지',text:'합주가 끝난 뒤 류현상은 녹음 파일을 들으며 말했다. “이제 내 인지도가 이 정도인데 멤버들이 내 수준을 따라오려면 좀 더 연습해야겠어.”\n\nP군이 기타 줄을 닦던 손을 멈췄고, L군은 말없이 류현상을 바라봤다. 후라보노가 재생 버튼을 다시 눌렀다. “형, 방금 두 번째 마디 박자 놓친 사람이 누구인지 같이 들어볼까요?”',choices:[['내 실수부터 인정한다',()=>{state.manager.bond=clamp(state.manager.bond+5);state.band.bond=clamp(state.band.bond+8);state.arrogance.lesson++;gainSkill('vocal',1,'event');return '류현상은 문제의 마디를 세 번 다시 들은 뒤 짧게 사과했다. “내가 틀렸네. 다시 맞춰 보자.” 멤버들의 굳었던 표정이 풀렸고, 합주는 한 시간 더 이어졌다.'}],['가수의 감각은 다르다고 우긴다',()=>{state.manager.bond=clamp(state.manager.bond-6);state.band.bond=clamp(state.band.bond-12);state.arrogance.lesson--;stat('stress',7);return 'L군이 아주 짧게 말했다. “박자는 감각 아님.” 후라보노는 고개를 끄덕였다. 그날 합주는 평소보다 일찍 끝났고, 단체 채팅방은 밤까지 조용했다.'}]]},
  {title:'편의점도 이제 날 알아봐야지',text:'오랜만에 편의점에 들른 류현상은 계산대 직원이 자신을 알아보지 못하자 작게 투덜거렸다. “인지도 레벨이 몇인데 아직도 멤버십 있으세요부터 묻네.”\n\n뒤에서 듣던 후라보노가 바로 말했다. “형, 인지도 레벨은 주민등록증이 아닙니다. 그리고 멤버십은 있으시잖아요. 포인트 4,820점.”',choices:[['조용히 멤버십 바코드를 낸다',()=>{state.manager.bond=clamp(state.manager.bond+4);state.arrogance.lesson++;stat('stress',-3);return '류현상은 말없이 휴대전화를 내밀었다. 직원이 뒤늦게 그를 알아보고 놀라자 오히려 먼저 말했다. “편하게 계산해 주세요. 저도 그냥 손님입니다.” 후라보노는 작게 엄지를 들었다.'}],['사인을 먼저 해주겠다고 한다',()=>{state.manager.bond=clamp(state.manager.bond-5);state.arrogance.lesson--;stat('looks',-1);return '직원은 당황해서 영수증만 내밀었다. 후라보노가 류현상의 팔을 끌고 나오며 말했다. “요청받지 않은 사인은 낙서예요, 형.” 류현상은 집에 돌아갈 때까지 아무 말도 하지 않았다.'}]]},
  {title:'대기실은 더 큰 곳으로',text:'공연장 대기실이 좁고 소파가 낡아 있자 류현상이 미간을 찌푸렸다. “이제 내 급이면 최소한 단독 대기실에 소파도 가죽이어야 하는 거 아닌가?”\n\n후라보노는 방 안을 둘러본 뒤 침착하게 말했다. “형이 26살에 기획사 차렸을 때 첫 소속 가수에게 해 주고 싶었던 말이 그거였어요? 아니면 좋은 무대만 만들어 주면 된다고 했어요?” 류현상은 바로 대답하지 못했다.',choices:[['초심을 떠올리고 스태프를 돕는다',()=>{state.manager.bond=clamp(state.manager.bond+8);state.arrogance.lesson+=2;stat('fame',10);stat('stress',-5);return '류현상은 말없이 소매를 걷고 케이블 정리를 도왔다. 공연이 끝난 뒤 현장 스태프가 “요즘 보기 드문 가수”라며 고마워했고, 후라보노는 그제야 웃었다.'}],['성공했으니 대우도 달라야 한다고 한다',()=>{state.manager.bond=clamp(state.manager.bond-10);state.arrogance.lesson-=2;stat('fame',-12);stat('stress',8);return '후라보노는 요구 사항을 전달하는 대신 류현상을 복도로 불러냈다. “정당한 대우와 사람 무시하는 태도는 다릅니다.” 현장 분위기는 끝까지 불편했고, 공연 후 관계자 평가에도 태도 문제가 남았다.'}]]}
 ];
@@ -417,8 +436,20 @@ const rivalStories=[
  {lv:90,title:'시상식 뒤편의 약속',scenes:[['나레이션','시상식 후보 발표 뒤, 류현상과 카인은 무대 뒤 비상계단에서 마주쳤다. 수많은 카메라와 팬덤 경쟁에서 벗어난 조용한 공간이었다.'],['카인','“처음엔 당신이 금방 사라질 줄 알았습니다. 감정만 앞서는 사람이라고 생각했어요. 그런데 계속 살아남더군요.”'],['류현상','“나도 당신이 재미없는 완벽주의자인 줄 알았어요. 지금도 절반은 맞는 것 같고.” 카인은 웃었고, 류현상도 아주 조금 웃었다.'],['나레이션','둘은 언젠가 경쟁이 아니라 공동 앨범으로 다시 만나자고 약속했다. 라이벌은 상대를 쓰러뜨리기 위한 존재가 아니라, 혼자였다면 도달하지 못할 높이를 보여 주는 사람이 되었다.']]}
 ];
 function runLinearStory(title,scenes,onFinish){let page=0,finished=false;const draw=()=>{const [name,text]=scenes[page];showModal(title,`<div class="ending-story"><div class="ending-count">STORY · ${page+1} / ${scenes.length}</div><h3>${name}</h3><p>${text}</p><div class="ending-nav"><button id="linearPrev" ${page===0?'disabled':''}>이전 장면</button><button id="linearNext" class="primary">${page===scenes.length-1?'이야기를 마친다':'다음 장면'}</button></div></div>`);$('#linearPrev').onclick=()=>{if(page>0){page--;draw()}};$('#linearNext').onclick=()=>{if(finished)return;if(page<scenes.length-1){page++;draw();return}finished=true;closeModal();onFinish&&onFinish()}};draw()}
-function maybeRivalStory(){const next=rivalStories[state.rival.stage];if(!next||fameLevel()<next.lv||state.day-state.rival.lastEventDay<5)return false;state.rival.met=true;runLinearStory(next.title,next.scenes,()=>{state.rival.stage++;state.rival.respect+=10;state.rival.lastEventDay=state.day;stat('vocal',2);stat('fame',15);addHistory(`⚔️ 라이벌 카인 · ${next.title}`,`rival:${state.rival.stage}`);save(false);render();toast('라이벌 스토리 완료 · 보컬 +2 / 인지도 +15')});return true}
+function maybeRivalStory(){const next=rivalStories[state.rival.stage];if(!next||fameLevel()<next.lv||state.day-state.rival.lastEventDay<5)return false;state.rival.met=true;runLinearStory(next.title,next.scenes,()=>{state.rival.stage++;state.rival.respect+=10;state.rival.lastEventDay=state.day;gainSkill('vocal',2,'rival');stat('fame',15);addHistory(`⚔️ 라이벌 카인 · ${next.title}`,`rival:${state.rival.stage}`);save(false);render();toast('라이벌 스토리 완료 · 보컬 +2 / 인지도 +15')});return true}
 function maybeStoryEvent(){if(state.skipNextStory){state.skipNextStory=false;return false}if(maybeFixedDaySpecialEvent())return true;if(maybeMysteriousMerchantEvent())return true;if(maybeHiddenRandomSpecialEvent())return true;if(maybeRivalStory())return true;if(maybeFanCommunityEvent())return true;if(maybePassiveSnsEvent())return true;if(maybeArroganceEvent())return true;if(Math.random()>.52)return false;const pool=storyEvents.filter(ev=>ev.id!=='secret-date'&&ev.id!=='rival'&&(!ev.place||ev.place===state.location)&&(!ev.condition||ev.condition())&&!state.seenEvents.includes(ev.id));if(!pool.length)return false;const ev=pool[Math.floor(Math.random()*pool.length)];state.seenEvents.push(ev.id);if(state.seenEvents.length>28)state.seenEvents.shift();playSfx('event');$('#eventBadge').classList.remove('hidden');setTimeout(()=>$('#eventBadge').classList.add('hidden'),2600);const choices=ev.choices.map(([label,fn])=>[label,()=>{const result=fn();addHistory(`📖 특별 이야기 · ${ev.title} — ${label}`,`story:${ev.id}`);return result}]);showDialogue('돌발 스토리',`【${ev.title}】\n\n${ev.text}`,choices);return true}
+function openFinance(){
+ const debt=Math.max(0,state.economy?.debt||0);
+ if(debt<=0)return showModal('가계부·채무','<p>현재 채무가 없습니다. 월 고정비와 다음 달 지출을 확인하며 현금을 관리하세요.</p>');
+ const options=[100000,500000,debt].filter((v,i,a)=>v<=debt&&v<=state.stats.money&&a.indexOf(v)===i);
+ showModal('가계부·채무',`<p>현재 채무 <b>${debt.toLocaleString()}원</b> · 보유금 <b>${state.stats.money.toLocaleString()}원</b></p><p>수입 발생 시 50%가 자동 상환되며, 여기서 원하는 금액을 즉시 상환할 수 있습니다.</p>${options.length?options.map(v=>`<button class="wide" data-repay-debt="${v}">${v===debt?'전액 ':''}${v.toLocaleString()}원 상환</button>`).join(''):'<p>현재 보유금으로 상환할 수 없습니다.</p>'}`);
+ $$('[data-repay-debt]').forEach(b=>b.onclick=()=>{const amount=Math.min(Number(b.dataset.repayDebt)||0,state.stats.money,state.economy.debt);if(amount<=0)return;state.stats.money-=amount;state.economy.debt-=amount;state.economy.totalDebtRepaid=(state.economy.totalDebtRepaid||0)+amount;addHistory(`💳 직접 채무 상환 · ${amount.toLocaleString()}원`,`debt:manual:${state.day}:${state.economy.debt}`);save(false);render();openFinance();toast(`${amount.toLocaleString()}원을 상환했습니다.`)})
+}
+function stageRehearsal(){
+ if(state.preparation?.stageReady)return toast('이미 다음 무대를 위한 리허설을 마쳤습니다.');
+ if(state.stats.money<50000)return toast('공연장 리허설 대관비 5만원이 필요합니다.');
+ if(!costHp(10))return;stat('money',-50000);stat('stress',-4);state.preparation.stageReady=true;state.preparation.stageReadyDay=state.day;showDialogue('류현상','공연장의 실제 동선과 음향을 확인했다. 다음 오디션·공연·방송에서 준비 보너스를 받는다.');advance(1)
+}
 function doAction(key){
  const s=state.stats;
  const f={
@@ -427,17 +458,20 @@ function doAction(key){
  meal:()=>{if((state.items.mealsToday||0)>=2)return toast('오늘은 더 이상 식사할 수 없습니다.');if(s.hp>=90)return toast('체력이 충분합니다.');if(s.money<8000)return toast('돈이 부족합니다.');state.items.mealsToday=(state.items.mealsToday||0)+1;stat('money',-8000);stat('hp',12);showDialogue('류현상',`${pickContextual(actionDialogue.meal)} 식사를 마치며 시간이 흘렀다.`);advance(1)},
  wardrobe:()=>openWardrobe(),
  bakcas:()=>{if(state.items.bakcas<1)return toast('박칵스가 없습니다.');if(state.items.bakcasUsedToday>=2)return toast('오늘은 박칵스를 더 마실 수 없습니다.');state.items.bakcas--;state.items.bakcasUsedToday++;stat('hp',state.items.bakcasUsedToday===1?25:20);if(state.items.bakcasUsedToday===2)stat('stress',4);showDialogue('류현상',state.items.bakcasUsedToday===1?pickContextual(actionDialogue.bakcas):'두 번째 박칵스를 마셨다. 정신은 들었지만 심장이 빠르게 뛰고 스트레스가 조금 쌓였다.');toast(`박칵스 사용 ${state.items.bakcasUsedToday}/2`);save(false);render()},
- moveHome:()=>moveHome(),
+ moveHome:()=>moveHome(),finance:()=>openFinance(),
  
- work:()=>{const continuous=state.economy.lastWorkDay===state.day||state.economy.lastWorkDay===state.day-1;state.economy.workStreak=continuous?state.economy.workStreak+1:1;state.economy.lastWorkDay=state.day;const hpCost=22+Math.max(0,state.economy.workStreak-1)*2;if(!costHp(hpCost)){state.economy.workStreak=Math.max(0,state.economy.workStreak-1);return}stat('money',45000);stat('stress',8+(state.economy.workStreak>=3?5:0));state.career.totalWork++;state.exp+=4;showDialogue('류현상',`${pickContextual(actionDialogue.work)} 급여 45,000원을 받았다. ${state.economy.workStreak>=3?'연속 근무로 피로가 크게 쌓였다.':''}`);advance(1)},
+ stockWork:()=>{if(!costHp(12))return;stat('money',25000);stat('stress',4);state.career.totalWork++;showDialogue('류현상','야간 진열 보조를 맡아 물건을 채우고 25,000원을 받았다. 정식 근무보다 수입은 적지만 체력 부담도 낮았다.');advance(1)},
+ work:()=>{const continuous=state.economy.lastWorkDay===state.day||state.economy.lastWorkDay===state.day-1;state.economy.workStreak=continuous?state.economy.workStreak+1:1;state.economy.lastWorkDay=state.day;const hpCost=Math.min(36,22+Math.max(0,state.economy.workStreak-1)*2);if(!costHp(hpCost)){state.economy.workStreak=Math.max(0,state.economy.workStreak-1);return}stat('money',45000);stat('stress',8+(state.economy.workStreak>=3?5:0));state.career.totalWork++;state.exp+=4;showDialogue('류현상',`${pickContextual(actionDialogue.work)} 급여 45,000원을 받았다. ${state.economy.workStreak>=3?'연속 근무로 피로가 크게 쌓였다.':''}`);advance(1)},
  buyBakcas:()=>{if(s.money<15000)return toast('돈이 부족합니다.');stat('money',-15000);state.items.bakcas++;showDialogue('류현상','박칵스 하나를 가방에 넣었다. 오늘은 조금 더 버틸 수 있겠다.');toast('박칵스 1개를 샀습니다.');save(false);render()},
  snack:()=>{if(s.money<2500)return toast('돈이 부족합니다.');stat('money',-2500);stat('hp',8);showDialogue('류현상',pickContextual(actionDialogue.snack));advance(1)},
+ storePromo:()=>{if(!costHp(8))return;const fanGain=8+Math.floor(Math.random()*13);stat('fans',fanGain);stat('fame',2);stat('stress',3);showDialogue('류현상',`점장의 허락을 받아 매장 안내 방송 끝에 오늘의 버스킹 일정을 짧게 홍보했다. 무심한 척했지만 목소리를 알아본 손님들이 휴대전화를 꺼냈다. 팬 ${fanGain}명이 늘었다.`);toast(`팬 +${fanGain} / 인지도 +2`);advance(1)},
+ customerPractice:()=>{if(!costHp(6))return;const tips=3000+Math.floor(Math.random()*5001);const fanGain=2+Math.floor(Math.random()*5);stat('money',tips);stat('fans',fanGain);stat('stress',1);showDialogue('류현상',`자주 오던 손님의 부탁을 차분히 해결했다. 손님은 고맙다며 작은 팁을 남기고 버스킹 일정도 물었다. 팁 ${tips.toLocaleString()}원, 팬 ${fanGain}명이 늘었다.`);advance(1)},
  gear:()=>openGear(),vocal:()=>trainingAction('vocal',12),
- rehearse:()=>{if(!state.band.formed)return toast('먼저 밴드를 결성해야 합니다.');if(!costHp(18))return;state.band.bond=clamp(state.band.bond+12);state.soloStreak=0;stat('vocal',2);showDialogue('류현상',pickContextual(actionDialogue.rehearse));advance(1)},
- recruit:()=>recruit(),arrange:()=>{if(!state.band.formed)return toast('밴드가 필요합니다.');if(!costHp(15))return;stat('compose',2);state.band.bond=clamp(state.band.bond+5);showDialogue('류현상','각 악기의 빈자리를 줄이자 곡이 훨씬 선명해졌다.');advance(1)},
- manager:()=>managerEvent(),busking:()=>busking(false),bandBusking:()=>busking(true),walk:()=>{stat('stress',-15);showDialogue('류현상',pickContextual(actionDialogue.walk));advance(1)},observe:()=>{stat('vocal',1);showDialogue('류현상',pickContextual(actionDialogue.observe));advance(1)},repair:()=>{if(!state.equipment.mic&&!state.equipment.amp)return toast('먼저 장비를 구입해야 합니다.');if(s.money<30000)return toast('점검비가 부족합니다.');stat('money',-30000);state.equipmentDamage.mic=false;state.equipmentDamage.amp=false;showDialogue('류현상','마이크와 앰프를 점검해 고장 상태를 모두 해결했다.');toast('장비 점검을 완료했습니다.');save(false);advance(1)},
- audition:()=>audition(),concert:()=>concert(),broadcast:()=>broadcast(),album:()=>openAlbum(),fanmeeting:()=>fanmeeting(),national:()=>national()
- };state.lastAction=key;if(key!=='wardrobe'&&key!=='gear'&&key!=='album'&&key!=='manager')pulseScene(key);const soundMap={work:'coin',buyBakcas:'coin',snack:'drink',meal:'drink',bakcas:'drink',busking:'busking',bandBusking:'busking',concert:'busking',audition:'busking',repair:'coin'};playSfx(soundMap[key]||'tap');f[key]?.();
+ rehearse:()=>{if(!state.band.formed)return toast('먼저 밴드를 결성해야 합니다.');if(!costHp(18))return;state.band.bond=clamp(state.band.bond+12);state.soloStreak=0;const gain=gainSkill('vocal',2,'rehearse');showDialogue('류현상',`${pickContextual(actionDialogue.rehearse)}${gain===0?' 보컬은 일반 성장 한계인 95에 도달해 더 오르지 않았다.':''}`);if(gain>0)toast(`보컬 +${gain}`);advance(1)},
+ recruit:()=>recruit(),arrange:()=>{if(!state.band.formed)return toast('밴드가 필요합니다.');if(!costHp(15))return;const gain=gainSkill('compose',2,'arrange');state.band.bond=clamp(state.band.bond+5);showDialogue('류현상',`각 악기의 빈자리를 줄이자 곡이 훨씬 선명해졌다.${gain===0?' 작곡은 일반 성장 한계인 95에 도달해 더 오르지 않았다.':''}`);if(gain>0)toast(`작곡 +${gain}`);advance(1)},
+ album:()=>openAlbum(),busking:()=>busking(false),bandBusking:()=>busking(true),walk:()=>{stat('stress',-15);showDialogue('류현상',pickContextual(actionDialogue.walk));advance(1)},flyerPromo:()=>{if(state.stats.money<20000)return toast('전단 제작비 2만원이 필요합니다.');if(!costHp(8))return;stat('money',-20000);const fanGain=15+Math.floor(Math.random()*21);stat('fans',fanGain);stat('fame',2);showDialogue('류현상',`공원 주변에 다음 버스킹 일정을 알리는 전단을 나눠 줬다. 팬 ${fanGain}명이 새로 관심을 보였다.`);advance(1)},audienceResearch:()=>{if(state.preparation?.buskingInsight)return toast('이미 다음 버스킹을 위한 관객 조사를 마쳤습니다.');if(!costHp(6))return;stat('stress',-3);state.preparation.buskingInsight=true;state.preparation.buskingInsightDay=state.day;showDialogue('류현상','공원 관객이 멈춰 서는 곡과 시간대를 살폈다. 다음 버스킹은 성공률과 팬 증가량이 상승한다.');advance(1)},observe:()=>{if(state.stats.vocal>=95)return toast('보컬 95 이상은 특별 이벤트·앨범·대형 무대로만 성장할 수 있습니다.');const gain=gainSkill('vocal',1,'observe');showDialogue('류현상',pickContextual(actionDialogue.observe));if(gain>0)toast(`보컬 +${gain}`);advance(1)},repair:()=>{if(!state.equipment.mic&&!state.equipment.amp)return toast('먼저 장비를 구입해야 합니다.');if(s.money<30000)return toast('점검비가 부족합니다.');stat('money',-30000);state.equipmentDamage.mic=false;state.equipmentDamage.amp=false;showDialogue('류현상','마이크와 앰프를 점검해 고장 상태를 모두 해결했다.');toast('장비 점검을 완료했습니다.');save(false);advance(1)},
+ stageRehearsal:()=>stageRehearsal(),audition:()=>audition(),concert:()=>concert(),broadcast:()=>broadcast(),fanmeeting:()=>fanmeeting(),national:()=>national()
+ };state.lastAction=key;if(key!=='wardrobe'&&key!=='gear'&&key!=='album'&&key!=='manager')pulseScene(key);const soundMap={stockWork:'coin',finance:'coin',flyerPromo:'tap',audienceResearch:'tap',stageRehearsal:'busking',work:'coin',buyBakcas:'coin',snack:'drink',meal:'drink',storePromo:'tap',customerPractice:'tap',bakcas:'drink',busking:'busking',bandBusking:'busking',concert:'busking',audition:'busking',repair:'coin'};playSfx(soundMap[key]||'tap');f[key]?.();
 }
 function startIziViralStory(hpCost){
  const scenes=[
@@ -463,7 +497,7 @@ function startIziViralStory(hpCost){
   button.onclick=()=>{
    if(page<scenes.length-1){page++;draw();return}
    const before=snapshotStats();
-   stat('fans',15000);stat('fame',350);stat('stress',3);
+   stat('fans',1500);stat('fame',350);stat('stress',3);
    state.specialEvents.iziViral=true;state.performanceCount++;
    state.specialScene={active:false,key:null};
    addHistory('🔥 수원역 특별 이벤트 · 응급실 커버 영상 바이럴, 인스타그램 팔로워 15,000명 증가','special:izi');
@@ -510,7 +544,7 @@ function startWaitedMoreViralStory(){
   prev.onclick=()=>{if(page>0){page--;draw()}};
   next.onclick=()=>{
    if(page<scenes.length-1){page++;draw();return;}
-   stat('fans',30000);stat('fame',555);stat('stress',4);
+   stat('fans',3000);stat('fame',555);stat('stress',4);
    state.specialEvents.waitedMoreViral=true;state.performanceCount++;
    state.specialScene={active:false,key:null};
    addHistory('🔥 명동 특별 이벤트 · 기다린만큼, 더 커버 555만 조회, 인스타그램 팔로워 30,000명 증가','special:waitedMore');
@@ -581,7 +615,7 @@ function maybeMysteriousMerchantEvent(){
  runMysteriousMerchantEvent();return true;
 }
 const hiddenRandomSpecialEvents=[
- {key:'hiddenGameOst',sceneKey:'hiddenGameOst',title:'🎮 게임 OST 제안 · 천도박멸',condition:()=>state.day>=50,history:'🎮 숨겨진 특별 이벤트 · 판타지 웹툰 「천도박멸」의 OST 제작과 녹음 제안을 받아 새로운 영역에 도전했다.',reward:()=>{stat('compose',5);stat('vocal',3);stat('fame',45);stat('fans',900);stat('money',800000);stat('stress',3)},scenes:[
+ {key:'hiddenGameOst',sceneKey:'hiddenGameOst',title:'🎮 게임 OST 제안 · 천도박멸',condition:()=>state.day>=50,history:'🎮 숨겨진 특별 이벤트 · 판타지 웹툰 「천도박멸」의 OST 제작과 녹음 제안을 받아 새로운 영역에 도전했다.',reward:()=>{gainSkill('compose',5,'specialEvent');gainSkill('vocal',3,'specialEvent');stat('fame',45);stat('fans',90);stat('money',800000);stat('stress',3)},scenes:[
   {name:'나레이션',text:'쉰 날이 지난 어느 저녁, 류현상에게 낯선 계정으로 장문의 메시지가 도착했다. 처음에는 흔한 홍보나 협찬 문의라고 생각해 대충 넘기려 했지만, 메시지에는 그가 올린 자작곡과 버스킹 영상의 특정 구간을 정확히 언급한 감상이 적혀 있었다. 보낸 사람은 판타지 웹툰을 연재 중인 남자 작가였다.'},
   {name:'웹툰 작가',text:'“안녕하세요. 저는 판타지 웹툰 「천도박멸」을 그리고 있습니다. 작품의 다음 대형 에피소드에 사용할 OST를 준비 중인데, 류현상 님의 목소리가 주인공의 분위기와 아주 잘 맞는다고 생각했습니다. 단순히 노래만 부르는 것이 아니라, 작품에 맞는 곡을 직접 제작하고 녹음해 주실 수 있을까요?”'},
   {name:'류현상',text:'현상은 제목부터 여러 번 읽었다. “천도박멸… 제목이 세긴 하네.” 웹툰은 인간계와 천계의 균형이 무너진 뒤, 봉인된 힘을 가진 주인공이 운명에 맞서는 이야기였다. 검과 마법, 배신과 구원, 멸망 직전의 세계가 이어지는 무거운 판타지였다. 평소 자신이 쓰던 사랑 노래와는 완전히 다른 결이었다.'},
@@ -591,7 +625,7 @@ const hiddenRandomSpecialEvents=[
   {name:'웹툰 작가',text:'최종 녹음이 끝난 뒤 작가는 헤드폰을 벗지 못한 채 한동안 침묵했다. “제가 그리려던 장면이 노래로 먼저 완성된 것 같아요.” 현상은 쑥스러운 듯 시선을 피하며 대답했다. “과장은 됐고, 독자들이 장면에 집중할 수 있으면 됐어요.” 말은 까칠했지만 입가에는 만족스러운 미소가 남아 있었다.'},
   {name:'나레이션',text:'「천도박멸」 OST 공개 소식은 웹툰 독자와 기존 팬들 사이에서 빠르게 퍼졌다. 류현상은 처음으로 다른 창작자의 세계를 음악으로 확장하는 경험을 했다. 이번 제안은 단순한 외주가 아니라, 그가 가수이자 작곡가로 새로운 영역에 발을 들인 사건이 되었다.'}
  ]},
- {key:'hiddenRadioDj',sceneKey:'hiddenRadioDj',title:'🎙 라디오 고정 게스트 제안',condition:()=>state.day>=100&&state.manager.hired,history:'📻 숨겨진 특별 이벤트 · 라디오 고정 게스트가 되어 청취자의 사연에 맞춘 노래를 부르는 라디오 버스킹을 시작했다.',reward:()=>{stat('vocal',4);stat('fans',1800);stat('fame',70);stat('money',500000);stat('stress',-2)},scenes:[
+ {key:'hiddenRadioDj',sceneKey:'hiddenRadioDj',title:'🎙 라디오 고정 게스트 제안',condition:()=>state.day>=100&&state.manager.hired,history:'📻 숨겨진 특별 이벤트 · 라디오 고정 게스트가 되어 청취자의 사연에 맞춘 노래를 부르는 라디오 버스킹을 시작했다.',reward:()=>{gainSkill('vocal',4,'specialEvent');stat('fans',180);stat('fame',70);stat('money',500000);stat('stress',-2)},scenes:[
   {name:'나레이션',text:'백 일이 지난 어느 날, 후라보노가 평소보다 이른 시간에 류현상을 깨웠다. 지역 음악 라디오 프로그램에서 고정 게스트 제안이 들어왔다는 소식이었다. 매주 한 번 스튜디오에 출연해 청취자의 사연을 읽고, 그 사연에 어울리는 노래를 짧게 라이브로 들려주는 코너였다.'},
   {name:'류현상',text:'“내가 말을 많이 해야 하는 거면 안 해.” 현상은 이불을 뒤집어쓴 채 즉시 거절하려 했다. 후라보노는 태연하게 대답했다. “형이 말을 잘해서 부르는 게 아니라, 말이 짧아서 부르는 거래요. 사연 듣고 한마디 한 다음 노래하면 된대요.” 현상은 그 설명이 칭찬인지 아닌지 판단하지 못한 채 한동안 침묵했다.'},
   {name:'나레이션',text:'첫 녹화 날, 밝은 낮의 라디오 스튜디오는 생각보다 편안했다. DJ 소라는 긴장을 풀어 주려 가벼운 질문부터 던졌다. 현상은 준비한 답보다 늘 한 문장씩 짧게 대답했지만, 억지로 꾸미지 않은 말투가 오히려 청취자들에게 솔직하게 들렸다.'},
@@ -601,7 +635,7 @@ const hiddenRandomSpecialEvents=[
   {name:'DJ 소라',text:'“말을 못 한다고 하셨는데, 필요한 말은 다 하시네요.” DJ가 웃으며 말하자 현상은 민망한 듯 안경을 고쳐 썼다. “다음부터는 노래만 시키세요.” 하지만 방송이 끝난 뒤 그는 다음 주 사연 목록을 누구보다 먼저 챙겨 보았다.'},
   {name:'나레이션',text:'라디오 버스킹 코너는 고정 코너로 편성되었다. 류현상은 매주 다른 사람의 사연을 음악으로 받아 적었다. 무대에서 관객의 얼굴을 보며 노래하는 것과는 또 다른 방식으로, 그의 목소리는 누군가의 가장 조용한 시간에 도착하기 시작했다.'}
  ]},
- {key:'hiddenDingo',sceneKey:'hiddenDingo',title:'🎬 딩고 · 더 넥스트 라이징 보이스',condition:()=>fameLevel()>=60&&state.manager.hired,history:'🎬 숨겨진 특별 이벤트 · 딩고 「더 넥스트 라이징 보이스」에 출연해 「기다린만큼, 더」 라이브 영상 조회수 1위를 달성했다.',reward:()=>{stat('vocal',5);stat('fans',12000);stat('fame',280);stat('money',1500000);stat('stress',4)},scenes:[
+ {key:'hiddenDingo',sceneKey:'hiddenDingo',title:'🎬 딩고 · 더 넥스트 라이징 보이스',condition:()=>fameLevel()>=60&&state.manager.hired,history:'🎬 숨겨진 특별 이벤트 · 딩고 「더 넥스트 라이징 보이스」에 출연해 「기다린만큼, 더」 라이브 영상 조회수 1위를 달성했다.',reward:()=>{gainSkill('vocal',5,'specialEvent');stat('fans',1200);stat('fame',280);stat('money',1500000);stat('stress',4)},scenes:[
   {name:'나레이션',text:'인지도 레벨 60을 넘긴 뒤, 음악 콘텐츠 채널 딩고에서 연락이 왔다. 차세대 남성 보컬을 소개하는 프로젝트 「더 넥스트 라이징 보이스」의 후보로 류현상이 추천됐다는 내용이었다. 여러 가수의 라이브 영상이 같은 기간 공개되고, 조회수와 반응을 통해 가장 주목받는 목소리를 가리는 기획이었다.'},
   {name:'후라보노',text:'“형, 이건 꼭 해야 해요. 라이브 한 번으로 지금까지 형을 몰랐던 사람들이 전부 볼 수 있어요.” 현상은 제안서를 한참 읽다가 물었다. “후보라는 건 떨어질 수도 있다는 거잖아.” 후라보노는 웃으며 대답했다. “그러니까 형 성격에 딱 맞죠. 이겨야 기분 좋으니까.”'},
   {name:'나레이션',text:'촬영곡은 명동 버스킹에서 큰 반응을 얻었던 「기다린만큼, 더」로 결정됐다. 화려한 세트나 관객 없이, 보라색 조명과 마이크 하나만 놓인 스튜디오였다. 숨길 장치가 없다는 점이 오히려 현상을 긴장시켰다. 작은 호흡 하나와 음정의 흔들림까지 전부 카메라에 남는 자리였다.'},
@@ -640,7 +674,7 @@ const fixedDaySpecialEvents=[
    {name:'나레이션',text:'잠시 후 그는 팔을 쭉 뻗은 채 바닥에 누워 스스로를 변호하기 시작했다. ‘시작이 중요한 거지. 무리하면 다음 날 더 못 한다. 천천히 가는 게 오래 간다.’ 틀린 말은 아니었다. 다만 그 말이 푸쉬업 다섯 번 뒤에 나오니 설득력이 조금 떨어질 뿐이었다.'},
    {name:'류현상',text:'결국 그는 식은땀을 닦으며 일어났다. “그래도… 안 한 것보단 낫지.” 거울 속 모습이 갑자기 바뀐 것은 아니었지만, 적어도 손놓고 있진 않았다는 사실이 조금은 마음을 놓이게 했다. 언젠가 더 많은 사람 앞에 설 때를 위해, 오늘의 다섯 번은 너무 초라하면서도 묘하게 소중한 시작이었다.'}
  ]},
- {day:90,key:'day90Live',sceneKey:'day90Live',label:'90일 특별 이벤트 · 인스타 라이브',history:'📱 90일 특별 이벤트 · 인스타 라이브에서 기타를 치며 노래하다가 무리한 신청곡은 능숙하게 모르는 척 넘겼다.',stat:()=>{stat('fans',700);stat('fame',45);stat('stress',2)},scenes:[
+ {day:90,key:'day90Live',sceneKey:'day90Live',label:'90일 특별 이벤트 · 인스타 라이브',history:'📱 90일 특별 이벤트 · 인스타 라이브에서 기타를 치며 노래하다가 무리한 신청곡은 능숙하게 모르는 척 넘겼다.',stat:()=>{stat('fans',70);stat('fame',45);stat('stress',2)},scenes:[
    {name:'나레이션',text:'아흔째 날 밤, 류현상은 침대 옆 작은 조명을 켜 두고 휴대전화를 세웠다. 인스타그램 라이브 알림이 켜지자 익숙한 아이디들이 하나둘 들어오기 시작했다. 검은 셔츠 차림의 그는 기타를 무릎 위에 올리고 마이크를 조용히 당겼다. 방 안은 늦은 시간 특유의 적막으로 가득했지만, 화면 속 댓글창은 금세 사람들로 북적였다.'},
    {name:'류현상',text:'“오늘은 그냥… 조용한 노래 몇 곡 할 겁니다.” 시작은 담백했지만 첫 소절이 흘러나오자 반응은 곧 뜨거워졌다. ‘헐 라이브 미쳤다’, ‘목소리 왜 이렇게 가까워요’, ‘오늘 안경 너무 잘 어울려요’ 같은 댓글이 쉴 틈 없이 올라왔고, 하트 아이콘은 화면 오른쪽을 쉬지 않고 타고 올랐다.'},
    {name:'나레이션',text:'한참 분위기가 무르익었을 때, 채팅창에 한 팬이 아주 용감한 신청곡을 남겼다. 현상도 알고, 팬들도 아는, 호흡도 길고 고음도 높은 그 악명 높은 곡이었다. 화면에는 “그 노래 불러 주세요!”라는 댓글이 연달아 달렸고, 현상은 분명히 그 문장을 봤으면서도 아주 능숙하게 기타 줄만 만지작거렸다.'},
@@ -648,7 +682,7 @@ const fixedDaySpecialEvents=[
    {name:'류현상',text:'“힘든 노래는… 오늘 제 컨디션을 위해 잠시 묻어 두겠습니다.” 그는 일부러 진지한 척 말했지만, 팬들은 이미 다 알아차린 상태였다. 누군가는 “가수의 건강권을 보장하라”고 적었고, 누군가는 “모르는 척하는 표정까지 콘텐츠”라고 남겼다. 라이브는 오히려 그 장면 덕분에 더 유쾌해졌다.'},
    {name:'나레이션',text:'방송이 끝날 무렵 시청자 수는 예상보다 훨씬 높아져 있었다. 오늘의 라이브는 대형 바이럴까지는 아니어도, 팬들에게 류현상의 밤을 조금 더 가까이 건네준 시간이었다. 그는 로그아웃 버튼을 누르며 조용히 웃었다. 힘든 신청곡은 피했지만, 팬들의 웃음은 확실히 얻어 낸 밤이었다.'}
  ]},
- {day:120,key:'day120Chat',sceneKey:'day120Chat',label:'120일 특별 이벤트 · 팬톡 대소동',history:'💬 120일 특별 이벤트 · 기획 일을 해 보고 싶다고 팬들과 상의했다가 누나에게 답정너 소리를 들었다.',stat:()=>{stat('fans',1200);stat('compose',2);stat('stress',2)},scenes:[
+ {day:120,key:'day120Chat',sceneKey:'day120Chat',label:'120일 특별 이벤트 · 팬톡 대소동',history:'💬 120일 특별 이벤트 · 기획 일을 해 보고 싶다고 팬들과 상의했다가 누나에게 답정너 소리를 들었다.',stat:()=>{stat('fans',120);gainSkill('compose',2,'specialEvent');stat('stress',2)},scenes:[
    {name:'나레이션',text:'백스무째 날 밤, 류현상은 팬들과의 단체 채팅방을 열어 놓고 한참을 망설였다. 요즘은 노래 만드는 일도 재미있지만, 이상하게도 기획안을 짜고 콘셉트를 구상하는 순간에도 꽤 큰 몰입을 느끼고 있었다. 기획사를 말아먹었던 기억이 아직도 남아 있는데도, 다시 그 세계를 들여다보고 싶다는 마음이 고개를 들고 있었다.'},
    {name:'류현상',text:'그는 결국 긴 메시지를 보냈다. “요즘 노래 만드는 것도 너무 재밌지만, 기획 일도 욕심나네요… 노래보다 기획 일을 조금 더 해 보고 싶은데 어떻게 생각해요? 솔직한 의견 궁금해요.” 평소보다 꽤 부드럽게 적은 문장이었지만, 마지막엔 또 어색한 이모지를 하나 붙여 놓았다. 류현상 나름의 사회성 노력의 흔적이었다.'},
    {name:'팬들',text:'답장은 거의 동시에 쏟아졌다. “형 노래 너무 좋아요. 가수 계속해 주세요 제발요🥺”, “기획도 잘할 것 같지만 우리는 형의 목소리를 더 듣고 싶어요!”, “오래오래 가수로 있어 줘요 ㅠㅠ”, “기획도 멋있지만 형이 노래할 때가 제일 빛나요✨” 같은 말들이 채팅창을 빠르게 채웠다. 현상은 스크롤을 내리며 묘하게 웃었다.'},
@@ -656,7 +690,7 @@ const fixedDaySpecialEvents=[
    {name:'누나',text:'그리고 잠시 뒤, 채팅방에 낯익은 이름이 등장했다. 류현상의 누나였다. “그럴거면 왜 물어보냐? 답정너 자식아 ㅋㅋㅋㅋ 그냥 네가 하고 싶은 거 해 진짜.” 채팅창은 순식간에 폭발했다. 팬들은 “누나 등판”, “팩트 폭행 너무 웃겨요”, “누나가 제일 정확해요”라며 환호했고, 현상은 핸드폰을 들고도 한동안 아무 말 없이 웃기만 했다.'},
    {name:'나레이션',text:'결국 그날의 채팅은 노래와 기획, 팬들의 진심, 그리고 누나의 한 방까지 모두 뒤섞인 채 마무리됐다. 류현상은 휴대전화를 내려놓으며 생각했다. 아직 정확한 답을 정한 것은 아니지만, 적어도 자신이 어떤 모습일 때 가장 많은 사람들이 빛을 본다고 말해 주는지는 분명히 알게 되었다.'}
  ]},
- {day:150,key:'day150Birthday',sceneKey:'day150Birthday',label:'150일 특별 이벤트 · 생일 파티',history:'🎂 150일 특별 이벤트 · 팬들이 생일을 축하해 주었고, 한 오랜 팬에게서 귀한 디지몬 카드 50장을 선물받았다.',stat:()=>{stat('fans',3000);stat('stress',-6);state.items.bakcas+=2},scenes:[
+ {day:150,key:'day150Birthday',sceneKey:'day150Birthday',label:'150일 특별 이벤트 · 생일 파티',history:'🎂 150일 특별 이벤트 · 팬들이 생일을 축하해 주었고, 한 오랜 팬에게서 귀한 디지몬 카드 50장을 선물받았다.',stat:()=>{stat('fans',300);stat('stress',-6);state.items.bakcas+=2},scenes:[
    {name:'나레이션',text:'백오십째 날, 류현상은 평소보다 조금 이른 시간에 팬들을 만나러 갔다. 별다를 것 없는 일정이라고 생각했지만, 문을 열자마자 보인 풍경은 예상 밖이었다. 조명이 걸린 공간 한가운데에는 검은색과 금색으로 장식된 케이크가 놓여 있었고, 벽에는 ‘Happy Birthday’ 문구와 그의 사진들이 정성스럽게 붙어 있었다. 팬들은 숨을 죽이고 있다가 그가 들어오자 일제히 환하게 웃었다.'},
    {name:'팬들',text:'“생일 축하해요!” 하는 목소리가 여러 방향에서 한꺼번에 쏟아졌다. 누군가는 케이크를 조심히 앞으로 내밀었고, 누군가는 포장된 선물을 한가득 안겨 주었다. 현상은 순간 당황한 표정으로 안경을 고쳐 썼다. 이렇게 많은 축하를 정면으로 받는 일은 여전히 익숙하지 않았지만, 그 낯설음 자체가 따뜻하게 느껴졌다.'},
    {name:'류현상',text:'“이렇게까지 준비한 거예요…?” 그는 늘 그렇듯 감정을 크게 드러내진 않았지만, 목소리는 평소보다 확실히 부드러웠다. 팬들은 웃으며 “오래된 팬이라면 이 정도는 기본이에요”, “오늘은 까칠 금지예요”, “소원 빌고 촛불 끄셔야 돼요”라며 그를 가운데로 이끌었다. 현상은 민망한 듯 한 손을 가슴에 얹고 조용히 고개를 숙였다.'},
@@ -664,7 +698,7 @@ const fixedDaySpecialEvents=[
    {name:'팬',text:'“이거… 전 세계에서 구하기 어려운 디지몬 카드들이에요. 50장 모았어요. 현상 씨가 디지몬 좋아한다고 예전에 말했잖아요.” 순간 류현상의 표정이 눈에 띄게 무너졌다. 무대 위에서 잘 흔들리지 않던 사람이 카드 한 장 한 장을 넘겨 보며 거의 숨을 삼키듯 웃었다. “이건… 진짜 귀한 건데. 아니, 이걸 어떻게…” 그의 눈빛에는 진짜 기쁨이 그대로 드러나 있었다.'},
    {name:'나레이션',text:'그날의 생일은 단순히 케이크를 자르고 사진을 찍는 시간이 아니었다. 류현상에게는 자신이 오랫동안 부른 노래들이 누군가에게는 축하를 준비할 만큼 큰 마음이 되었다는 증거이기도 했다. 그는 선물들을 끌어안고 조용히 말했다. “고마워요. 진짜… 오래 기억할게요.” 팬들은 그 짧고 서툰 감사가 누구보다 진심이라는 것을 알고 있었다.'}
  ]},
- {day:180,key:'day180Archive',sceneKey:'day180Archive',label:'180일 특별 이벤트 · 폐업한 기획사의 흔적',history:'📂 180일 특별 이벤트 · 망한 기획사의 자료를 다시 꺼내 보며, 언젠가 다시 기획도 하고 싶다는 마음을 정리했다.',stat:()=>{stat('compose',3);stat('stress',-2);stat('fame',20)},scenes:[
+ {day:180,key:'day180Archive',sceneKey:'day180Archive',label:'180일 특별 이벤트 · 폐업한 기획사의 흔적',history:'📂 180일 특별 이벤트 · 망한 기획사의 자료를 다시 꺼내 보며, 언젠가 다시 기획도 하고 싶다는 마음을 정리했다.',stat:()=>{gainSkill('compose',3,'specialEvent');stat('stress',-2);stat('fame',20)},scenes:[
    {name:'나레이션',text:'백여든째 날 저녁, 류현상은 자취방 구석에 처박혀 있던 오래된 서류 상자를 꺼냈다. 먼지가 뽀얗게 쌓인 상자 겉면에는 예전에 자신이 차렸던 작은 기획사의 이름이 희미하게 남아 있었다. 스물여섯, 세상은 내 기획력 하나면 뒤집을 수 있을 거라고 믿었던 시절의 흔적이었다.'},
    {name:'류현상',text:'상자를 여는 손은 생각보다 조심스러웠다. 안에는 콘셉트 기획안, 데뷔 로드맵, 신인 브랜딩 메모, 매출 예상표까지 빼곡하게 들어 있었다. 너무 진지해서 오히려 웃긴 문장도 보였다. “1년 안에 업계 판도 변화.” 현상은 그 문장을 읽고 한동안 어이없다는 표정으로 침묵했다가 결국 작게 웃었다. “야, 자신감 하나는 대기업 회장이었네.”'},
    {name:'나레이션',text:'웃음 뒤에는 조금 쓴 기억도 따라왔다. 코로나가 터지기 전까지는 어떻게든 굴러갈 거라고 믿었다. 하지만 공연은 줄줄이 취소됐고, 계획은 종이 속 문장으로만 남았다. 그는 그때의 자신이 너무 미숙했다고 생각하면서도, 동시에 그 정도로 무모했기에 여기까지 다시 돌아올 수 있었는지도 모른다고 느꼈다.'},
@@ -672,7 +706,7 @@ const fixedDaySpecialEvents=[
    {name:'나레이션',text:'잠시 그는 생각했다. 팬들에게 말했던 것처럼, 언젠가는 다시 기획을 더 본격적으로 해 보고 싶다고. 다만 이제는 무대 밖으로 도망치듯 기획을 붙잡는 방식이 아니라, 무대 위에 선 사람으로서 더 좋은 팀과 더 좋은 작품을 만드는 방향이어야 한다고. 망해 본 사람이니 할 수 있는 기획도 분명 있을 것이다.'},
    {name:'류현상',text:'현상은 상자 맨 위에 있던 계획표를 조용히 접어 다시 넣었다. “노래를 먼저 놓진 않는다. 그다음에 기획.” 짧은 한마디였지만, 그 안에는 과거의 실패와 지금의 다짐이 함께 들어 있었다. 실패한 기획사의 흔적은 여전히 아팠지만, 동시에 언젠가 다시 써먹을 수 있는 미래의 재료가 되어 있었다.'}
  ]},
- {day:210,key:'day210Demo',sceneKey:'day210Demo',label:'210일 특별 이벤트 · 새벽 데모와 디지몬 감성',history:'🎙 210일 특별 이벤트 · 새벽에 자작곡 데모를 만들다가 디지몬 감성이 과해진 가사에 스스로 웃었다.',stat:()=>{stat('compose',4);stat('vocal',2);stat('stress',1)},scenes:[
+ {day:210,key:'day210Demo',sceneKey:'day210Demo',label:'210일 특별 이벤트 · 새벽 데모와 디지몬 감성',history:'🎙 210일 특별 이벤트 · 새벽에 자작곡 데모를 만들다가 디지몬 감성이 과해진 가사에 스스로 웃었다.',stat:()=>{gainSkill('compose',4,'specialEvent');gainSkill('vocal',2,'specialEvent');stat('stress',1)},scenes:[
    {name:'나레이션',text:'이백열째 날 새벽, 류현상은 도무지 잠이 오지 않아 혼자 작업을 시작했다. 방 안은 조용했고, 창밖 도시의 불빛만 희미하게 깜빡였다. 그는 기타를 가볍게 튕기며 막 떠오른 멜로디를 휴대전화 녹음 앱에 담기 시작했다. 밤이 깊을수록 이상하게 좋은 멜로디가 잘 나오는 날이 있었다.'},
    {name:'류현상',text:'처음에는 꽤 진지했다. “좋은데… 이거 된다.” 그는 낮은 톤으로 멜로디를 흥얼거리고, 가사를 메모장에 빠르게 적어 내려갔다. 문제는 집중이 길어질수록 그의 취향도 점점 스며든다는 데 있었다. 잠깐 쉬는 사이 무심코 틀어 둔 디지몬 오프닝 영상이 머릿속에 남아 있었던 것이다.'},
    {name:'나레이션',text:'그래서였을까. 어느 순간 메모장에는 “진화하듯 커지는 마음”, “디지털처럼 번지는 신호”, “너와 나의 세계가 연결된다” 같은 문장이 줄줄이 적혀 있었다. 사랑 노래를 쓰는 줄 알았는데 어쩐지 마지막 후렴구는 모험과 진화를 외치는 분위기로 흘러갔다. 현상은 가사를 끝까지 적은 뒤 한동안 화면만 바라봤다.'},
@@ -680,7 +714,7 @@ const fixedDaySpecialEvents=[
    {name:'나레이션',text:'그래도 멜로디 자체는 꽤 마음에 들었다. 현상은 가이드 보컬을 한 번 더 녹음했고, 적당히 민망한 가사는 별표를 쳐 두고 수정 후보로 남겨 뒀다. 실패작은 아니었다. 오히려 웃기게 솔직해서 더 기억에 남는 데모였다. 언젠가 진짜 곡으로 발전시킬지, 평생 혼자만 듣고 웃을지는 아직 모른다.'},
    {name:'류현상',text:'파일명은 결국 “new_demo_final_real_last_진화금지”로 저장됐다. 그는 저장 버튼을 누르며 중얼거렸다. “이건 아무한테도 바로 안 들려준다… 조금 더 다듬은 뒤에 공개하자.” 새벽은 여전히 조용했지만, 그 조용함 속에서 또 하나의 류현상다운 곡의 씨앗이 생겨났다.'}
  ]},
- {day:240,key:'day240Meme',sceneKey:'day240Meme',label:'240일 특별 이벤트 · 팬 밈 정주행',history:'😂 240일 특별 이벤트 · 팬들이 만든 밈과 짤을 정주행하며 자신의 까칠한 이미지가 사랑받고 있음을 실감했다.',stat:()=>{stat('fans',1500);stat('fame',35);stat('stress',-3)},scenes:[
+ {day:240,key:'day240Meme',sceneKey:'day240Meme',label:'240일 특별 이벤트 · 팬 밈 정주행',history:'😂 240일 특별 이벤트 · 팬들이 만든 밈과 짤을 정주행하며 자신의 까칠한 이미지가 사랑받고 있음을 실감했다.',stat:()=>{stat('fans',150);stat('fame',35);stat('stress',-3)},scenes:[
    {name:'나레이션',text:'이백사십째 날 밤, 류현상은 팬카페와 SNS를 가볍게 둘러보다가 예상치 못한 게시글 하나를 눌렀다. 제목은 “류현상 레전드 모먼트 모음.zip”. 대수롭지 않게 들어갔지만, 그 안에는 그동안 팬들이 모아 둔 각종 짤과 밈, 자막 영상이 끝도 없이 정리돼 있었다. 문제는 그 자료들이 생각보다 너무 정교했다는 점이었다.'},
    {name:'팬들',text:'“무뚝뚝한데 끝까지 우산 씌워 줌”, “표정은 차가운데 박칵스는 먼저 챙겨 줌”, “팬한테 까칠하게 굴다가 집 가서 댓글 다 읽을 상”, “스태프를 혼낼 듯 말 듯 결국 먼저 도와줌” 같은 자막이 하나하나 붙어 있었다. 그의 말투, 안경 올리는 습관, 팬서비스를 부끄러워하는 미세한 표정까지 전부 밈 소재가 되어 있었다.'},
    {name:'류현상',text:'처음엔 “이 사람들 정말 할 일 많다…”라며 혀를 찼다. 그런데 몇 장 더 넘기자 결국 웃음을 참지 못했다. 특히 자신이 팬의 질문에 딱딱하게 답해 놓고는 뒤늦게 음료를 건네는 장면에 “츤데레 아저씨 아님 주의”라고 적혀 있는 짤에서는 완전히 무너졌다. “아저씨는 아니지.” 반박 포인트가 거기라는 점이 또 우스웠다.'},
@@ -688,7 +722,7 @@ const fixedDaySpecialEvents=[
    {name:'류현상',text:'“내가 저렇게 보이나….” 그는 민망한 표정으로 중얼거렸지만, 싫지는 않았다. 애써 꾸미지 않아도 좋아해 주는 사람들이 있다는 건 꽤 큰 위안이었다. 억지로 성격을 바꾸지 않아도, 대신 조금씩 더 좋은 사람이 되려고 노력하면 된다는 생각도 들었다.'},
    {name:'나레이션',text:'결국 류현상은 팬들이 만든 짧은 밈 영상 하나에 조용히 좋아요를 눌렀다. 그러자 몇 분 뒤 댓글이 또다시 폭발했다. “본체 등판”, “가수님 본인인증 완료”, “오늘도 떡밥 공급 감사합니다.” 그는 휴대전화를 내려놓으며 피식 웃었다. 가끔은 진지한 노래보다, 이런 사소한 웃음이 더 오래 사람을 붙잡아 주는 법이었다.'}
  ]},
- {day:300,key:'day300Promise',sceneKey:'day300Promise',label:'300일 특별 이벤트 · 텅 빈 공연장의 맹세',history:'🎤 300일 특별 이벤트 · 아무도 없는 공연장을 바라보며, 결과와 상관없이 노래를 계속하겠다고 다짐했다.',stat:()=>{stat('fans',2500);stat('fame',70);stat('vocal',2);stat('stress',-4)},scenes:[
+ {day:300,key:'day300Promise',sceneKey:'day300Promise',label:'300일 특별 이벤트 · 텅 빈 공연장의 맹세',history:'🎤 300일 특별 이벤트 · 아무도 없는 공연장을 바라보며, 결과와 상관없이 노래를 계속하겠다고 다짐했다.',stat:()=>{stat('fans',250);stat('fame',70);gainSkill('vocal',2,'specialEvent');stat('stress',-4)},scenes:[
    {name:'나레이션',text:'삼백째 날, 공연 시작까지 아직 시간이 꽤 남아 있었지만 류현상은 남들보다 먼저 공연장 안으로 들어왔다. 객석은 비어 있었고, 무대 조명도 반쯤만 켜져 있었다. 관객의 함성도, 밴드의 튜닝 소리도 없는 빈 공연장은 이상할 만큼 넓고 조용했다. 그는 객석 맨 앞줄부터 가장 뒤쪽 자리까지 천천히 눈으로 훑었다.'},
    {name:'류현상',text:'처음 버스킹을 하던 날엔 세 명만 멈춰 서 줘도 다행이라고 생각했다. 지금은 그때보다 훨씬 더 많은 무대를 밟았고, 더 많은 사람의 얼굴을 알게 됐다. 그런데도 빈 객석을 바라보는 마음만큼은 그때와 크게 다르지 않았다. 무대에 서기 직전의 긴장, 목이 잠기지 않을까 하는 걱정, 오늘은 누군가의 하루를 조금이라도 바꿀 수 있을까 하는 기대.'},
    {name:'나레이션',text:'현상은 무대 중앙으로 걸어가 조용히 마이크 스탠드를 잡았다. 객석을 향해 선 채로 한동안 아무 말 없이 서 있었다. 실패했던 기획사, 군대로 도망쳤던 시간, 공원의 찬 바람, 수원역과 명동의 바이럴, 곁에서 도와준 사람들의 조언, 팬들의 웃음과 응원…. 지난 삼백 일이 파도처럼 스쳐 지나갔다.'},
@@ -742,26 +776,43 @@ function busking(band){
  if(maybeStartWaitedMoreViralEvent(band,hpCost))return;
  if(!costHp(hpCost))return;
  const dayBonus=type==='공휴일'?.18:type==='주말'?.12:0;
- const stressPenalty=Math.max(0,(state.stats.stress-50)/250);const successChance=Math.max(.12,Math.min(.95,.48+dayBonus+weather.success+state.stats.vocal/250+state.stats.looks/500+(band?state.band.bond/600:0)-stressPenalty));
+ const stressPenalty=Math.max(0,(state.stats.stress-50)/250);const insightBonus=state.preparation?.buskingInsight?.08:0;const successChance=Math.max(.12,Math.min(.95,.48+dayBonus+weather.success+state.stats.vocal/250+state.stats.looks/500+(band?state.band.bond/600:0)+insightBonus-stressPenalty));
  const success=Math.random()<successChance;
  const quality=safe(state.stats.vocal*.65+state.stats.looks*.2+Math.random()*28)*(success?1:.28);
- const fans=Math.max(1,Math.floor(quality*(band?3.3:1.8)*(type==='공휴일'?1.5:type==='주말'?1.25:1)));
+ const insightMultiplier=state.preparation?.buskingInsight?1.1:1;const fans=Math.max(1,Math.floor(quality*(band?3.3:1.8)*(type==='공휴일'?1.5:type==='주말'?1.25:1)*insightMultiplier));
  const money=Math.max(0,Math.floor(quality*(band?1700:850)*(success?1:.35)));
  stat('fans',fans);stat('fame',success?Math.max(1,Math.floor(quality/8)):1);stat('money',money);
  let leaveNote='';
  if(band){state.band.bond=clamp(state.band.bond+(success?6:2));state.soloStreak=0}else{state.soloStreak++;if(state.band.formed){state.band.bond=clamp(state.band.bond-(state.soloStreak>=3?12:8));if(state.band.bond<=20&&Math.random()<.35)leaveNote=memberLeave()}}
  const broken=equipmentBreakCheck();
  const result=success?'성공':'실패';
- state.performanceCount++;state.career.totalBusking++;const fanLine=pickFanComment();showDialogue('팬들',`${type} · ${weather.label} 버스킹 ${result}. 체력 ${hpCost} 소모, 팬 ${fans}명, ${money.toLocaleString()}원을 얻었다.${broken}\n\n팬 반응: “${fanLine}”${leaveNote?`\n\n${leaveNote}`:''}`);if(checkStalkerEvent())return;advance(1)
+ state.performanceCount++;state.career.totalBusking++;if(state.preparation?.buskingInsight)state.preparation.buskingInsight=false;const fanLine=pickFanComment();showDialogue('팬들',`${type} · ${weather.label} 버스킹 ${result}. 체력 ${hpCost} 소모, 팬 ${fans}명, ${money.toLocaleString()}원을 얻었다.${broken}\n\n팬 반응: “${fanLine}”${leaveNote?`\n\n${leaveNote}`:''}`);if(checkStalkerEvent())return;advance(1)
 }
 function safe(n){return Math.max(1,n)}
 function recruit(){
- const missing=Object.keys(state.band.members).filter(k=>!state.band.members[k]);if(!missing.length)return toast('모든 멤버가 모였습니다.');
- if(state.stats.money<120000)return toast('모집과 대관에 12만원이 필요합니다.');
- stat('money',-120000);const names={guitar:'기타 P군',bass:'베이스 L군',piano:'피아노 J군',drums:'드럼 R군'};const k=missing[0];state.band.members[k]=names[k];state.band.formed=Object.values(state.band.members).every(Boolean);
- addHistory(`🎸 멤버 영입 · ${names[k]} 합류`, `member:${k}`);
- if(state.band.formed){state.soloStreak=0;state.milestones.bandFormed=true;addHistory('🎶 밴드 결성 · P군·L군·J군·R군이 모두 모였다.','band:formed')}
- showDialogue(names[k],state.band.formed?'네 명이 모두 모였다. 잠깐의 침묵 뒤 R군이 스틱을 들어 올렸고, P군이 기타를 울렸다. L군은 짧게 “시작하죠”라고 말했고 J군은 이미 밴드 이름 후보를 열두 개 적어 왔다. 이제 정말 밴드가 됐다.':`${names[k]}이(가) 악기를 내려놓고 류현상에게 손을 내밀었다. “잘 부탁드립니다. 유명해지기 전까지는 연습실 대관비도 정확히 나누는 걸로 하죠.”`);advance(1)
+ const names={guitar:'기타 P군',bass:'베이스 L군',piano:'피아노 J군',drums:'드럼 R군'};
+ const requirements={
+  guitar:{cost:120000,label:'인지도 Lv.5 · 보컬 28',ok:()=>fameLevel()>=5&&state.stats.vocal>=28},
+  bass:{cost:180000,label:'인지도 Lv.10 · 버스킹 3회',ok:()=>fameLevel()>=10&&state.career.totalBusking>=3},
+  piano:{cost:250000,label:'인지도 Lv.15 · 작곡 35',ok:()=>fameLevel()>=15&&state.stats.compose>=35},
+  drums:{cost:320000,label:'인지도 Lv.20 · 공연 경험 2회',ok:()=>fameLevel()>=20&&state.performanceCount>=2}
+ };
+ const missing=Object.keys(state.band.members).filter(k=>!state.band.members[k]);
+ if(!missing.length)return toast('모든 멤버가 모였습니다.');
+ const remain=Math.max(0,5-(state.day-(state.cooldowns.recruit??-99)));
+ showModal('밴드 멤버 오디션',`<p>멤버는 자동으로 합류하지 않습니다. 파트별 조건을 달성하고 오디션 대관비를 지불해야 하며, 영입 후 5일 동안 새 오디션을 열 수 없습니다.</p>${remain>0?`<p><b>다음 모집까지 ${remain}일</b></p>`:''}<div class="card-list">${missing.map(k=>{const r=requirements[k],eligible=r.ok()&&remain===0&&state.stats.money>=r.cost;return `<div class="info-card"><header><b>${names[k]}</b><span>${r.cost.toLocaleString()}원</span></header><p>${r.label}</p><button data-recruit-member="${k}" ${eligible?'':'disabled'}>${remain>0?'모집 대기':!r.ok()?'조건 부족':state.stats.money<r.cost?'비용 부족':'오디션 진행'}</button></div>`}).join('')}</div>`);
+ $$('[data-recruit-member]').forEach(btn=>btn.onclick=()=>{
+  const k=btn.dataset.recruitMember,r=requirements[k];
+  if(state.day-(state.cooldowns.recruit??-99)<5)return toast('새 멤버 오디션은 5일마다 열 수 있습니다.');
+  if(!r.ok())return toast(`${names[k]} 영입 조건이 부족합니다: ${r.label}`);
+  if(state.stats.money<r.cost)return toast('오디션 대관비가 부족합니다.');
+  if(!costHp(10))return;
+  stat('money',-r.cost);state.cooldowns.recruit=state.day;state.band.members[k]=names[k];
+  const joined=Object.values(state.band.members).filter(Boolean).length;state.band.bond=Math.max(35,45+joined*5);state.band.formed=joined===4;
+  addHistory(`🎸 멤버 오디션 합격 · ${names[k]} 합류`,`member:${k}`);
+  if(state.band.formed){state.soloStreak=0;state.milestones.bandFormed=true;addHistory('🎶 밴드 결성 · 모든 파트의 오디션을 마치고 완전체가 되었다.','band:formed')}
+  closeModal();showDialogue(names[k],state.band.formed?'네 파트의 오디션이 모두 끝났다. 이제 완전체 밴드로 합주와 공연을 진행할 수 있다.':`${names[k]}이(가) 오디션을 통과했다. 아직 공석이 남아 있어 완전체 활동은 할 수 없다.`);advance(1)
+ });
 }
 function managerEvent(){
  const lv=fameLevel();
@@ -800,14 +851,14 @@ function weddingEvent(){state.manager.wedding=true;addHistory('💍 후라보노
 function audition(){
  if(state.stats.vocal<40||state.stats.fame<30)return toast('보컬 40, 인지도 30 이상이 필요합니다.');
  if(!cooldownReady('audition',7,'다음 오디션'))return;if(!costHp(20))return;markCooldown('audition');
- const chance=clamp(state.stats.vocal+state.stats.looks*.3-state.stats.stress*.25,15,95);const ok=Math.random()*100<chance;
+ const rehearsalBonus=state.preparation?.stageReady?12:0;const chance=clamp(state.stats.vocal+state.stats.looks*.3-state.stats.stress*.25+rehearsalBonus,15,95);const ok=Math.random()*100<chance;if(state.preparation?.stageReady)state.preparation.stageReady=false;
  if(ok){stat('fame',75);stat('fans',500);if(!state.milestones.firstAudition){state.milestones.firstAudition=true;addHistory('🎤 첫 오디션 합격 · 다음 무대 진출권을 얻었다.','milestone:audition')}showDialogue('심사위원','당신의 목소리에는 이야기가 있군요. 다음 무대로 올라오세요.')}else{stat('stress',5);showDialogue('심사위원','긴장 때문에 기본기가 흔들렸습니다. 일주일 뒤 다시 준비해 오세요.')}
  advance(1)
 }
 function concert(){
  if(state.stats.fans<500||state.stats.vocal<45)return toast('팬 500명과 보컬 45 이상이 필요합니다.');
  if(!cooldownReady('concert',7,'다음 공연'))return;if(!costHp(28))return;markCooldown('concert');state.career.totalConcerts++;
- const earn=300000+Math.floor(Math.min(state.stats.fans,30000)*120);const newFans=Math.max(80,Math.floor(Math.sqrt(state.stats.fans)*8));
+ const stageBoost=state.preparation?.stageReady?1.15:1;const earn=Math.floor((300000+Math.floor(Math.min(state.stats.fans,30000)*120))*stageBoost);const newFans=Math.max(80,Math.floor(Math.sqrt(state.stats.fans)*8*stageBoost));if(state.preparation?.stageReady)state.preparation.stageReady=false;
  stat('money',earn);stat('fame',60);stat('fans',newFans);stat('stress',4);
  if(state.band.formed)state.band.bond=clamp(state.band.bond+8);state.performanceCount++;
  if(!state.milestones.firstConcert){state.milestones.firstConcert=true;addHistory(`🎪 첫 단독 공연 · 수익 ${earn.toLocaleString()}원, 새 팬 ${newFans.toLocaleString()}명`,'milestone:concert')}
@@ -816,17 +867,27 @@ function concert(){
 function broadcast(){
  if(!state.manager.hired||state.stats.vocal<55)return toast('후라보노 고용과 보컬 55 이상이 필요합니다.');
  if(!cooldownReady('broadcast',7,'다음 방송 출연'))return;if(!costHp(22))return;markCooldown('broadcast');state.career.totalBroadcasts++;
- stat('fame',120);stat('fans',1200);stat('stress',6);state.manager.bond=clamp(state.manager.bond+5);
+ const stageBoost=state.preparation?.stageReady?1.15:1;stat('fame',Math.floor(120*stageBoost));stat('fans',Math.floor(1200*stageBoost));stat('stress',6);if(state.preparation?.stageReady)state.preparation.stageReady=false;state.manager.bond=clamp(state.manager.bond+5);
  if(!state.milestones.firstBroadcast){state.milestones.firstBroadcast=true;addHistory('📺 첫 방송 출연 · 실시간 검색에 류현상의 이름이 올랐다.','milestone:broadcast')}
  showDialogue('후라보노','방송 반응이 좋아요. 실시간 검색에도 형 이름이 올라왔습니다. 다만 다음 출연은 일주일 뒤에 잡겠습니다.');advance(1)
 }
 function fanmeeting(){
- if(state.stats.fans<3000)return toast('팬 3,000명 이상이 필요합니다.');if(!cooldownReady('fanmeeting',10,'다음 팬미팅'))return;if(!costHp(15))return;markCooldown('fanmeeting');
- stat('fans',450);stat('stress',-5);if(!state.milestones.firstFanmeeting){state.milestones.firstFanmeeting=true;addHistory('💌 첫 팬미팅 · 팬들과 직접 이야기를 나눴다.','milestone:fanmeeting')}
- showDialogue('팬들','현상 씨, 다음 노래도 오래 기다릴게요!');advance(1)
+ if(state.stats.fans<3000)return toast('팬 3,000명 이상이 필요합니다.');
+ if(fameLevel()<20)return toast('인지도 Lv.20 이상이 필요합니다.');
+ if(!state.manager.hired)return toast('팬미팅 진행을 맡을 후라보노를 먼저 고용해야 합니다.');
+ if(state.stats.money<300000)return toast('팬미팅 대관·운영비 300,000원이 필요합니다.');
+ if(!cooldownReady('fanmeeting',20,'다음 팬미팅'))return;
+ if(!costHp(20))return;
+ stat('money',-300000);markCooldown('fanmeeting');
+ const first=!state.milestones.firstFanmeeting;
+ const fanGain=first?300:150+Math.floor(Math.random()*101);
+ stat('fans',fanGain);stat('stress',-8);
+ if(first){state.milestones.firstFanmeeting=true;addHistory('💌 첫 팬미팅 · 팬들과 직접 이야기를 나눴다.','milestone:fanmeeting')}
+ showDialogue('팬들',`현상 씨, 다음 노래도 오래 기다릴게요! 팬 ${fanGain.toLocaleString()}명이 새로 합류했고 스트레스가 줄었다.`);advance(1)
 }
-function national(){const result=endingProfile();if(!result[0].startsWith('월드 '))return toast('월드 엔딩 조건이 아직 부족합니다. 보컬·작곡·밴드·공연·해외 팬 중 자신만의 진출 경로를 완성하세요.');offerEnding(result[0],result[1],true)}
+function national(){const result=endingProfile();if(!result[0].startsWith('월드 '))return toast('월드 엔딩 조건이 아직 부족합니다. 보컬·작곡·밴드·공연·해외 팬 중 자신만의 진출 경로를 완성하세요.');offerEnding(result[0],result[1],true,`manual:${result[0]}:${state.day}`)}
 function openGear(){
+ if(debtBlocked('장비·악기 구매'))return;
  const busking=[['중고 마이크',150000,'mic','버스킹 필수 장비'],['입문용 앰프',300000,'amp','버스킹 필수 장비'],['방수·전원 보호 케이스',400000,'battery','장비 고장 확률 감소']];
  const instruments=[['어쿠스틱 기타',850000,'acousticGuitar','장착 시 작곡 +1 · 버스킹 감성 보정'],['미디 키보드',1400000,'keyboard','장착 시 작곡 +2'],['오디오 인터페이스',2200000,'audioInterface','장착 시 보컬·작곡 +1 · 앨범 완성도'],['스튜디오 콘덴서 마이크',2800000,'studioMic','장착 시 보컬 +2'],['모니터링 헤드폰',950000,'monitorHeadphones','장착 시 보컬 +1 · 훈련 보조']];
  const equipped=new Set(state.equippedInstruments||[]);
@@ -836,12 +897,13 @@ function openGear(){
  $$('[data-equipinstrument]').forEach(b=>b.onclick=()=>{const k=b.dataset.equipinstrument;const list=[...(state.equippedInstruments||[])];const i=list.indexOf(k);if(i>=0)list.splice(i,1);else{if(list.length>=3)return toast('악기는 최대 3개까지만 장착할 수 있습니다.');list.push(k)}state.equippedInstruments=list;save(false);openGear();render()})
 }
 function openWardrobe(){
+ if(debtBlocked('의상 구매와 스타일 관리'))return;
  const outfits=[['검은 셔츠',0,0],['흰 셔츠',180000,2],['체크 셔츠',240000,3],['가죽 재킷',480000,5],['후드티',320000,4],['무대 의상',1200000,8],['???',0,0]];
  showModal('옷장',`<div class="card-list">${outfits.map(([x,price],i)=>{const owned=state.ownedOutfits.includes(i);if(i===6&&!owned)return '';const special=i===6;return `<div class="info-card ${special?'mystery-outfit-card':''}"><header><b>${x}</b><span>${special?'수상한 상인의 의상':i===0?'기본 의상':price.toLocaleString()+'원'}</span></header>${special?'<p>착용하는 순간 외모가 최대치 100이 됩니다.</p>':''}<button data-outfit="${i}" ${state.outfit===i?'disabled':''}>${state.outfit===i?'착용 중':owned?'갈아입기':'구매하기'}</button></div>`}).join('')}<div class="info-card"><header><b>헤어·스타일 관리</b><span>80,000원</span></header><p>체력 4를 사용하고 외모 +2. 외모 100까지 이용할 수 있습니다.</p><button id="styleCare" ${state.stats.looks>=100?'disabled':''}>${state.stats.looks>=100?'외모 최대':'관리받기'}</button></div></div>`);
  $$('[data-outfit]').forEach(b=>b.onclick=()=>{const i=+b.dataset.outfit,[name,price,bonus]=outfits[i];if(!state.ownedOutfits.includes(i)){if(state.stats.money<price)return toast('옷을 구매할 돈이 부족합니다.');stat('money',-price);state.ownedOutfits.push(i);if(bonus)stat('looks',bonus);toast(`${name}을 구매했습니다. 외모 +${bonus}`)}state.outfit=i;if(i===6){state.stats.looks=100;addHistory('✨ 의상 「???」 착용 · 외모가 최대치 100이 되었다.','outfit:mystery-equipped')}showDialogue('류현상',`${name}으로 갈아입었다. 거울을 보며 “옷이 사람을 만든다는데, 성격까지 부드러워지진 않겠지.”라고 중얼거렸다.`);save(false);closeModal();render()});
  const care=$('#styleCare');if(care)care.onclick=()=>{if(state.stats.money<80000)return toast('스타일 관리 비용이 부족합니다.');if(!costHp(4))return;stat('money',-80000);stat('looks',2);if(state.stats.looks>=100)addHistory('✨ 외모 100 달성 · 무대 스타일이 완성됐다.','milestone:looks100');closeModal();showDialogue('류현상','머리와 의상을 정돈했다. 낯선 사람과 눈을 마주치는 일은 여전히 어렵지만, 무대에 설 준비는 조금 더 단단해졌다.');advance(1)}
 }
-function openAlbum(){const albums=[['디지털 싱글',5000000],['미니앨범',20000000],['정규앨범',50000000]];showModal('앨범 제작',albums.map(([n,p],i)=>`<div class="info-card"><header><b>${n}</b><span>${p.toLocaleString()}원</span></header><p>보컬과 작곡 능력에 따라 팬과 수익이 증가합니다.</p><button data-album="${i}">발매하기</button></div>`).join(''));$$('[data-album]').forEach(b=>b.onclick=()=>releaseAlbum(albums[+b.dataset.album]))}
+function openAlbum(){if(debtBlocked('앨범 제작'))return;const albums=[['디지털 싱글',5000000],['미니앨범',20000000],['정규앨범',50000000]];showModal('앨범 제작',albums.map(([n,p],i)=>`<div class="info-card"><header><b>${n}</b><span>${p.toLocaleString()}원</span></header><p>보컬과 작곡 능력에 따라 팬과 수익이 증가합니다.</p><button data-album="${i}">발매하기</button></div>`).join(''));$$('[data-album]').forEach(b=>b.onclick=()=>releaseAlbum(albums[+b.dataset.album]))}
 function releaseAlbum([name,cost]){
  if(state.stats.money<cost)return toast('제작비가 부족합니다.');if(state.stats.compose<30||state.stats.vocal<35)return toast('작곡 30, 보컬 35 이상이 필요합니다.');if(!cooldownReady('album',30,'다음 앨범 발매'))return;markCooldown('album');
  stat('money',-cost);const score=Math.max(30,state.stats.vocal+state.stats.compose+((state.equippedInstruments||[]).length*2)+(state.band.formed?state.band.bond*.3:0)+Math.random()*35-state.stats.stress*.1);const tier=name==='디지털 싱글'?0:name==='미니앨범'?1:2;const fanRates=[40,120,300],fameRates=[.6,1,1.5];
@@ -904,15 +966,28 @@ dialogues.stage.push('예민함은 무대를 망치기도 하지만, 작은 소�
 function pickFanComment(big=false){const pool=[...fanComments,...(big||Math.random()<.18?superFanComments:[])];return pick(pool)}
 function trainingBaseGain(type){let gain=4;const eq=new Set(state.equippedInstruments||[]);if(type==='compose'){if(eq.has('acousticGuitar'))gain+=1;if(eq.has('keyboard'))gain+=2;if(eq.has('audioInterface'))gain+=1}else{if(eq.has('studioMic'))gain+=2;if(eq.has('monitorHeadphones'))gain+=1;if(eq.has('audioInterface'))gain+=1}return Math.min(7,gain)}
 function scaledTrainingGain(type,raw){const v=state.stats[type];let rate=v<40?1:v<60?.8:v<80?.6:v<90?.4:v<95?.25:0;let gain=Math.floor(raw*rate);if(raw>0&&rate>0)gain=Math.max(1,gain);return gain}
+function gainSkill(type,raw,source='general'){
+ if(!['vocal','compose'].includes(type))return 0;
+ const specialSources=new Set(['specialEvent','album','majorStage','endingReward']);
+ const cap=specialSources.has(source)?100:95;
+ const current=Number(state.stats[type]||0);
+ if(current>=cap)return 0;
+ let gain=Math.max(0,Math.floor(Number(raw)||0));
+ if(source==='training')gain=scaledTrainingGain(type,gain);
+ const actual=Math.min(gain,cap-current);
+ if(actual<=0)return 0;
+ stat(type,actual);
+ return actual;
+}
 function trainingAction(type,hpCost){
  if(state.stats[type]>=95)return toast(`${trainingLabel(type)} 95 이상은 특별 이벤트·앨범·대형 무대로만 성장할 수 있습니다.`);
  if(!costHp(hpCost))return;
  const base=trainingBaseGain(type);
  if(Math.random()<.38){if(Math.random()<.5)startMemoryGame(type,base);else startReactionGame(type,base);return}
- const actual=scaledTrainingGain(type,base);if(actual<=0)return toast(`${trainingLabel(type)} 95 이상은 특별 이벤트·앨범·대형 무대로만 성장할 수 있습니다.`);stat(type,actual);state.exp+=8;showDialogue('류현상',type==='vocal'?pickContextual(actionDialogue.vocal):pickContextual(actionDialogue.compose));toast(`${trainingLabel(type)} +${actual}`);advance(1)
+ const actual=gainSkill(type,base,'training');if(actual<=0)return toast(`${trainingLabel(type)} 95 이상은 특별 이벤트·앨범·대형 무대로만 성장할 수 있습니다.`);state.exp+=8;showDialogue('류현상',type==='vocal'?pickContextual(actionDialogue.vocal):pickContextual(actionDialogue.compose));toast(`${trainingLabel(type)} +${actual}`);advance(1)
 }
 function trainingLabel(type){return type==='vocal'?'보컬':'작곡'}
-function finishTrainingResult(type,baseGain,success,reason,successText){const raw=success?Math.round(baseGain*1.5):baseGain;const gain=scaledTrainingGain(type,raw);if(gain>0)stat(type,gain);state.exp+=success?12:8;const fallbackText=reason==='closed'?'훈련 게임을 중간에 닫았다. 미니게임 보너스는 받지 못했지만 기본 훈련 능력치는 획득했다.':'제한 시간 안에 끝내지는 못했지만 기본 훈련 능력치는 획득했다.';showDialogue('류현상',success?successText:fallbackText);toast(`${trainingLabel(type)} +${gain}`);advance(1)}
+function finishTrainingResult(type,baseGain,success,reason,successText){const raw=success?Math.round(baseGain*1.5):baseGain;const gain=gainSkill(type,raw,'training');state.exp+=success?12:8;const fallbackText=reason==='closed'?'훈련 게임을 중간에 닫았다. 미니게임 보너스는 받지 못했지만 기본 훈련 능력치는 획득했다.':'제한 시간 안에 끝내지는 못했지만 기본 훈련 능력치는 획득했다.';showDialogue('류현상',success?successText:fallbackText);toast(`${trainingLabel(type)} +${gain}`);advance(1)}
 function runTrainingCountdown(onStart){let n=3;const body=$('#modalBody');if(!body)return;const overlay=document.createElement('div');overlay.className='training-countdown';overlay.innerHTML=`<strong>${n}</strong><small>준비</small>`;body.appendChild(overlay);const tick=setInterval(()=>{n--;if(n>0){overlay.querySelector('strong').textContent=n;playSfx('tap');return}clearInterval(tick);overlay.querySelector('strong').textContent='START';overlay.querySelector('small').textContent='';setTimeout(()=>{overlay.remove();onStart()},450)},700);return()=>clearInterval(tick)}
 function startMemoryGame(type,baseGain){
  memoryGameActive=true;const symbols=['♪','♫','♬','𝄞','♩','𝄢','♭','♯','𝄐','𝄫'];const cards=[...symbols,...symbols].sort(()=>Math.random()-.5);let first=null,lock=true,matched=0,time=60,timer=null,flipTimer=null,finished=false,countdownCancel=null;
@@ -992,11 +1067,15 @@ function checkProgress(){
  const stalkerFatal=lv>=50&&state.stalker.active&&!state.stalker.resolved&&state.stalker.encounters>=3&&state.stalker.safety<3;
  if(stalkerFatal){offerEnding('스토커 살해 엔딩','세 차례의 위험 신호를 해결하지 못한 채 인지도 레벨 50을 넘겼고, 통제되지 않은 접근이 돌이킬 수 없는 결말로 이어졌다.');return}
  const world=endingProfile();
- if(world[0].startsWith('월드 ')&&!state.endingPrompted[world[0]]){offerEnding(world[0],world[1]);return}
- if(state.day>=365&&!state.endingPrompted.year){state.endingPrompted.year=true;offerEnding(world[0],`1년의 마지막 날이다. ${world[1]} 지금까지의 길을 엔딩으로 남기거나 다음 해를 계속 살아갈 수 있다.`);return}
- if(state.stats.money===0&&state.day>20&&(state.career.peakFame>=2000||state.stats.fame>=1000))offerEnding('재기 엔딩','한때 가능성을 확인했지만 모든 돈을 잃었다. 음악을 포기할지, 장비 하나만 들고 다시 거리로 나갈지 선택해야 한다.')
+ const monthCycle=Math.floor((state.day-1)/30);
+ const worldOfferKey=`world:${world[0]}:${monthCycle}`;
+ if(world[0].startsWith('월드 ')&&!state.endingPrompted[worldOfferKey]){offerEnding(world[0],world[1],false,worldOfferKey);return}
+ const year=Math.floor((state.day-1)/365)+1;
+ const yearOfferKey=`year:${year}`;
+ if(state.day>=365&&!state.endingPrompted[yearOfferKey]){offerEnding(world[0],`${year}년 차의 마지막 날이다. ${world[1]} 지금까지의 길을 엔딩으로 남기거나 다음 해를 계속 살아갈 수 있다.`,false,yearOfferKey);return}
+ if((state.economy?.debt||0)>=1000000&&state.day>20&&(state.career.peakFame>=2000||state.stats.fame>=1000))offerEnding('재기 엔딩','한때 가능성을 확인했지만 큰 채무가 쌓였다. 음악을 포기할지, 장비 하나만 들고 다시 거리로 나갈지 선택해야 한다.')
 }
-function offerEnding(name,text,force=false){if(state.endingPrompted[name]&&!force)return;state.endingPrompted[name]=true;state.pendingEnding={name,text};save(false);displayPendingEnding()}
+function offerEnding(name,text,force=false,offerKey=name){if(state.endingPrompted[offerKey]&&!force)return;state.endingPrompted[offerKey]=true;state.pendingEnding={name,text,offerKey};save(false);displayPendingEnding()}
 function displayPendingEnding(){if(!state.pendingEnding)return;const {name,text}=state.pendingEnding;showDialogue('운명의 선택',text,[['최종 엔딩을 본다',()=>{state.pendingEnding=null;unlockEnding(name);runEndingStory(name,true);return `${name}을 선택했다.`}],['계속 성장한다',()=>{state.pendingEnding=null;save(false);return '아직 끝내지 않는다. 더 높은 무대를 향해 계속 나아가기로 했다.'}]])}
 function unlockEnding(name){if(!state.endings.includes(name)){state.endings.push(name);saveMetaEndings(state.endings);addHistory(`🏁 엔딩 해금 · ${name}`);save(false);toast(`${name} 해금!`)}}
 function showModal(title,html){const modal=$('#modal');if(modal.open)modal.close();$('#modalTitle').textContent=title;$('#modalBody').innerHTML=html;modal.showModal()}
@@ -1011,8 +1090,8 @@ function getLocationDialoguePool(loc){
 function render(){
  $('#dayText').textContent=`${state.day}일차`;$('#timeText').textContent=`${['오전','오후','저녁','밤'][state.time]} · ${weatherLabel()}`;$('#levelText').textContent=fameLevel();$('#rankText').textContent=state.rank;
  const tops=[['♥ 체력','hp'],['♫ 보컬','vocal'],['✍ 작곡','compose'],['★ 인지도','fame']];$('#topStats').innerHTML=tops.map(([n,k])=>`<div class="stat-chip"><small>${n}</small><b>${k==='fame'?`${state.stats.fame.toLocaleString()} · Lv.${fameLevel()}`:state.stats[k].toLocaleString()}</b><div class="bar"><i style="width:${k==='fame'?fameLevel():Math.min(100,state.stats[k])}%"></i></div></div>`).join('');
- $('#resourceStats').innerHTML=[['돈',`${state.stats.money.toLocaleString()}원`],['팬',`${state.stats.fans.toLocaleString()}명`],['외모',state.stats.looks],['스트레스',state.stats.stress],['박칵스',`${state.items.bakcas}개`]].map(x=>`<div class="resource-row"><span>${x[0]}</span><b>${x[1]}</b></div>`).join('');
- $('#mobileResources').innerHTML=[['💰','돈',`${state.stats.money.toLocaleString()}원`],['👥','팬',`${state.stats.fans.toLocaleString()}명`],['✨','외모',state.stats.looks],['☁','스트레스',state.stats.stress],['⚡','박칵스',`${state.items.bakcas}개`]].map(([icon,label,value])=>`<div class="mobile-resource-chip"><span class="mobile-resource-icon">${icon}</span><span class="mobile-resource-label">${label}</span><b>${value}</b></div>`).join('');
+ $('#resourceStats').innerHTML=[['돈',`${state.stats.money.toLocaleString()}원`],['채무',`${(state.economy.debt||0).toLocaleString()}원`],['팬',`${state.stats.fans.toLocaleString()}명`],['외모',state.stats.looks],['스트레스',state.stats.stress],['박칵스',`${state.items.bakcas}개`]].map(x=>`<div class="resource-row"><span>${x[0]}</span><b>${x[1]}</b></div>`).join('');
+ $('#mobileResources').innerHTML=[['💰','돈',`${state.stats.money.toLocaleString()}원`],['💳','채무',`${(state.economy.debt||0).toLocaleString()}원`],['👥','팬',`${state.stats.fans.toLocaleString()}명`],['✨','외모',state.stats.looks],['☁','스트레스',state.stats.stress],['⚡','박칵스',`${state.items.bakcas}개`]].map(([icon,label,value])=>`<div class="mobile-resource-chip"><span class="mobile-resource-icon">${icon}</span><span class="mobile-resource-label">${label}</span><b>${value}</b></div>`).join('');
  $('#scheduleList').innerHTML=`<li>현재: ${locations[state.location].name}</li><li>날씨: ${weatherLabel()} · ${dayType()}</li><li>집: ${housingInfo[state.housing][0]}</li><li>밴드 결속력: ${state.band.bond}</li>${state.manager.hired?`<li>후라보노 관계: ${state.manager.bond}</li>`:'<li>매니저: 미고용</li>'}`;
  $('#missionBox').innerHTML=`<p>팬 3,000명 달성</p><div class="progress"><span style="width:${Math.min(100,state.stats.fans/30)}%"></span></div><p>첫 앨범 발매 ${state.albums.length?'완료':'미완료'}</p><p>라이벌 스토리 ${state.rival.stage}/5</p>`;
  const outfitImages=['outfit-black.png','outfit-white.png','outfit-check.png','outfit-leather.png','outfit-hoodie.png','outfit-stage.png','outfit-mystery.png'];const art=$('#characterArt');if(art){const src=`assets/images/${outfitImages[state.outfit||0]}`;if(!art.src.endsWith(src))art.src=src;}const scene=$('#scene');const specialKey=state.specialScene?.active?state.specialScene.key:null;const specialClassMap={iziViral:' special-izi-viral',waitedMoreViral:' special-waited-more-viral',day30Hair:' special-day30-hair',day60Workout:' special-day60-workout',day90Live:' special-day90-live',day120Chat:' special-day120-chat',day150Birthday:' special-day150-birthday',day180Archive:' special-day180-archive',day210Demo:' special-day210-demo',day240Meme:' special-day240-meme',day300Promise:' special-day300-promise',hiddenGameOst:' special-hidden-game-ost',hiddenRadioDj:' special-hidden-radio-dj',hiddenDingo:' special-hidden-dingo',mysteriousMerchant:' special-mysterious-merchant'};const specialLabelMap={iziViral:'수원역 · 특별 이벤트',waitedMoreViral:'명동 · 특별 이벤트',day30Hair:'자취방 · 30일 특별 이벤트',day60Workout:'자취방 · 60일 특별 이벤트',day90Live:'자취방 · 90일 특별 이벤트',day120Chat:'자취방 · 120일 특별 이벤트',day150Birthday:'생일 파티 · 150일 특별 이벤트',day180Archive:'자취방 · 180일 특별 이벤트',day210Demo:'연습실 · 210일 특별 이벤트',day240Meme:'자취방 · 240일 특별 이벤트',day300Promise:'공연장 · 300일 특별 이벤트',hiddenGameOst:'카페 · 게임 OST 특별 이벤트',hiddenRadioDj:'라디오 스튜디오 · 특별 이벤트',hiddenDingo:'딩고 스튜디오 · 특별 이벤트',mysteriousMerchant:'이름 없는 골목 · 수상한 상인'};const specialClass=specialKey?(specialClassMap[specialKey]||''):'';scene.className=`scene ${locations[state.location].cls} outfit-${state.outfit||0}${specialClass}`;scene.dataset.time=state.time;scene.style.setProperty('--spark-opacity',state.location==='stage'?'.58':state.location==='park'?'.46':'.32');bindScenePointer();$('#gameScreen').classList.toggle('story-lock',!!specialClass);$('#locationLabel').textContent=specialKey?(specialLabelMap[specialKey]||locations[state.location].name):locations[state.location].name;const basePool=getLocationDialoguePool(state.location);const d=state.dialogue||{name:'류현상',text:pick(basePool)};displayDialogue(d.name,d.text);if(state.pendingEnding)setTimeout(displayPendingEnding,0);
@@ -1034,11 +1113,11 @@ function render(){
 }
 function openFanCommunity(){const total=Object.values(state.fanGroups).reduce((a,b)=>a+b,0);showModal('팬 커뮤니티',`<div class="fan-group-grid"><div class="metric-card"><small>일반 팬</small><b>${state.fanGroups.regular.toLocaleString()}명</b></div><div class="metric-card"><small>열혈 팬</small><b>${state.fanGroups.enthusiast.toLocaleString()}명</b></div><div class="metric-card"><small>게이 팬</small><b>${state.fanGroups.gay.toLocaleString()}명</b></div><div class="metric-card"><small>해외 팬</small><b>${state.fanGroups.overseas.toLocaleString()}명</b></div></div><div class="info-card"><b>팬 유형 안내</b><p>팬 유형은 우열이나 능력치가 아니라 팬덤의 다양성을 보여 주는 분류입니다. 게이 팬은 희화화하지 않고 개별 취향과 전문성을 지닌 팬으로 등장합니다.</p><small>분류된 팬 ${total.toLocaleString()}명 / 전체 팬 ${state.stats.fans.toLocaleString()}명</small></div>`)}
 function openSNS(){const canPost=state.day!==state.sns.lastPostDay;showModal('SNS',`<div class="info-card"><b>팔로워·팬 ${state.stats.fans.toLocaleString()}명</b><p>오늘의 짧은 게시물을 올리면 다양한 반응이 발생합니다. 하루에 한 번만 직접 게시할 수 있습니다.</p><button id="snsPost" ${canPost?'':'disabled'}>${canPost?'게시물 올리기':'오늘 게시 완료'}</button></div><div class="card-list">${snsScenarios.slice(0,6).map(x=>`<div class="info-card"><b>${x.title}</b><p>${x.text}</p></div>`).join('')}</div>`);const b=$('#snsPost');if(b)b.onclick=()=>{if(!canPost)return;const ev=pick(snsScenarios);state.sns.lastPostDay=state.day;state.sns.totalPosts++;const before=snapshotStats();stat('fans',ev.fans);stat('fame',ev.fame);stat('stress',ev.stress);addHistory(`📱 SNS 게시 · ${ev.title}`,`sns-post:${state.day}`);closeModal();showDialogue('SNS 반응',`【${ev.title}】\n\n${ev.text}`);const changes=describeStatChanges(before);if(changes)setTimeout(()=>toast(changes),250);advance(1)}}
-function openPhone(type){if(type==='manager')managerEvent();if(type==='band')showBand();if(type==='fan')openFanCommunity();if(type==='sns')openSNS();if(type==='album')openAlbum();if(type==='items')showModal('아이템',`<div class="info-card"><b>박칵스</b><p>보유 ${state.items.bakcas}개 · 오늘 ${state.items.bakcasUsedToday}/2회 사용 · 체력 25/20 회복</p></div>`);if(type==='save')save()}
+function openPhone(type){if(type==='manager')managerEvent();if(type==='band')showBand();if(type==='fan')openFanCommunity();if(type==='sns')openSNS();if(type==='items')showModal('아이템',`<div class="info-card"><b>박칵스</b><p>보유 ${state.items.bakcas}개 · 오늘 ${state.items.bakcasUsedToday}/2회 사용 · 체력 25/20 회복</p></div>`)}
 function showBand(){showModal('밴드 멤버',Object.entries(state.band.members).map(([k,v])=>`<div class="info-card"><b>${k.toUpperCase()}</b><p>${v||'공석'}</p></div>`).join('')+`<p>결속력: ${state.band.bond}</p>`)}
 $('#newGameBtn').onclick=()=>{const collected=loadMetaEndings();state=structuredClone(baseState);state.endings=collected;startPrologue()};
 $('#continueBtn').onclick=()=>{if(!load())return toast('저장된 게임이 없습니다.');$('#titleScreen').classList.remove('active');$('#gameScreen').classList.add('active');render()};
-$('#howBtn').onclick=()=>showModal('게임 설명','<p>류현상을 연습시키고 버스킹 장비를 구입해 팬과 인지도를 늘리세요. 밴드를 결성한 뒤에는 솔로 버스킹만 반복하지 말고 합주와 밴드 공연으로 결속력을 관리해야 합니다. 인지도 Lv.20부터 후라보노를 고용할 수 있으며, 고용하면 방송과 주요 이벤트가 열립니다. 인지도 Lv.31 이상부터는 류현상이 가끔 성공에 취해 꺼드럭대고 후라보노가 제지하는 선택형 스토리가 발생합니다. 날씨·평일·주말·공휴일에 따라 버스킹 성공률과 체력 소모, 장비 고장 확률이 달라집니다. 인지도 100마다 레벨이 오릅니다. 오디션·공연·방송은 7일, 앨범은 30일의 준비 기간이 필요합니다. 월드 엔딩은 밴드·싱어송라이터·솔로 보컬의 세 경로가 있으며, 인지도뿐 아니라 실력·앨범·공연·해외 팬·결속력이 함께 평가됩니다. 인지도 성장에 따라 라이벌 카인 스토리가 이어지며, 휴대전화에서 팬 유형과 SNS를 확인할 수 있습니다. 악기는 최대 3개만 장착할 수 있고, 능력치 40 이상부터는 훈련 성장 속도가 점차 둔화됩니다.</p>');
+$('#howBtn').onclick=()=>showModal('게임 설명','<p>류현상을 연습시키고 버스킹 장비를 구입해 팬과 인지도를 늘리세요. 파트별 조건을 충족해 멤버 오디션을 진행하고 완전체 밴드를 결성한 뒤에는 솔로 버스킹만 반복하지 말고 합주와 밴드 공연으로 결속력을 관리해야 합니다. 인지도 Lv.20부터 후라보노를 고용할 수 있으며, 고용하면 방송과 주요 이벤트가 열립니다. 인지도 Lv.31 이상부터는 류현상이 가끔 성공에 취해 꺼드럭대고 후라보노가 제지하는 선택형 스토리가 발생합니다. 날씨·평일·주말·공휴일에 따라 버스킹 성공률과 체력 소모, 장비 고장 확률이 달라집니다. 인지도 100마다 레벨이 오릅니다. 오디션·공연·방송은 7일, 앨범은 30일의 준비 기간이 필요합니다. 월드 엔딩은 밴드·싱어송라이터·솔로 보컬의 세 경로가 있으며, 인지도뿐 아니라 실력·앨범·공연·해외 팬·결속력이 함께 평가됩니다. 인지도 성장에 따라 라이벌 카인 스토리가 이어지며, 휴대전화에서 팬 유형과 SNS를 확인할 수 있습니다. 악기는 최대 3개만 장착할 수 있고, 능력치 40 이상부터는 훈련 성장 속도가 점차 둔화됩니다.</p>');
 $('#closeModal').onclick=()=>closeModal();$('#modal').addEventListener('cancel',e=>{if(memoryGameActive){e.preventDefault();closeModal()}});$('#audioBtn').onclick=openAudioSettings;$('#menuBtn').onclick=()=>showModal('메뉴','<div class="card-list"><button id="manualSave">수동 저장</button><button id="backTitle">타이틀로 돌아가기</button></div>');
 $('#modal').addEventListener('click',e=>{if(e.target===$('#modal'))closeModal()});
 $$('[data-phone]').forEach(b=>b.onclick=()=>openPhone(b.dataset.phone));
@@ -1085,7 +1164,7 @@ if(installBtn)installBtn.onclick=async()=>{
  }
 };
 refreshInstallUi();
-if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',async()=>{try{const reg=await navigator.serviceWorker.register('service-worker.js?v=31',{updateViaCache:'none'});await reg.update();refreshInstallUi()}catch(err){console.warn('서비스워커 등록 실패',err);refreshInstallUi()}});
+if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',async()=>{try{const reg=await navigator.serviceWorker.register('service-worker.js?v=40.1',{updateViaCache:'none'});await reg.update();refreshInstallUi()}catch(err){console.warn('서비스워커 등록 실패',err);refreshInstallUi()}});
 
 
 /* v36: iOS standalone PWA viewport synchronization */
