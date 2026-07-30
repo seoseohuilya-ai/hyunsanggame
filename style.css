@@ -884,3 +884,34 @@ html,body,#app{
 
 /* v47 game guide */
 .game-guide{display:grid;gap:16px}.guide-hero{padding:18px;border:1px solid #3c4f6d;border-radius:16px;background:linear-gradient(135deg,#14233a,#11192a)}.guide-hero h3{margin:6px 0 8px;font-size:1.25rem}.guide-hero p{margin:0;color:#d0d9e7;line-height:1.7}.guide-kicker{color:#8db5ff;font-size:.78rem;letter-spacing:.08em}.guide-tabs{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px}.guide-tabs button{white-space:nowrap;padding:.58rem .78rem;border-radius:999px;background:#111a2a}.guide-tabs button.active{background:linear-gradient(135deg,#477de8,#7356dd);border-color:transparent}.guide-page{display:none;gap:10px}.guide-page.active{display:grid}.guide-step,.guide-grid article,.guide-table>div{background:#141d2d;border:1px solid #33425b;border-radius:14px;padding:14px}.guide-step b,.guide-grid b,.guide-table b{display:block;margin-bottom:5px;color:#e8f0ff}.guide-step p,.guide-grid p{margin:0;color:#c9d3e2;line-height:1.65}.guide-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.guide-table{display:grid;gap:8px}.guide-table>div{display:grid;grid-template-columns:110px 1fr;gap:12px;align-items:start}.guide-table span{color:#c9d3e2;line-height:1.55}.guide-callout{border-left:4px solid #6f9cff;background:#152239;border-radius:12px;padding:14px}.guide-callout.warning{border-left-color:#e0a84f}.guide-callout p{margin:5px 0 0;color:#d4deec;line-height:1.6}.guide-tip-list{display:grid;gap:9px;margin:0;padding:0;list-style:none;counter-reset:guide-tip}.guide-tip-list li{counter-increment:guide-tip;display:grid;grid-template-columns:34px 1fr;gap:10px;background:#141d2d;border:1px solid #33425b;border-radius:14px;padding:13px}.guide-tip-list li:before{content:counter(guide-tip);width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#263957;color:#dbe8ff;font-weight:700;grid-row:1/3}.guide-tip-list b,.guide-tip-list span{grid-column:2}.guide-tip-list span{color:#c9d3e2;line-height:1.55}@media(max-width:560px){.guide-grid{grid-template-columns:1fr}.guide-table>div{grid-template-columns:1fr;gap:3px}.guide-hero{padding:14px}.guide-hero h3{font-size:1.08rem}}
+
+
+/* v50: notifications stay above modal screens */
+#modal{isolation:isolate}
+#modal .modal-toast{
+  position:absolute!important;
+  top:50%!important;
+  left:50%!important;
+  right:auto!important;
+  bottom:auto!important;
+  z-index:2147483647!important;
+  width:min(440px,calc(100% - 28px))!important;
+  min-width:0!important;
+  max-width:calc(100% - 28px)!important;
+  transform:translate(-50%,-50%) scale(.92)!important;
+  pointer-events:none!important;
+  box-shadow:0 22px 70px rgba(0,0,0,.78),0 0 0 9999px rgba(0,0,0,.30)!important;
+}
+#modal .modal-toast.show{
+  transform:translate(-50%,-50%) scale(1)!important;
+}
+@media(max-width:720px){
+  #modal .modal-toast{
+    top:50%!important;
+    width:calc(100% - 20px)!important;
+    max-width:calc(100% - 20px)!important;
+  }
+}
+
+
+.concert-dodge-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:12px}.concert-dodge-head>div:first-child{display:grid;gap:4px}.concert-dodge-head small{color:var(--muted)}.concert-dodge-score{display:grid;gap:4px;text-align:right;white-space:nowrap}.concert-dodge-score strong{font-size:1.15rem}.concert-dodge-arena{position:relative;height:420px;overflow:hidden;border:1px solid #3b4a64;border-radius:18px;background:linear-gradient(180deg,#11213a 0%,#0a1120 54%,#07101b 100%);touch-action:none}.concert-dodge-grid{position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 24%,rgba(255,255,255,.045) 24% 25%,transparent 25% 49.5%,rgba(255,255,255,.045) 49.5% 50.5%,transparent 50.5% 74%,rgba(255,255,255,.045) 74% 75%,transparent 75% 100%);opacity:.55;pointer-events:none}.concert-dodge-player{position:absolute;left:50%;bottom:14px;width:min(104px,22vw);transform:translateX(-50%);image-rendering:pixelated;filter:drop-shadow(0 10px 14px rgba(0,0,0,.42));transition:left .08s linear}.concert-dodge-player.hit{filter:drop-shadow(0 0 12px rgba(255,120,120,.95)) brightness(1.18)}.concert-falling-note{position:absolute;top:-12%;transform:translateX(-50%);font-weight:900;line-height:1;color:#dfe9ff;text-shadow:0 0 14px rgba(141,181,255,.88),0 0 28px rgba(120,160,255,.4);pointer-events:none}.concert-dodge-arena>p{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);pointer-events:none;font-size:1rem;padding:1rem;text-align:center}@media(max-width:420px){.concert-dodge-head{display:grid;gap:8px}.concert-dodge-score{text-align:left;display:flex;justify-content:space-between}.concert-dodge-arena{height:360px}.concert-dodge-player{width:min(96px,28vw)}}
