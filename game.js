@@ -14,7 +14,8 @@ const actions={
   ['식사','체력 +12~24 · 돈 -8,000원 · 시간 미소모','meal'],
   ['옷장','의상 변경 · 스타일 관리 시 체력 -4·돈 -80,000원·외모 +2','wardrobe'],
   ['이사','돈 -1,000만~1억원 · 집 등급 상승 · 시간 +1','moveHome'],
-  ['가계부·채무','채무 상환 시 보유금 감소 · 시간 미소모','finance']
+  ['가계부·채무','채무 상환 시 보유금 감소 · 시간 미소모','finance'],
+  ['디지몬 카드 보관함','보유 카드 확인·등급별 판매 · 시간 미소모','digimonInventory']
  ],
  store:[
   ['편의점 알바','체력 -22~36 · 스트레스 +9~14 · 보컬 -2 · 작곡 -2 · 돈 +45,000원 · 시간 +1','work'],
@@ -23,7 +24,7 @@ const actions={
   ['삼각김밥','체력 +8 · 돈 -2,500원 · 스트레스 +1 · 시간 +1','snack'],
   ['매장 홍보 방송','체력 -8 · 스트레스 +4 · 팬 +8~20 · 인지도 +2 · 시간 +1','storePromo'],
   ['단골 손님 응대','체력 -6 · 스트레스 +2 · 팬 +2~6 · 돈 +3,000~8,000원 · 시간 +1','customerPractice'],
-  ['디지몬 카드','1장 1,500원 · 카드 보유·판매 가능 · 시간 +1','digimonCard'],
+  ['디지몬 카드','1장·10장 구매 · 10장도 시간 +1','digimonCard'],
   ['복권','번호 6개 선택 · 1장 1,000원 · 7일 뒤 추첨 · 시간 +1','lottery']
  ],
  practice:[
@@ -840,8 +841,8 @@ function maybeStoryEvent(source='action'){
  if(state.skipNextStory){state.skipNextStory=false;return false}
  if(state.pendingEnding||choiceLock||state.specialScene?.active||$('#modal')?.open)return false;
  if(state.narrative?.lastMajorEventDay===state.day)return false;
- if(maybeTwentyDayEpisode())return true;
  if(maybeFixedDaySpecialEvent()){markMajorNarrativeEvent();return true}
+ if(maybeTwentyDayEpisode())return true;
  if(maybeCareerMilestoneEvent()){markMajorNarrativeEvent();return true}
  if(maybeMysteriousMerchantEvent()){markMajorNarrativeEvent();return true}
  if(maybeHiddenRandomSpecialEvent()){markMajorNarrativeEvent();return true}
@@ -878,26 +879,48 @@ function bindDigimonInventory(){
  $$('[data-sell-card]').forEach(b=>b.onclick=()=>sellDigimonCard(b.dataset.sellCard,1));
  $$('[data-sell-card-all]').forEach(b=>b.onclick=()=>sellDigimonCard(b.dataset.sellCardAll,state.gambling.cards[b.dataset.sellCardAll]||0))
 }
+function openDigimonCardHub(){
+ showModal('디지몬 카드 구매',`<div class="info-card"><b>디지몬 카드 코너</b><p>1장은 <strong>1,500원</strong>, 10장은 <strong>15,000원</strong>입니다.</p><p>10장을 연속으로 뽑아도 1장 뽑기와 동일하게 <strong>시간 1칸</strong>만 지나갑니다.</p><small>확률: C 1/3 · U 1/3 · R 1/6 · SR 1/36 · SEC 1/1,728 · SP 1/3,456<br>카드 보관함과 판매는 자취방에서 이용할 수 있습니다.</small></div><div class="result-actions card-purchase-actions"><button id="digimonBuyOne" class="primary">1장 뽑기<br><small>1,500원</small></button><button id="digimonBuyTen" class="primary">10장 연속 뽑기<br><small>15,000원</small></button></div>`);
+ const one=$('#digimonBuyOne'),ten=$('#digimonBuyTen');
+ if(one)one.onclick=()=>{closeModal();drawDigimonCards(1)};
+ if(ten)ten.onclick=()=>{closeModal();drawDigimonCards(10)};
+}
 function openDigimonInventory(){showModal('디지몬 카드 보관함',digimonInventoryHtml());bindDigimonInventory()}
 function sellDigimonCard(grade,count){
  const owned=state.gambling.cards[grade]||0;count=Math.max(0,Math.min(owned,Math.floor(Number(count)||0)));if(!count)return;
  const amount=digimonCardGrades[grade].value*count;state.gambling.cards[grade]-=count;stat('money',amount);addHistory(`💳 디지몬 카드 판매 · ${grade} ${count}장, ${amount.toLocaleString()}원`,`card-sell:${state.day}:${Date.now()}`);playSfx('coin');save(false);render();openDigimonInventory();toast(`${grade} ${count}장 판매 · +${amount.toLocaleString()}원`)
 }
-function showDigimonCardResult(grade){
- const info=digimonCardGrades[grade];
- showModal(`디지몬 카드 결과 · ${grade}`,`<div class="digimon-result grade-${grade.toLowerCase()}"><div class="card-rarity">${grade}</div><h3>${info.label} 카드 획득!</h3><p>판매가 <strong>${info.value.toLocaleString()}원</strong> · 현재 ${grade} 보유 ${state.gambling.cards[grade]}장</p><div class="result-actions"><button id="cardResultInventory">보관함 보기</button><button id="cardResultConfirm" class="primary">확인</button></div></div>`);
- if(grade==='SP'){launchCardFireworks();playSfx('success')}
- $('#cardResultInventory').onclick=()=>openDigimonInventory();
- $('#cardResultConfirm').onclick=()=>closeModal()
+function showDigimonCardResult(grades){
+ const counts={C:0,U:0,R:0,SR:0,SEC:0,SP:0};
+ grades.forEach(grade=>counts[grade]++);
+ if(grades.length===1){
+  const grade=grades[0],info=digimonCardGrades[grade];
+  showModal(`디지몬 카드 결과 · ${grade}`,`<div class="digimon-result grade-${grade.toLowerCase()}"><div class="card-rarity">${grade}</div><h3>${info.label} 카드 획득!</h3><p>판매가 <strong>${info.value.toLocaleString()}원</strong> · 현재 ${grade} 보유 ${state.gambling.cards[grade]}장</p><div class="result-actions"><button id="cardResultConfirm" class="primary wide">확인</button></div></div>`);
+ }else{
+  const order=['SP','SEC','SR','R','U','C'];
+  const totalValue=order.reduce((sum,grade)=>sum+counts[grade]*digimonCardGrades[grade].value,0);
+  showModal('디지몬 카드 10장 결과',`<div class="digimon-result ten-card-result"><h3>10장 연속 뽑기 완료!</h3><div class="ten-card-grid">${order.filter(grade=>counts[grade]>0).map(grade=>`<div class="ten-card-item grade-${grade.toLowerCase()}"><b>${grade}</b><span>${counts[grade]}장</span><small>${(counts[grade]*digimonCardGrades[grade].value).toLocaleString()}원</small></div>`).join('')}</div><p>획득 카드 판매가 합계 <strong>${totalValue.toLocaleString()}원</strong></p><small>획득한 카드는 모두 보관함에 저장되었습니다.</small><div class="result-actions"><button id="cardResultConfirm" class="primary wide">확인</button></div></div>`);
+ }
+ if(counts.SP>0){launchCardFireworks();playSfx('success')}
+ const confirm=$('#cardResultConfirm');if(confirm)confirm.onclick=()=>closeModal();
 }
-function drawDigimonCard(){
- if(state.stats.money<1500){pendingLocationActionStress=false;return toast('디지몬 카드 1장을 뽑으려면 1,500원이 필요합니다.')}
- stat('money',-1500);const grade=rollDigimonCard();state.gambling.cards[grade]++;state.gambling.totalCardDraws++;
- showDialogue('류현상','오늘은 어떤 카드가 나올까... 두근 두근');
- addHistory(`🃏 디지몬 카드 뽑기 · ${grade} 등급 획득`,`card-draw:${state.day}:${state.gambling.totalCardDraws}`);
+function drawDigimonCards(count=1){
+ count=count===10?10:1;
+ const price=1500*count;
+ if(state.stats.money<price){pendingLocationActionStress=false;return toast(`디지몬 카드 ${count}장을 뽑으려면 ${price.toLocaleString()}원이 필요합니다.`)}
+ stat('money',-price);
+ const grades=[];
+ for(let i=0;i<count;i++){
+  const grade=rollDigimonCard();grades.push(grade);state.gambling.cards[grade]++;
+ }
+ state.gambling.totalCardDraws+=count;
+ showDialogue('류현상',count===10?'오늘은 열 장이다. 한 장쯤은 좋은 게 나오겠지... 두근 두근.':'오늘은 어떤 카드가 나올까... 두근 두근');
+ const summary=Object.entries(grades.reduce((acc,g)=>(acc[g]=(acc[g]||0)+1,acc),{})).map(([g,n])=>`${g} ${n}장`).join(' · ');
+ addHistory(`🃏 디지몬 카드 ${count}장 뽑기 · ${summary}`,`card-draw:${state.day}:${state.gambling.totalCardDraws}`);
  cardRevealPending=true;advance(1,'gambling');
- setTimeout(()=>{cardRevealPending=false;showDigimonCardResult(grade)},650)
+ setTimeout(()=>{cardRevealPending=false;showDigimonCardResult(grades)},count===10?850:650)
 }
+function drawDigimonCard(){drawDigimonCards(1)}
 function lotteryNumberButtons(selected=[]){const set=new Set(selected);return Array.from({length:45},(_,i)=>{const n=i+1;return `<button class="lottery-number ${set.has(n)?'selected':''}" data-lotto-number="${n}">${n}</button>`}).join('')}
 function openLottery(){
  let selected=[];
@@ -918,7 +941,7 @@ function maybeLotteryResult(){
  const results=due.map(ticket=>{const draw=draws.get(ticket.drawDay),winning=draw.winning,bonus=draw.bonus,matches=ticket.numbers.filter(n=>winning.includes(n)).length,hasBonus=ticket.numbers.includes(bonus),prize=lotteryPrize(matches,hasBonus);ticket.status='drawn';if(prize.money)stat('money',prize.money);const result={ticketId:ticket.id,drawDay:ticket.drawDay,announcedDay:state.day,numbers:ticket.numbers,winning,bonus,matches,hasBonus,rank:prize.rank,money:prize.money};state.gambling.lotteryResults.push(result);addHistory(`🎰 ${ticket.drawDay}일차 복권 결과 · ${prize.rank}${prize.money?` ${prize.money.toLocaleString()}원`:''}`,`lottery-result:${ticket.id}`);return result});
  state.gambling.lotteryResults=state.gambling.lotteryResults.slice(-20);save(false);render();const total=results.reduce((a,r)=>a+r.money,0);showModal('복권 추첨 결과',`<div class="card-list">${results.map(r=>`<div class="lottery-result-card ${r.money?'winner':''}"><b>${r.drawDay}일차 추첨 · ${r.rank}${r.money?` · +${r.money.toLocaleString()}원`:''}</b><p>내 번호: ${r.numbers.join(', ')}</p><p>당첨 번호: ${r.winning.join(', ')} + 보너스 ${r.bonus}</p><small>일치 ${r.matches}개${r.hasBonus?' · 보너스 일치':''}</small></div>`).join('')}</div><button id="lotteryResultConfirm" class="primary wide">확인</button>`);$('#lotteryResultConfirm').onclick=()=>closeModal();if(total>0)playSfx('success');return true
 }
-function openShopHub(){showModal('상점',`<div class="shop-hub"><button id="openGearShop" class="info-card"><b>🎤 장비·악기 상점</b><small>마이크, 음향장비, 악기 구매와 장착</small></button><button id="openCardInventory" class="info-card"><b>🃏 디지몬 카드 보관함</b><small>보유 카드 확인과 등급별 판매</small></button></div>`);$('#openGearShop').onclick=openGear;$('#openCardInventory').onclick=openDigimonInventory}
+function openShopHub(){showModal('상점',`<div class="shop-hub single-shop"><button id="openGearShop" class="info-card"><b>🎤 장비·악기 상점</b><small>마이크, 음향장비, 악기 구매와 장착</small></button></div>`);$('#openGearShop').onclick=openGear}
 function openFinance(){
  const debt=Math.max(0,state.economy?.debt||0);
  if(debt<=0)return showModal('가계부·채무','<p>현재 채무가 없습니다. 월 고정비와 다음 달 지출을 확인하며 현금을 관리하세요.</p>');
@@ -946,6 +969,7 @@ function useBakcas(fromItemMenu=false){
  return true
 }
 function doAction(key){
+ if(state.specialScene?.active)return toast('진행 중인 특별 이벤트를 먼저 마쳐 주세요.');
  const actionResultBefore=snapshotActionResult();
  const s=state.stats;
  const f={
@@ -961,14 +985,39 @@ function doAction(key){
  buyBakcas:()=>{if(s.money<15000)return toast('돈이 부족합니다.');stat('money',-15000);state.items.bakcas++;if(pendingLocationActionStress){stat('stress',1);pendingLocationActionStress=false}showDialogue('류현상',actionStory('bakcas','박칵스 하나를 가방에 넣었다. 오늘은 조금 더 버틸 수 있겠다.'));toast('박칵스 1개를 샀습니다. · 스트레스 +1');save(false);render()},
  snack:()=>{if(s.hp>=100)return toast('체력이 이미 최대입니다.');if(s.money<2500)return toast('돈이 부족합니다.');stat('money',-2500);stat('hp',8);showDialogue('류현상',pickActionDialogue('snack'));advance(1)},
  storePromo:()=>{if(state.storeDaily.promoDay===state.day)return toast('매장 홍보 방송은 하루에 한 번만 할 수 있습니다.');if(!costHp(8))return;state.storeDaily.promoDay=state.day;const fanGain=8+Math.floor(Math.random()*13);stat('fans',fanGain);stat('fame',2);stat('stress',3);showDialogue('류현상',actionStory('work',`점장의 허락을 받아 매장 안내 방송 끝에 오늘의 버스킹 일정을 짧게 홍보했다. 무심한 척했지만 목소리를 알아본 손님들이 휴대전화를 꺼냈다. 팬 ${fanGain}명이 늘었다.`));toast(`팬 +${fanGain} / 인지도 +2`);advance(1)},
- digimonCard:()=>drawDigimonCard(),lottery:()=>openLottery(),
+ digimonCard:()=>openDigimonCardHub(),digimonInventory:()=>openDigimonInventory(),lottery:()=>openLottery(),
  customerPractice:()=>{if(state.storeDaily.customerDay===state.day)return toast('단골 손님 응대는 하루에 한 번만 할 수 있습니다.');if(!costHp(6))return;state.storeDaily.customerDay=state.day;const tips=3000+Math.floor(Math.random()*5001);const fanGain=2+Math.floor(Math.random()*5);stat('money',tips);stat('fans',fanGain);stat('stress',1);showDialogue('류현상',actionStory('work',`자주 오던 손님의 부탁을 차분히 해결했다. 손님은 고맙다며 작은 팁을 남기고 버스킹 일정도 물었다. 팁 ${tips.toLocaleString()}원, 팬 ${fanGain}명이 늘었다.`));advance(1)},
  gear:()=>openGear(),vocal:()=>trainingAction('vocal',12),
  rehearse:()=>{if(!state.band.formed)return toast('먼저 밴드를 결성해야 합니다.');if(!costHp(18))return;state.band.bond=clamp(state.band.bond+12);state.soloStreak=0;const gain=gainSkill('vocal',2,'rehearse');showDialogue('류현상',`${pickActionDialogue('rehearse')}${gain===0?' 보컬은 일반 성장 한계인 95에 도달해 더 오르지 않았다.':''}`);if(gain>0)toast(`보컬 +${gain}`);advance(1)},
  recruit:()=>recruit(),arrange:()=>{if(!state.band.formed)return toast('밴드가 필요합니다.');if(!costHp(15))return;markDailyPractice('compose');const gain=gainSkill('compose',2,'arrange');state.band.bond=clamp(state.band.bond+5);showDialogue('류현상',actionStory('rehearse',`각 악기의 빈자리를 줄이자 곡이 훨씬 선명해졌다.${gain===0?' 작곡은 일반 성장 한계인 95에 도달해 더 오르지 않았다.':''}`));if(gain>0)toast(`작곡 +${gain}`);advance(1)},
  album:()=>openAlbum(),busking:()=>busking(false),bandBusking:()=>busking(true),walk:()=>{stat('stress',-15);showDialogue('류현상',pickActionDialogue('walk'));advance(1)},flyerPromo:()=>{if(state.storeDaily.flyerDay===state.day)return toast('공연 전단 홍보는 하루에 한 번만 할 수 있습니다.');if(state.stats.money<20000)return toast('전단 제작비 2만원이 필요합니다.');if(!costHp(8))return;state.storeDaily.flyerDay=state.day;stat('money',-20000);const fanGain=8+Math.floor(Math.random()*8);stat('fans',fanGain);stat('fame',1);showDialogue('류현상',actionStory('busking',`공원 주변에 다음 버스킹 일정을 알리는 전단을 나눠 줬다. 팬 ${fanGain}명이 새로 관심을 보였다.`));advance(1)},audienceResearch:()=>{if(state.preparation?.buskingInsight)return toast('이미 다음 버스킹을 위한 관객 조사를 마쳤습니다.');if(!costHp(6))return;stat('stress',-3);state.preparation.buskingInsight=true;state.preparation.buskingInsightDay=state.day;showDialogue('류현상',actionStory('busking','공원 관객이 멈춰 서는 곡과 시간대를 살폈다. 다음 버스킹은 성공률과 팬 증가량이 상승한다.'));advance(1)},observe:()=>{if(state.storeDaily.observeDay===state.day)return toast('라이벌 관찰은 하루에 한 번만 할 수 있습니다.');if(state.stats.vocal>=95)return toast('보컬 95 이상은 특별 이벤트·앨범·대형 무대로만 성장할 수 있습니다.');if(!costHp(6))return;state.storeDaily.observeDay=state.day;const gain=gainSkill('vocal',1,'observe');stat('stress',1);showDialogue('류현상',pickActionDialogue('observe'));if(gain>0)toast(`보컬 +${gain}`);advance(1)},repair:()=>{if(!state.equipment.mic&&!state.equipment.amp)return toast('먼저 마이크나 음향장비를 구입해야 합니다.');const micNeeds=state.equipment.mic&&state.equipmentDurability.mic<equipmentMaxDurability('mic');const ampNeeds=state.equipment.amp&&state.equipmentDurability.amp<equipmentMaxDurability('amp');if(!micNeeds&&!ampNeeds){const status=`마이크 ${equipmentStatusText('mic')} · 음향장비 ${equipmentStatusText('amp')}`;showDialogue('장비 점검',`마이크와 음향장비 내구도가 이미 최대다. ${status}. 보호 케이스는 50회 소모품이라 점검으로 회복되지 않는다.`);toast('장비 내구도가 이미 최대입니다.');pendingLocationActionStress=false;save(false);render();return}if(s.money<50000)return toast('장비 점검비 50,000원이 필요합니다.');stat('money',-50000);if(state.equipment.mic)state.equipmentDurability.mic=equipmentMaxDurability('mic');if(state.equipment.amp)state.equipmentDurability.amp=equipmentMaxDurability('amp');state.equipmentDamage={mic:false,amp:false};const status=`마이크 ${equipmentStatusText('mic')} · 음향장비 ${equipmentStatusText('amp')}`;showDialogue('류현상',actionStory('rehearse',`장비 점검으로 마이크와 음향장비의 내구도를 전부 회복했다. ${status}. 보호 케이스는 소모품이라 회복되지 않는다.`));toast('50,000원으로 장비 내구도를 모두 회복했습니다.');advance(1)},
  stageRehearsal:()=>stageRehearsal(),audition:()=>audition(),concert:()=>concert(),broadcast:()=>broadcast(),fanmeeting:()=>fanmeeting(),national:()=>national()
- };pendingLocationActionStress=['store','practice','stage'].includes(state.location)&&!['wardrobe','gear','moveHome','finance','national','digimonCard','lottery'].includes(key);if(key!=='rest')state.restStreak=0;state.lastAction=key;if(key!=='wardrobe'&&key!=='gear'&&key!=='album'&&key!=='manager')pulseScene(key);const soundMap={stockWork:'coin',finance:'coin',flyerPromo:'tap',audienceResearch:'tap',stageRehearsal:'busking',work:'coin',buyBakcas:'coin',snack:'drink',meal:'drink',storePromo:'tap',customerPractice:'tap',digimonCard:'coin',lottery:'coin',bakcas:'drink',busking:'busking',bandBusking:'busking',concert:'busking',audition:'busking',repair:'coin'};playSfx(soundMap[key]||'tap');f[key]?.();scheduleActionResultNotice(actionResultBefore);
+ };pendingLocationActionStress=['store','practice','stage'].includes(state.location)&&!['wardrobe','gear','moveHome','finance','national','digimonCard','lottery'].includes(key);if(key!=='rest')state.restStreak=0;state.lastAction=key;if(!['wardrobe','gear','album','manager','digimonInventory'].includes(key))pulseScene(key);const soundMap={stockWork:'coin',finance:'coin',flyerPromo:'tap',audienceResearch:'tap',stageRehearsal:'busking',work:'coin',buyBakcas:'coin',snack:'drink',meal:'drink',storePromo:'tap',customerPractice:'tap',digimonCard:'coin',lottery:'coin',bakcas:'drink',busking:'busking',bandBusking:'busking',concert:'busking',audition:'busking',repair:'coin'};playSfx(soundMap[key]||'tap');f[key]?.();scheduleActionResultNotice(actionResultBefore);
+}
+const specialSceneImageMap={
+ iziViral:'assets/images/izi-suwon-viral.jpg',waitedMoreViral:'assets/images/waited-more-myeongdong-viral.jpg',
+ day30Hair:'assets/images/special-day30-hair.jpg',day60Workout:'assets/images/special-day60-workout.jpg',day90Live:'assets/images/special-day90-live.jpg',day120Chat:'assets/images/special-day120-kakaotalk.jpg',day150Birthday:'assets/images/special-day150-birthday.jpg',
+ day180Archive:'assets/images/special-day180-user.png',day210Demo:'assets/images/special-day210-user.png',day240Meme:'assets/images/special-day240-user.png',day300Promise:'assets/images/special-day300-user.png',
+ hiddenGameOst:'assets/images/hidden-game-ost.jpg',hiddenRadioDj:'assets/images/hidden-radio-dj.png',hiddenDingo:'assets/images/hidden-dingo-rising.png',mysteriousMerchant:'assets/images/mysterious-merchant.png'
+};
+function clearTransientSceneEffects(){
+ clearTimeout(motionTimer);clearTimeout(burstTimer);
+ const scene=$('#scene'),badge=$('#eventBadge'),burst=$('#actionBurst'),notes=$('#musicNotes'),lights=$('#audienceLights'),area=$('#choiceArea');
+ if(scene)scene.className=scene.className.replace(/\bmotion-[^\s]+/g,'').replace(/\bcharacter-switch\b/g,'').trim();
+ if(badge)badge.classList.add('hidden');
+ if(burst){burst.classList.remove('show');burst.textContent=''}
+ if(notes)notes.innerHTML='';if(lights)lights.innerHTML='';
+ if(area){area.innerHTML='';area.classList.add('hidden')}
+ setChoiceLock(false);
+}
+function beginSpecialScene(key){
+ clearTransientSceneEffects();
+ state.specialScene={active:true,key};
+ state.dialogue=null;
+}
+function endSpecialScene(){
+ state.specialScene={active:false,key:null};
+ clearTransientSceneEffects();
 }
 function startIziViralStory(hpCost){
  const scenes=[
@@ -981,7 +1030,7 @@ function startIziViralStory(hpCost){
   {name:'내레이션',text:'영상은 며칠 동안 계속 퍼졌다. 사람들은 류현상을 ‘응급실 버스킹 가수’라고 부르기 시작했고, 다음 버스킹 장소에는 이전보다 훨씬 많은 관객이 모였다.\n\n한 곡의 커버 영상은 류현상의 이름을 처음으로 대중의 알고리즘 위에 올려놓았다. 그러나 그는 영상 속 마지막 고음을 다시 들으며 조용히 중얼거렸다.\n\n“다음에는 내 노래로 저 숫자를 만들 거야.”'}
  ];
  let page=0;
- state.specialScene={active:true,key:'iziViral'};
+ beginSpecialScene('iziViral');
  const draw=()=>{
   const scene=scenes[page];
   state.dialogue={name:scene.name,text:scene.text};
@@ -997,7 +1046,7 @@ function startIziViralStory(hpCost){
    stat('fans',1500);stat('fame',350);stat('stress',3);
    state.specialEvents.iziViral=true;state.performanceCount++;
    const gearNotice=consumeBuskingEquipment();
-   state.specialScene={active:false,key:null};
+   endSpecialScene();
    addHistory('🔥 수원역 특별 이벤트 · 응급실 커버 영상 바이럴, 인스타그램 팔로워 15,000명 증가','special:izi');
    state.dialogue={name:state.manager.hired?'후라보노':'류현상',text:(state.manager.hired?'영상 하나로 팔로워 1만 5천 명이 늘었어요. 지금부터가 더 중요합니다. 다음에는 형의 노래로 사람들을 멈춰 세워요.':'팔로워가 1만 5천 명이나 늘었다. 기쁘지만, 다음에는 내 노래로 사람들을 멈춰 세우고 싶다.')+gearNotice};
    state.skipNextStory=true;
@@ -1018,7 +1067,7 @@ function maybeStartIziViralEvent(band,hpCost){
  return true;
 }
 function startWaitedMoreViralStory(){
- state.specialScene={active:true,key:'waitedMoreViral'};
+ beginSpecialScene('waitedMoreViral');
  const before={...state.stats};
  const scenes=[
   {name:'나레이션',text:'명동 거리는 늦은 오후의 열기로 가득했다. 유동 인구가 많은 사거리 앞에서 류현상은 마이크 높이를 조절하며 숨을 골랐다. 평소보다 사람이 많았다. 웅성거림 사이로 누군가 “저 사람 공원에서 노래하던 분 아니야?” 하고 속삭였다.'},
@@ -1045,7 +1094,7 @@ function startWaitedMoreViralStory(){
    stat('fans',3000);stat('fame',555);stat('stress',4);
    state.specialEvents.waitedMoreViral=true;state.performanceCount++;
    const gearNotice=consumeBuskingEquipment();
-   state.specialScene={active:false,key:null};
+   endSpecialScene();
    addHistory('🔥 명동 특별 이벤트 · 기다린만큼, 더 커버 555만 조회, 인스타그램 팔로워 30,000명 증가','special:waitedMore');
    state.dialogue={name:state.manager.hired?'후라보노':'류현상',text:(state.manager.hired?'명동 버스킹 영상 조회수가 555만이에요. 팔로워도 3만이나 늘었고요. 형, 이제 다들 형 이름을 그냥 스쳐 지나가지 않을 거예요.':'명동 버스킹 영상 조회수가 555만을 찍었다. 팔로워도 3만이 늘었다. 어쩌면 오늘의 노래가, 내 이름을 더 멀리 데려다줄지도 모른다.')+gearNotice};
    state.skipNextStory=true;
@@ -1066,12 +1115,12 @@ function maybeStartWaitedMoreViralEvent(band,hpCost){
 }
 const MYSTERY_OUTFIT_PRICE=44444444;
 function finishMysteriousMerchantEvent(message){
- state.specialScene={active:false,key:null};
+ endSpecialScene();
  state.dialogue={name:'류현상',text:message};
  setChoiceLock(false);save(false);render();
 }
 function runMysteriousMerchantEvent(){
- state.specialScene={active:true,key:'mysteriousMerchant'};
+ beginSpecialScene('mysteriousMerchant');
  const scenes=[
   {name:'나레이션',text:'해가 완전히 저문 뒤였다. 류현상이 다음 일정을 위해 골목을 지나던 순간, 분명 조금 전까지 비어 있던 길 한가운데에 낯선 상인이 서 있었다. 넓은 삿갓과 여러 겹의 검은 로프가 얼굴을 전부 가리고 있었고, 등에 멘 커다란 보따리에서는 금속이 맞부딪히는 듯한 희미한 소리가 들렸다.'},
   {name:'이름 모를 상인',text:'“자네… 이거 하나 사지 않겠나?” 상인은 인사도, 자기소개도 없이 낮게 말했다. 류현상이 대답하기도 전에 그는 보따리 깊숙한 곳으로 손을 넣었다. 이상하게도 보따리 안쪽에서는 밤의 골목과 어울리지 않는 눈부신 빛이 새어 나왔다.'},
@@ -1168,9 +1217,9 @@ const hiddenRandomSpecialEvents=[
  ]}
 ];
 function runHiddenRandomSpecialEvent(def){
- state.specialScene={active:true,key:def.sceneKey};
+ beginSpecialScene(def.sceneKey);
  const before=snapshotStats();let page=0;const area=$('#choiceArea');
- const draw=()=>{const scene=def.scenes[page];state.dialogue={name:scene.name,text:scene.text};render();area.innerHTML='';const prev=document.createElement('button');prev.textContent='이전 장면';prev.disabled=page===0;const next=document.createElement('button');next.textContent=page===def.scenes.length-1?'특별 스토리 마치기':'다음 장면';area.append(prev,next);area.classList.remove('hidden');prev.onclick=()=>{if(page>0){page--;draw()}};next.onclick=()=>{if(page<def.scenes.length-1){page++;draw();return}def.reward();state.specialEvents[def.key]=true;state.specialScene={active:false,key:null};addHistory(def.history,`hidden:${def.key}`);state.dialogue={name:'나레이션',text:`숨겨진 특별 이벤트 「${def.title}」가 끝났다.`};playSfx('success');save(false);render();const changes=describeStatChanges(before);if(changes)setTimeout(()=>toast(changes),280)}};playSfx('event');draw();
+ const draw=()=>{const scene=def.scenes[page];state.dialogue={name:scene.name,text:scene.text};render();area.innerHTML='';const prev=document.createElement('button');prev.textContent='이전 장면';prev.disabled=page===0;const next=document.createElement('button');next.textContent=page===def.scenes.length-1?'특별 스토리 마치기':'다음 장면';area.append(prev,next);area.classList.remove('hidden');prev.onclick=()=>{if(page>0){page--;draw()}};next.onclick=()=>{if(page<def.scenes.length-1){page++;draw();return}def.reward();state.specialEvents[def.key]=true;endSpecialScene();addHistory(def.history,`hidden:${def.key}`);state.dialogue={name:'나레이션',text:`숨겨진 특별 이벤트 「${def.title}」가 끝났다.`};playSfx('success');save(false);render();const changes=describeStatChanges(before);if(changes)setTimeout(()=>toast(changes),280)}};playSfx('event');draw();
 }
 function maybeHiddenRandomSpecialEvent(){
  const pool=hiddenRandomSpecialEvents.filter(def=>!state.specialEvents?.[def.key]&&def.condition());
@@ -1252,7 +1301,7 @@ const fixedDaySpecialEvents=[
  ]}
 ];
 function runFixedDaySpecialEvent(def){
- state.specialScene={active:true,key:def.sceneKey};
+ beginSpecialScene(def.sceneKey);
  const before=snapshotStats();
  let page=0;
  const area=$('#choiceArea');
@@ -1269,7 +1318,7 @@ function runFixedDaySpecialEvent(def){
      if(page<def.scenes.length-1){page++;draw();return;}
      def.stat&&def.stat();
      state.specialEvents[def.key]=true;
-     state.specialScene={active:false,key:null};
+     endSpecialScene();
      addHistory(def.history,`special:${def.key}`);
      playSfx('success');
      const changes=describeStatChanges(before);
@@ -1524,9 +1573,9 @@ function openSpecialAlbum(){
 function replaySpecialAlbum(entry){
  let page=0;
  const previousLocation=state.location;
- state.specialScene={active:true,key:entry.sceneKey};
+ beginSpecialScene(entry.sceneKey);
  const area=$('#choiceArea');
- const finish=()=>{state.specialScene={active:false,key:null};state.location=previousLocation;state.dialogue={name:'나레이션',text:`추억 앨범에서 「${entry.title}」을 다시 보았다.`};area.innerHTML='';area.classList.add('hidden');render();};
+ const finish=()=>{endSpecialScene();state.location=previousLocation;state.dialogue={name:'나레이션',text:`추억 앨범에서 「${entry.title}」을 다시 보았다.`};area.innerHTML='';area.classList.add('hidden');render();};
  const draw=()=>{const scene=entry.scenes[page];state.dialogue={name:scene.name||scene.speaker||'나레이션',text:scene.text};render();area.innerHTML='';const prev=document.createElement('button');prev.textContent='이전 장면';prev.disabled=page===0;const next=document.createElement('button');next.textContent=page===entry.scenes.length-1?'앨범으로 돌아가기':'다음 장면';area.append(prev,next);area.classList.remove('hidden');prev.onclick=()=>{if(page>0){page--;draw()}};next.onclick=()=>{if(page<entry.scenes.length-1){page++;draw()}else{finish();setTimeout(openSpecialAlbum,30)}}};
  playSfx('event');draw();
 }
@@ -1751,12 +1800,13 @@ function render(){
  $('#mobileResources').innerHTML=[['💰','돈',`${state.stats.money.toLocaleString()}원`],['💳','채무',`${(state.economy.debt||0).toLocaleString()}원`],['👥','팬',`${state.stats.fans.toLocaleString()}명`],['✨','외모',state.stats.looks],['☁','스트레스',state.stats.stress],['⚡','박칵스',`${state.items.bakcas}개`],['🎤','마이크',equipmentDurabilityText('mic')],['🔊','음향',equipmentDurabilityText('amp')],['🧰','보호',equipmentDurabilityText('battery')]].map(([icon,label,value])=>`<div class="mobile-resource-chip"><span class="mobile-resource-icon">${icon}</span><span class="mobile-resource-label">${label}</span><b>${value}</b></div>`).join('');
  $('#scheduleList').innerHTML=`<li>현재: ${locations[state.location].name}</li><li>날씨: ${weatherLabel()} · ${dayType()}</li><li>집: ${housingInfo[state.housing][0]}</li><li>밴드 결속력: ${state.band.bond}</li><li>마이크: ${equipmentStatusText('mic')}</li><li>음향장비: ${equipmentStatusText('amp')}</li><li>보호 케이스: ${equipmentDurabilityText('battery')}</li>${state.manager.hired?`<li>후라보노 관계: ${state.manager.bond}</li>`:'<li>매니저: 미고용</li>'}`;
  $('#missionBox').innerHTML=`<p>팬 3,000명 달성</p><div class="progress"><span style="width:${Math.min(100,state.stats.fans/30)}%"></span></div><p>첫 앨범 발매 ${state.albums.length?'완료':'미완료'}</p><p>라이벌 스토리 ${state.rival.stage}/5</p>`;
- const outfitImages=['outfit-black.png','outfit-white.png','outfit-check.png','outfit-leather.png','outfit-hoodie.png','outfit-stage.png','outfit-mystery.png'];const art=$('#characterArt');if(art){const src=`assets/images/${outfitImages[state.outfit||0]}`;if(!art.src.endsWith(src))art.src=src;}const scene=$('#scene');const specialKey=state.specialScene?.active?state.specialScene.key:null;const specialClassMap={iziViral:' special-izi-viral',waitedMoreViral:' special-waited-more-viral',day30Hair:' special-day30-hair',day60Workout:' special-day60-workout',day90Live:' special-day90-live',day120Chat:' special-day120-chat',day150Birthday:' special-day150-birthday',day180Archive:' special-day180-archive',day210Demo:' special-day210-demo',day240Meme:' special-day240-meme',day300Promise:' special-day300-promise',hiddenGameOst:' special-hidden-game-ost',hiddenRadioDj:' special-hidden-radio-dj',hiddenDingo:' special-hidden-dingo',mysteriousMerchant:' special-mysterious-merchant'};const specialLabelMap={iziViral:'수원역 · 특별 이벤트',waitedMoreViral:'명동 · 특별 이벤트',day30Hair:'자취방 · 30일 특별 이벤트',day60Workout:'자취방 · 60일 특별 이벤트',day90Live:'자취방 · 90일 특별 이벤트',day120Chat:'자취방 · 120일 특별 이벤트',day150Birthday:'생일 파티 · 150일 특별 이벤트',day180Archive:'자취방 · 180일 특별 이벤트',day210Demo:'연습실 · 210일 특별 이벤트',day240Meme:'자취방 · 240일 특별 이벤트',day300Promise:'공연장 · 300일 특별 이벤트',hiddenGameOst:'카페 · 게임 OST 특별 이벤트',hiddenRadioDj:'라디오 스튜디오 · 특별 이벤트',hiddenDingo:'딩고 스튜디오 · 특별 이벤트',mysteriousMerchant:'이름 없는 골목 · 수상한 상인'};const specialClass=specialKey?(specialClassMap[specialKey]||''):'';scene.className=`scene ${locations[state.location].cls} outfit-${state.outfit||0}${specialClass}`;scene.dataset.time=state.time;scene.style.setProperty('--spark-opacity',state.location==='stage'?'.58':state.location==='park'?'.46':'.32');bindScenePointer();$('#gameScreen').classList.toggle('story-lock',!!specialClass);$('#locationLabel').textContent=specialKey?(specialLabelMap[specialKey]||locations[state.location].name):locations[state.location].name;const basePool=getLocationDialoguePool(state.location);const d=state.dialogue||{name:'류현상',text:pick(basePool)};displayDialogue(d.name,d.text);if(state.pendingEnding)setTimeout(displayPendingEnding,0);
+ const outfitImages=['outfit-black.png','outfit-white.png','outfit-check.png','outfit-leather.png','outfit-hoodie.png','outfit-stage.png','outfit-mystery.png'];const art=$('#characterArt');if(art){const src=`assets/images/${outfitImages[state.outfit||0]}`;if(!art.src.endsWith(src))art.src=src;}const scene=$('#scene');const specialKey=state.specialScene?.active?state.specialScene.key:null;const specialClassMap={iziViral:' special-izi-viral',waitedMoreViral:' special-waited-more-viral',day30Hair:' special-day30-hair',day60Workout:' special-day60-workout',day90Live:' special-day90-live',day120Chat:' special-day120-chat',day150Birthday:' special-day150-birthday',day180Archive:' special-day180-archive',day210Demo:' special-day210-demo',day240Meme:' special-day240-meme',day300Promise:' special-day300-promise',hiddenGameOst:' special-hidden-game-ost',hiddenRadioDj:' special-hidden-radio-dj',hiddenDingo:' special-hidden-dingo',mysteriousMerchant:' special-mysterious-merchant'};const specialLabelMap={iziViral:'수원역 · 특별 이벤트',waitedMoreViral:'명동 · 특별 이벤트',day30Hair:'자취방 · 30일 특별 이벤트',day60Workout:'자취방 · 60일 특별 이벤트',day90Live:'자취방 · 90일 특별 이벤트',day120Chat:'자취방 · 120일 특별 이벤트',day150Birthday:'생일 파티 · 150일 특별 이벤트',day180Archive:'자취방 · 180일 특별 이벤트',day210Demo:'연습실 · 210일 특별 이벤트',day240Meme:'자취방 · 240일 특별 이벤트',day300Promise:'공연장 · 300일 특별 이벤트',hiddenGameOst:'카페 · 게임 OST 특별 이벤트',hiddenRadioDj:'라디오 스튜디오 · 특별 이벤트',hiddenDingo:'딩고 스튜디오 · 특별 이벤트',mysteriousMerchant:'이름 없는 골목 · 수상한 상인'};const specialClass=specialKey?(specialClassMap[specialKey]||''):'';scene.className=`scene ${locations[state.location].cls} outfit-${state.outfit||0}${specialClass}`;scene.dataset.time=state.time;scene.style.setProperty('--spark-opacity',state.location==='stage'?'.58':state.location==='park'?'.46':'.32');const specialImage=specialKey?specialSceneImageMap[specialKey]:null;if(specialImage){const shade=specialKey==='mysteriousMerchant'?'linear-gradient(rgba(2,3,6,.10),rgba(2,3,6,.54))':'linear-gradient(rgba(4,6,10,.08),rgba(4,6,10,.38))';scene.style.setProperty('background-image',`${shade},url('${specialImage}')`,'important');scene.style.setProperty('background-position',specialKey==='mysteriousMerchant'?'center 38%':'center center','important');scene.style.setProperty('background-size',specialKey==='mysteriousMerchant'?'contain':'cover','important');scene.style.setProperty('background-repeat','no-repeat','important')}else{scene.style.removeProperty('background-image');scene.style.removeProperty('background-position');scene.style.removeProperty('background-size');scene.style.removeProperty('background-repeat')}bindScenePointer();$('#gameScreen').classList.toggle('story-lock',!!specialKey);$('#locationLabel').textContent=specialKey?(specialLabelMap[specialKey]||locations[state.location].name):locations[state.location].name;const basePool=getLocationDialoguePool(state.location);const d=state.dialogue||{name:'류현상',text:pick(basePool)};displayDialogue(d.name,d.text);if(state.pendingEnding)setTimeout(displayPendingEnding,0);
  const locationMarkup=Object.entries(locations).map(([k,v])=>`<button data-loc="${k}" class="${state.location===k?'active':''}" aria-pressed="${state.location===k}">${v.name}</button>`).join('');
  $('#locationButtons').innerHTML=locationMarkup;
  $('#mobileLocationButtons').innerHTML=locationMarkup;
  $('#mobileLocationText').textContent=`현재: ${locations[state.location].name}`;
  $$('[data-loc]').forEach(b=>b.onclick=()=>{
+   if(state.specialScene?.active)return toast('진행 중인 특별 이벤트를 먼저 마쳐 주세요.');
    const next=b.dataset.loc;
    if(next===state.location){toast(`현재 ${locations[next].name}에 있습니다.`);return;}
    state.location=next;state.restStreak=0;state.lastAction='move';
@@ -1778,15 +1828,15 @@ function openItemMenu(){
  showModal('아이템',`<div class="info-card item-use-card"><b>⚡ 박칵스</b><p>보유 <strong>${state.items.bakcas}개</strong> · 오늘 <strong>${state.items.bakcasUsedToday}/2회</strong> 사용 · 현재 체력 <strong>${state.stats.hp}/100</strong></p><p>${reason}</p><button id="useBakcasFromItems" class="primary wide" ${disabled?'disabled':''}>박칵스 사용</button></div>`);
  const button=$('#useBakcasFromItems');if(button)button.onclick=()=>useBakcas(true)
 }
-function openPhone(type){if(type==='manager')managerEvent();if(type==='band')showBand();if(type==='fan')openFanCommunity();if(type==='sns')openSNS();if(type==='items')openItemMenu()}
+function openPhone(type){if(state.specialScene?.active)return toast('진행 중인 특별 이벤트를 먼저 마쳐 주세요.');if(type==='manager')managerEvent();if(type==='band')showBand();if(type==='fan')openFanCommunity();if(type==='sns')openSNS();if(type==='items')openItemMenu()}
 function showBand(){showModal('밴드 멤버',Object.entries(state.band.members).map(([k,v])=>`<div class="info-card"><b>${k.toUpperCase()}</b><p>${v||'공석'}</p></div>`).join('')+`<p>결속력: ${state.band.bond}</p>`)}
 $('#newGameBtn').onclick=()=>{const collected=loadMetaEndings();state=structuredClone(baseState);state.endings=collected;startPrologue()};
 $('#continueBtn').onclick=()=>{migrateLegacySave();const hasAny=!!readSave(AUTO_SAVE_KEY)||MANUAL_SAVE_KEYS.some(k=>!!readSave(k));if(!hasAny)return toast('저장된 게임이 없습니다.');openSaveManager('load')};
-$('#howBtn').onclick=()=>showModal('게임 설명','<p>류현상을 연습시키고 버스킹 장비를 구입해 팬과 인지도를 늘리세요. 파트별 조건을 충족해 멤버 오디션을 진행하고 완전체 밴드를 결성한 뒤에는 솔로 버스킹만 반복하지 말고 합주와 밴드 공연으로 결속력을 관리해야 합니다. 인지도 Lv.20부터 후라보노를 고용할 수 있으며, 고용하면 방송과 주요 이벤트가 열립니다. 오디션은 인지도 Lv.10·보컬 50, 공연은 인지도 Lv.15·팬 5,000명·보컬 70, 방송 출연은 후라보노 고용·보컬 85, 팬미팅은 팬 15,000명부터 도전할 수 있습니다. 인지도 Lv.31 이상부터는 류현상이 가끔 성공에 취해 꺼드럭대고 후라보노가 제지하는 선택형 스토리가 발생합니다. 날씨·평일·주말·공휴일에 따라 버스킹 성공률과 체력 소모가 달라집니다. 장비 고장 상태는 없으며, 마이크와 음향장비는 내구도를 모두 사용하면 사라집니다. 방수·전원 보호케이스는 50회 동안 장비 내구도 소모를 막고, 보호케이스가 없을 때는 10% 확률로 내구도가 2배 소모됩니다. 팬은 활동과 이벤트로 늘지만 논란·무성의한 대응·반복되는 공연으로 감소할 수도 있습니다. 인지도 100마다 레벨이 오릅니다. 오디션·공연·방송은 7일, 앨범은 30일의 준비 기간이 필요합니다. 체력이 10 이하로 내려가면 보컬과 작곡이 각각 2 감소하며, 깊은 휴식은 반나절인 시간 2칸을 사용합니다. 깊은 휴식을 연속 두 번 하면 보컬과 작곡이 각각 1 감소합니다. 식사는 시간을 쓰지 않고 집 등급마다 회복량이 3씩 증가합니다. 편의점 알바와 야간 진열 보조는 보컬과 작곡을 각각 2 감소시킵니다. 하루 동안 보컬 연습을 하지 않으면 다음 날 보컬 -1, 작곡 연습 또는 신곡 편곡을 하지 않으면 작곡 -1이 적용됩니다. 공연에서는 낮은 확률로 도트 류현상 음표 피하기 미니게임이 열릴 수 있습니다. 인지도 Lv.70·80·90에서는 전국 페스티벌, 전국 투어, 해외 쇼케이스 커리어 이벤트가 열리며 후반 공연·방송 인지도 보상도 단계적으로 상승합니다. 월드 엔딩은 밴드·싱어송라이터·솔로 보컬의 세 경로가 있으며, 인지도뿐 아니라 실력·앨범·공연·해외 팬·결속력이 함께 평가됩니다. 인지도 성장에 따라 라이벌 카인 스토리가 이어지며, 휴대전화에서 팬 유형과 SNS를 확인할 수 있습니다. 악기는 최대 3개만 장착할 수 있고, 능력치 40 이상부터는 훈련 성장 속도가 점차 둔화됩니다. 편의점에서는 디지몬 카드를 1,500원에 뽑아 보관하거나 등급별 가격으로 판매할 수 있고, SP 카드가 나오면 폭죽 효과가 발생합니다. 복권은 1~45 중 6개를 골라 구매하며 7일 뒤 당첨 번호 6개와 보너스 번호가 자동 추첨됩니다. 게임 20일차부터 20일 간격으로 총 10개의 일상 에피소드가 순서대로 등장하며, 같은 날 다른 핵심 이벤트는 겹치지 않고 다음 날로 미뤄집니다. 스토커 사건은 총 5단계이며 안전도 5를 확보해야 해결됩니다.</p>');
+$('#howBtn').onclick=()=>showModal('게임 설명','<p>류현상을 연습시키고 버스킹 장비를 구입해 팬과 인지도를 늘리세요. 파트별 조건을 충족해 멤버 오디션을 진행하고 완전체 밴드를 결성한 뒤에는 솔로 버스킹만 반복하지 말고 합주와 밴드 공연으로 결속력을 관리해야 합니다. 인지도 Lv.20부터 후라보노를 고용할 수 있으며, 고용하면 방송과 주요 이벤트가 열립니다. 오디션은 인지도 Lv.10·보컬 50, 공연은 인지도 Lv.15·팬 5,000명·보컬 70, 방송 출연은 후라보노 고용·보컬 85, 팬미팅은 팬 15,000명부터 도전할 수 있습니다. 인지도 Lv.31 이상부터는 류현상이 가끔 성공에 취해 꺼드럭대고 후라보노가 제지하는 선택형 스토리가 발생합니다. 날씨·평일·주말·공휴일에 따라 버스킹 성공률과 체력 소모가 달라집니다. 장비 고장 상태는 없으며, 마이크와 음향장비는 내구도를 모두 사용하면 사라집니다. 방수·전원 보호케이스는 50회 동안 장비 내구도 소모를 막고, 보호케이스가 없을 때는 10% 확률로 내구도가 2배 소모됩니다. 팬은 활동과 이벤트로 늘지만 논란·무성의한 대응·반복되는 공연으로 감소할 수도 있습니다. 인지도 100마다 레벨이 오릅니다. 오디션·공연·방송은 7일, 앨범은 30일의 준비 기간이 필요합니다. 체력이 10 이하로 내려가면 보컬과 작곡이 각각 2 감소하며, 깊은 휴식은 반나절인 시간 2칸을 사용합니다. 깊은 휴식을 연속 두 번 하면 보컬과 작곡이 각각 1 감소합니다. 식사는 시간을 쓰지 않고 집 등급마다 회복량이 3씩 증가합니다. 편의점 알바와 야간 진열 보조는 보컬과 작곡을 각각 2 감소시킵니다. 하루 동안 보컬 연습을 하지 않으면 다음 날 보컬 -1, 작곡 연습 또는 신곡 편곡을 하지 않으면 작곡 -1이 적용됩니다. 공연에서는 낮은 확률로 도트 류현상 음표 피하기 미니게임이 열릴 수 있습니다. 인지도 Lv.70·80·90에서는 전국 페스티벌, 전국 투어, 해외 쇼케이스 커리어 이벤트가 열리며 후반 공연·방송 인지도 보상도 단계적으로 상승합니다. 월드 엔딩은 밴드·싱어송라이터·솔로 보컬의 세 경로가 있으며, 인지도뿐 아니라 실력·앨범·공연·해외 팬·결속력이 함께 평가됩니다. 인지도 성장에 따라 라이벌 카인 스토리가 이어지며, 휴대전화에서 팬 유형과 SNS를 확인할 수 있습니다. 악기는 최대 3개만 장착할 수 있고, 능력치 40 이상부터는 훈련 성장 속도가 점차 둔화됩니다. 편의점에서는 디지몬 카드를 1장 1,500원 또는 10장 15,000원에 뽑을 수 있으며, 10장 뽑기도 시간은 1칸만 사용합니다. 보관함 확인과 판매는 자취방에서 할 수 있고, SP 카드가 나오면 폭죽 효과가 발생합니다. 복권은 1~45 중 6개를 골라 구매하며 7일 뒤 당첨 번호 6개와 보너스 번호가 자동 추첨됩니다. 게임 20일차부터 20일 간격으로 총 10개의 일상 에피소드가 순서대로 등장하며, 같은 날 다른 핵심 이벤트는 겹치지 않고 다음 날로 미뤄집니다. 스토커 사건은 총 5단계이며 안전도 5를 확보해야 해결됩니다.</p>');
 $('#closeModal').onclick=()=>closeModal();$('#modal').addEventListener('cancel',e=>{if(memoryGameActive){e.preventDefault();closeModal()}});$('#audioBtn').onclick=openAudioSettings;$('#menuBtn').onclick=()=>showModal('메뉴','<div class="card-list"><button id="gameGuideBtn" class="primary">게임 설명 · 진행 가이드</button><button id="manualSave">저장 / 불러오기</button><button id="backTitle">타이틀로 돌아가기</button></div>');
 $('#modal').addEventListener('click',e=>{if(e.target===$('#modal'))closeModal()});
 $$('[data-phone]').forEach(b=>b.onclick=()=>openPhone(b.dataset.phone));
-$$('[data-tab]').forEach(b=>b.onclick=()=>{const t=b.dataset.tab;$$('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));if(t==='band')showBand();if(t==='album')openSpecialAlbum();if(t==='shop')openShopHub();if(t==='ending'){showModal('엔딩 컬렉션',state.endings.length?state.endings.map(x=>`<button class="info-card ending-replay" data-ending-replay="${x}"><b>${x}</b><small>다시 읽기</small></button>`).join(''):'아직 해금된 엔딩이 없습니다.');$$('[data-ending-replay]').forEach(x=>x.onclick=()=>runEndingStory(x.dataset.endingReplay));}if(t==='story')showModal('스토리 기록',state.history.length?`<div class="card-list story-history-list">${[...state.history].reverse().map(x=>`<div class="info-card story-history-item">${x}</div>`).join('')}</div>`:'류현상의 이야기는 이제 시작입니다.')});
+$$('[data-tab]').forEach(b=>b.onclick=()=>{if(state.specialScene?.active)return toast('진행 중인 특별 이벤트를 먼저 마쳐 주세요.');const t=b.dataset.tab;$$('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));if(t==='band')showBand();if(t==='album')openSpecialAlbum();if(t==='shop')openShopHub();if(t==='ending'){showModal('엔딩 컬렉션',state.endings.length?state.endings.map(x=>`<button class="info-card ending-replay" data-ending-replay="${x}"><b>${x}</b><small>다시 읽기</small></button>`).join(''):'아직 해금된 엔딩이 없습니다.');$$('[data-ending-replay]').forEach(x=>x.onclick=()=>runEndingStory(x.dataset.endingReplay));}if(t==='story')showModal('스토리 기록',state.history.length?`<div class="card-list story-history-list">${[...state.history].reverse().map(x=>`<div class="info-card story-history-item">${x}</div>`).join('')}</div>`:'류현상의 이야기는 이제 시작입니다.')});
 document.addEventListener('click',e=>{if(e.target&&e.target.id==='gameGuideBtn'){openGameGuide()}if(e.target&&e.target.id==='manualSave'){openSaveManager('all')}if(e.target&&e.target.id==='backTitle'){save(false);setChoiceLock(false);exitEndingMusic();$('#gameScreen').classList.remove('active');$('#titleScreen').classList.add('active');closeModal()}});
 
 document.addEventListener('click',e=>{
