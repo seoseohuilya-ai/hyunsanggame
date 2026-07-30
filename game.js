@@ -1328,7 +1328,7 @@ function specialAlbumEntries(){
  return [...fixed,...extras];
 }
 function specialAlbumImage(sceneKey){
- const map={day30Hair:'assets/images/special-day30-hair.jpg',day60Workout:'assets/images/special-day60-workout.jpg',day90Live:'assets/images/special-day90-live.jpg',day120Chat:'assets/images/special-day120-kakaotalk.jpg',day150Birthday:'assets/images/special-day150-birthday.jpg',day180Archive:'assets/images/special-day180-archive.png',day210Demo:'assets/images/special-day210-demo.png',day240Meme:'assets/images/special-day240-meme.png',day300Promise:'assets/images/special-day300-promise.png'};
+ const map={day30Hair:'assets/images/special-day30-hair.jpg',day60Workout:'assets/images/special-day60-workout.jpg',day90Live:'assets/images/special-day90-live.jpg',day120Chat:'assets/images/special-day120-kakaotalk.jpg',day150Birthday:'assets/images/special-day150-birthday.jpg',day180Archive:'assets/images/special-day180-user.png',day210Demo:'assets/images/special-day210-user.png',day240Meme:'assets/images/special-day240-user.png',day300Promise:'assets/images/special-day300-user.png'};
  return map[sceneKey]||'assets/images/home-bg.jpg';
 }
 function openSpecialAlbum(){
