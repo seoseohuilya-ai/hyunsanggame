@@ -1696,16 +1696,28 @@ function buyDigimonCard(){
  stat('money',-1500);state.lastAction='digimonCard';state.gambling.cardsDrawn++;
  showDialogue('류현상','오늘은 어떤 카드가 나올까... 두근 두근');
  const grade=drawDigimonGrade(),info=DIGIMON_CARD_INFO[grade];state.gambling.cardCollection[grade]++;
- stat('money',info.value);addHistory(`🃏 디지몬 카드 · ${grade} ${info.name} 획득 · 환산가 ${info.value.toLocaleString()}원`,`digimon-card:${state.day}:${state.gambling.cardsDrawn}`);
+ addHistory(`🃏 디지몬 카드 · ${grade} ${info.name} 획득 · 보유함에 추가`,`digimon-card:${state.day}:${state.gambling.cardsDrawn}`);
  closeModal();advance(1,'gambling');
- setTimeout(()=>{toast(`${grade} ${info.name} 카드! 환산가 ${info.value.toLocaleString()}원`);if(grade==='SP')launchCardFireworks()},260);
+ setTimeout(()=>{toast(`${grade} ${info.name} 카드 획득! 보유함에 추가되었습니다.`);if(grade==='SP')launchCardFireworks()},260);
+}
+function sellDigimonCard(grade,all=false){
+ const count=Math.max(0,Number(state.gambling.cardCollection[grade])||0);
+ if(count<1)return toast('판매할 카드가 없습니다.');
+ const qty=all?count:1,info=DIGIMON_CARD_INFO[grade];
+ state.gambling.cardCollection[grade]-=qty;
+ stat('money',info.value*qty);
+ addHistory(`💰 디지몬 카드 판매 · ${grade} ${qty}장 · ${(info.value*qty).toLocaleString()}원`,`digimon-sell:${state.day}:${Date.now()}`);
+ toast(`${grade} 카드 ${qty}장 판매 · ${(info.value*qty).toLocaleString()}원 획득`);
+ openDigimonCards();
 }
 function openDigimonCards(){
  const c=state.gambling.cardCollection;
- showModal('디지몬 카드',`<div class="info-card"><b>오늘은 어떤 카드가 나올까...</b><p>한 장 1,500원 · 시간 1칸(하루의 1/4) 소모</p><button id="drawDigimonCard" class="primary wide">카드 한 장 뽑기</button></div><div class="gamble-grade-grid">${Object.entries(DIGIMON_CARD_INFO).map(([g,x])=>`<div class="metric-card grade-${g.toLowerCase()}"><small>${g} · ${x.name}</small><b>${x.value.toLocaleString()}원</b><span>보유 ${c[g]||0}장</span></div>`).join('')}</div><div class="info-card"><small>표기 확률: C 1/3 · U 1/3 · R 1/6 · SR 1/36 · SEC 1/1728 · SP 1/3456</small><p>카드는 뽑는 즉시 표기된 환산가로 정산됩니다. SP 획득 시 폭죽 효과가 발생합니다.</p></div>`);
+ showModal('디지몬 카드',`<div class="info-card"><b>오늘은 어떤 카드가 나올까...</b><p>한 장 1,500원 · 시간 1칸(하루의 1/4) 소모</p><button id="drawDigimonCard" class="primary wide">카드 한 장 뽑기</button></div><div class="gamble-grade-grid">${Object.entries(DIGIMON_CARD_INFO).map(([g,x])=>`<div class="metric-card grade-${g.toLowerCase()}"><small>${g} · ${x.name}</small><b>${x.value.toLocaleString()}원</b><span>보유 ${c[g]||0}장</span><div class="card-sale-actions"><button data-sell-card="${g}" ${(c[g]||0)<1?'disabled':''}>1장 판매</button><button data-sell-all="${g}" ${(c[g]||0)<1?'disabled':''}>전부 판매</button></div></div>`).join('')}</div><div class="info-card"><small>표기 확률: C 1/3 · U 1/3 · R 1/6 · SR 1/36 · SEC 1/1728 · SP 1/3456</small><p>뽑은 카드는 자동 판매되지 않고 보유함에 저장됩니다. 원하는 등급만 직접 판매할 수 있으며 판매에는 시간이 소모되지 않습니다. SP 획득 시 폭죽 효과가 발생합니다.</p></div>`);
  $('#drawDigimonCard').onclick=buyDigimonCard;
+ $$('[data-sell-card]').forEach(button=>button.onclick=()=>sellDigimonCard(button.dataset.sellCard,false));
+ $$('[data-sell-all]').forEach(button=>button.onclick=()=>sellDigimonCard(button.dataset.sellAll,true));
 }
-function lotteryPrize(rank){return ({1:1000000000,2:50000000,3:1500000,4:50000,5:5000})[rank]||0}
+function lotteryPrize(rank){return ({1:100000000,2:20000000,3:1500000,4:50000,5:5000})[rank]||0}
 function uniqueLotteryNumbers(count=7){const pool=Array.from({length:45},(_,i)=>i+1),out=[];while(out.length<count){const i=Math.floor(Math.random()*pool.length);out.push(pool.splice(i,1)[0])}return out}
 function lotteryRank(selected,winning,bonus){const matches=selected.filter(n=>winning.includes(n)).length;if(matches===6)return 1;if(matches===5&&selected.includes(bonus))return 2;if(matches===5)return 3;if(matches===4)return 4;if(matches===3)return 5;return 0}
 function processLotteryDraws(){
@@ -1720,7 +1732,7 @@ function maybeShowLotteryResult(){
 }
 function openLottery(){
  const pending=state.gambling.lotteryTickets.filter(t=>!t.drawn).sort((a,b)=>a.drawDay-b.drawDay);
- showModal('복권',`<div class="info-card"><b>로또 6/45</b><p>1게임 1,000원 · 번호 6개 선택 · 시간 1칸 소모</p><p>구매일로부터 7일 후 당첨 번호 6개와 보너스 번호 1개를 추첨합니다.</p></div><div id="lotteryPicker" class="lottery-picker"><div id="lotterySelected" class="lottery-selected">선택한 번호: 없음</div><div class="lottery-number-grid">${Array.from({length:45},(_,i)=>`<button type="button" data-lotto-number="${i+1}">${i+1}</button>`).join('')}</div><div class="lottery-actions"><button id="lotteryAuto">자동 선택</button><button id="lotteryReset">초기화</button><button id="lotteryBuy" class="primary" disabled>구매하기</button></div></div>${pending.length?`<div class="info-card"><b>추첨 대기 ${pending.length}장</b>${pending.map(t=>`<p>${t.numbers.join(', ')} · ${t.drawDay}일차 발표</p>`).join('')}</div>`:''}<div class="info-card"><b>고정 당첨금</b><p>1등 10억원 · 2등 5천만원 · 3등 150만원 · 4등 5만원 · 5등 5천원</p><small>실제 6/45 번호 일치 방식으로 등수를 판정합니다.</small></div>`);
+ showModal('복권',`<div class="info-card"><b>로또 6/45</b><p>1게임 1,000원 · 번호 6개 선택 · 시간 1칸 소모</p><p>구매일로부터 7일 후 당첨 번호 6개와 보너스 번호 1개를 추첨합니다.</p></div><div id="lotteryPicker" class="lottery-picker"><div id="lotterySelected" class="lottery-selected">선택한 번호: 없음</div><div class="lottery-number-grid">${Array.from({length:45},(_,i)=>`<button type="button" data-lotto-number="${i+1}">${i+1}</button>`).join('')}</div><div class="lottery-actions"><button id="lotteryAuto">자동 선택</button><button id="lotteryReset">초기화</button><button id="lotteryBuy" class="primary" disabled>구매하기</button></div></div>${pending.length?`<div class="info-card"><b>추첨 대기 ${pending.length}장</b>${pending.map(t=>`<p>${t.numbers.join(', ')} · ${t.drawDay}일차 발표</p>`).join('')}</div>`:''}<div class="info-card"><b>고정 당첨금</b><p>1등 1억원 · 2등 2천만원 · 3등 150만원 · 4등 5만원 · 5등 5천원</p><small>실제 6/45 번호 일치 방식으로 등수를 판정합니다.</small></div>`);
  let selected=[];const update=()=>{$$('#lotteryPicker [data-lotto-number]').forEach(b=>b.classList.toggle('selected',selected.includes(+b.dataset.lottoNumber)));$('#lotterySelected').textContent=`선택한 번호: ${selected.length?selected.sort((a,b)=>a-b).join(', '):'없음'} (${selected.length}/6)`;$('#lotteryBuy').disabled=selected.length!==6};
  $$('#lotteryPicker [data-lotto-number]').forEach(b=>b.onclick=()=>{const n=+b.dataset.lottoNumber,i=selected.indexOf(n);if(i>=0)selected.splice(i,1);else if(selected.length<6)selected.push(n);else return toast('번호는 6개까지만 선택할 수 있습니다.');update()});
  $('#lotteryAuto').onclick=()=>{selected=uniqueLotteryNumbers(6).sort((a,b)=>a-b);update()};$('#lotteryReset').onclick=()=>{selected=[];update()};
