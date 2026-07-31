@@ -1577,3 +1577,11 @@ html.minigame-active .training-countdown{
 /* v88 suspicious shop */
 .mystery-shop-button,.mystery-shop-card{border-color:#6f5b87;background:linear-gradient(145deg,rgba(52,35,68,.92),rgba(18,20,31,.96));box-shadow:inset 0 0 24px rgba(139,92,175,.08)}
 .mystery-shop-button b,.mystery-shop-card b{color:#ead7ff}.mystery-shop-card header span{color:#d6b8f4}
+
+/* v89: all image-backed special events are background-only scenes. */
+.scene.special-background-only .character-wrap,
+.scene.special-background-only .character-shadow,
+.scene.special-background-only .ambient-layer,
+.scene.special-background-only .music-notes,
+.scene.special-background-only .audience-lights,
+.scene.special-background-only .action-burst{display:none!important}
