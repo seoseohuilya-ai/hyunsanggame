@@ -1,6 +1,6 @@
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const locations={home:{name:'자취방',cls:'home'},store:{name:'편의점',cls:'store'},practice:{name:'연습실',cls:'practice'},park:{name:'공원',cls:'park'},stage:{name:'공연장',cls:'stage'}};
-const baseState={day:1,slot:0,time:0,location:'home',level:1,exp:0,rank:'무명 가수',weather:'sun',housing:0,endingPrompted:{},pendingEnding:null,stats:{hp:80,vocal:22,compose:16,looks:35,fame:0,fans:0,money:800000,stress:10},equipment:{mic:false,amp:false,battery:false},equipmentModel:{mic:null,amp:null},equipmentDamage:{mic:false,amp:false},equipmentDurability:{mic:0,amp:0,battery:0},forcedRest:{count:0,lastTriggeredDay:-99},restStreak:0,dailyPractice:{vocalDay:0,composeDay:0},instruments:{acousticGuitar:false,keyboard:false,audioInterface:false,studioMic:false,monitorHeadphones:false},fanGroups:{regular:0,enthusiast:0,gay:0,overseas:0},sns:{lastPostDay:-99,totalPosts:0,controversy:0,lastEventDay:-99},rival:{met:false,stage:0,respect:0,lastEventDay:-99},items:{bakcas:1,bakcasUsedToday:0,mealsToday:0},storeDaily:{promoDay:-99,customerDay:-99,flyerDay:-99,observeDay:-99,buskingDay:-99,buskingCount:0},economy:{workStreak:0,lastWorkDay:-99,debt:0,totalDebtRepaid:0,lastDebtNoticeDay:-99},equippedInstruments:[],career:{peakFame:0,totalWork:0,totalConcerts:0,totalBroadcasts:0,totalBusking:0},skillMaintenance:{lastVocalUseDay:1,lastComposeUseDay:1,vocalDecayCount:0,composeDecayCount:0},manager:{hired:false,bond:0,wedding:false},band:{formed:false,bond:60,members:{guitar:null,bass:null,piano:null,drums:null}},albums:[],endings:[],history:[],dialogue:null,seenEvents:[],soloStreak:0,outfit:0,ownedOutfits:[0],performanceCount:0,stalker:{active:false,resolved:false,encounters:0,safety:0},narrative:{lastMajorEventDay:-99,twentyDaySeen:[]},gambling:{cards:{C:0,U:0,R:0,SR:0,SEC:0,SP:0},totalCardDraws:0,lotteryTickets:[],lotteryResults:[]},arrogance:{lastDay:-99,count:0,lesson:0},specialEvents:{iziViral:false,waitedMoreViral:false,day30Hair:false,day60Workout:false,day90Live:false,day120Chat:false,day150Birthday:false,day180Archive:false,day210Demo:false,day240Meme:false,day300Promise:false,hiddenGameOst:false,hiddenRadioDj:false,hiddenDingo:false,careerLv70:false,careerLv80:false,careerLv90:false,mysteriousMerchantPurchased:false},specialScene:{active:false,key:null},preparation:{stageReady:false,stageReadyDay:-99,buskingInsight:false,buskingInsightDay:-99},cooldowns:{managerTalk:-99,recruit:-99,audition:-99,concert:-99,broadcast:-99,fanmeeting:-99,album:-99,fanEvent:-99,snsPost:-99},milestones:{firstAudition:false,firstConcert:false,firstBroadcast:false,firstFanmeeting:false,firstAlbum:false,managerHired:false,bandFormed:false,stalkerResolved:false,randomSeen:[]},historyKeys:[],lastAction:null,prologueSeen:false};
+const baseState={day:1,slot:0,time:0,location:'home',level:1,exp:0,rank:'무명 가수',weather:'sun',housing:0,endingPrompted:{},pendingEnding:null,stats:{hp:80,vocal:22,compose:16,looks:35,fame:0,fans:0,money:800000,stress:10},equipment:{mic:false,amp:false,battery:false},equipmentModel:{mic:null,amp:null},equipmentDamage:{mic:false,amp:false},equipmentDurability:{mic:0,amp:0,battery:0},forcedRest:{count:0,lastTriggeredDay:-99},restStreak:0,restNightmares:{totalRests:0,lastTriggeredRest:0,seen:[]},dailyPractice:{vocalDay:0,composeDay:0},instruments:{acousticGuitar:false,keyboard:false,audioInterface:false,studioMic:false,monitorHeadphones:false},fanGroups:{regular:0,enthusiast:0,gay:0,overseas:0},sns:{lastPostDay:-99,totalPosts:0,controversy:0,lastEventDay:-99},rival:{met:false,stage:0,respect:0,lastEventDay:-99},items:{bakcas:1,bakcasUsedToday:0,mealsToday:0},storeDaily:{promoDay:-99,customerDay:-99,flyerDay:-99,observeDay:-99,buskingDay:-99,buskingCount:0},economy:{workStreak:0,lastWorkDay:-99,debt:0,totalDebtRepaid:0,lastDebtNoticeDay:-99},equippedInstruments:[],career:{peakFame:0,totalWork:0,totalConcerts:0,totalBroadcasts:0,totalBusking:0},skillMaintenance:{lastVocalUseDay:1,lastComposeUseDay:1,vocalDecayCount:0,composeDecayCount:0},manager:{hired:false,bond:0,wedding:false},band:{formed:false,bond:60,members:{guitar:null,bass:null,piano:null,drums:null}},albums:[],endings:[],history:[],dialogue:null,seenEvents:[],soloStreak:0,outfit:0,ownedOutfits:[0],performanceCount:0,stalker:{active:false,resolved:false,encounters:0,safety:0},narrative:{lastMajorEventDay:-99,twentyDaySeen:[]},gambling:{cards:{C:0,U:0,R:0,SR:0,SEC:0,SP:0},totalCardDraws:0,lotteryTickets:[],lotteryResults:[]},minigames:{songSurvivalLastDay:-99,quizShowLastDay:-99,songBestStage:0,quizBest:0,quizBag:[]},arrogance:{lastDay:-99,count:0,lesson:0},specialEvents:{iziViral:false,waitedMoreViral:false,day30Hair:false,day60Workout:false,day90Live:false,day120Chat:false,day150Birthday:false,day180Archive:false,day210Demo:false,day240Meme:false,day300Promise:false,hiddenGameOst:false,hiddenRadioDj:false,hiddenDingo:false,careerLv70:false,careerLv80:false,careerLv90:false,mysteriousMerchantPurchased:false},specialScene:{active:false,key:null},preparation:{stageReady:false,stageReadyDay:-99,buskingInsight:false,buskingInsightDay:-99},cooldowns:{managerTalk:-99,recruit:-99,audition:-99,concert:-99,broadcast:-99,fanmeeting:-99,album:-99,fanEvent:-99,snsPost:-99},milestones:{firstAudition:false,firstConcert:false,firstBroadcast:false,firstFanmeeting:false,firstAlbum:false,managerHired:false,bandFormed:false,stalkerResolved:false,randomSeen:[]},historyKeys:[],lastAction:null,prologueSeen:false};
 let state=structuredClone(baseState);let deferredPrompt=null;let audioCtx=null;let motionTimer=null;let burstTimer=null;let memoryGameActive=false;let activeTrainingAbort=null;
 let audioMaster=null,bgmGain=null,sfxGain=null,bgmTimer=null,bgmStep=0;
 let choiceLock=false,endingMusicMode=false,endingMusicName='';
@@ -10,7 +10,7 @@ let cardRevealPending=false;
 let audioSettings={bgm:true,sfx:true,volume:.42};
 const actions={
  home:[
-  ['깊은 휴식','체력 +25~45 · 스트레스 -10 · 시간 +2 · 2회 연속 시 보컬·작곡 -1','rest'],
+  ['깊은 휴식','체력 +25~45 · 스트레스 -10 · 시간 +2 · 2회 연속 시 보컬·작곡 -1 · 누적 5회 이후 악몽 가능','rest'],
   ['식사','체력 +12~24 · 돈 -8,000원 · 시간 미소모','meal'],
   ['옷장','의상 변경 · 스타일 관리 시 체력 -4·돈 -80,000원·외모 +2','wardrobe'],
   ['이사','돈 -1,000만~1억원 · 집 등급 상승 · 시간 +1','moveHome'],
@@ -50,7 +50,9 @@ const actions={
   ['공연','체력 -28 · 스트레스 +5 · 팬·돈·인지도 +변동 · 시간 +1','concert'],
   ['방송 출연','체력 -22 · 스트레스 +7 · 팬 +250~690 · 인지도 +90~138 · 관계 +5 · 시간 +1','broadcast'],
   ['팬미팅','체력 -20 · 돈 -300,000원 · 팬 +220~450 · 스트레스 -7 · 시간 +1','fanmeeting'],
-  ['대형 콘서트','조건 충족 시 월드 엔딩 진행 · 시간 미소모','national']
+  ['대형 콘서트','조건 충족 시 월드 엔딩 진행 · 시간 미소모','national'],
+  ['노래 서바이벌','366일차부터 · 음표 벽돌깨기 3단계 · 7일 간격 · 시간 +1','songSurvival'],
+  ['도전 퀴즈쇼','366일차부터 · 류현상 O/X 퀴즈 10문제 · 7일 간격 · 시간 +1','quizShow']
  ]
 };
 const dialogues={
@@ -308,7 +310,7 @@ function normalizeState(){
  state.equipmentDamage={mic:false,amp:false};
  const ed=state.equipmentDurability||{};const micMax=state.equipmentModel.mic?equipmentCatalog.mic[state.equipmentModel.mic].durability:0;const ampMax=state.equipmentModel.amp?equipmentCatalog.amp[state.equipmentModel.amp].durability:0;
  state.equipmentDurability={mic:state.equipment.mic?Math.max(1,Math.min(micMax,Number.isFinite(Number(ed.mic))?Number(ed.mic):micMax)):0,amp:state.equipment.amp?Math.max(1,Math.min(ampMax,Number.isFinite(Number(ed.amp))?Number(ed.amp):ampMax)):0,battery:state.equipment.battery?Math.max(1,Math.min(50,Number.isFinite(Number(ed.battery))?Number(ed.battery):50)):0};
- const fr=state.forcedRest||{};state.forcedRest={count:Math.max(0,Number(fr.count)||0),lastTriggeredDay:Number(fr.lastTriggeredDay??-99)};state.restStreak=Math.max(0,Math.floor(Number(state.restStreak)||0));const dp=state.dailyPractice||{};state.dailyPractice={vocalDay:Math.max(0,Math.floor(Number(dp.vocalDay)||0)),composeDay:Math.max(0,Math.floor(Number(dp.composeDay)||0))};
+ const fr=state.forcedRest||{};state.forcedRest={count:Math.max(0,Number(fr.count)||0),lastTriggeredDay:Number(fr.lastTriggeredDay??-99)};state.restStreak=Math.max(0,Math.floor(Number(state.restStreak)||0));const rn=state.restNightmares||{};state.restNightmares={totalRests:Math.max(0,Math.floor(Number(rn.totalRests)||0)),lastTriggeredRest:Math.max(0,Math.floor(Number(rn.lastTriggeredRest)||0)),seen:(Array.isArray(rn.seen)?rn.seen:[]).filter(x=>['military','stalker','sleep-paralysis'].includes(x)).slice(-3)};const dp=state.dailyPractice||{};state.dailyPractice={vocalDay:Math.max(0,Math.floor(Number(dp.vocalDay)||0)),composeDay:Math.max(0,Math.floor(Number(dp.composeDay)||0))};
  state.instruments={acousticGuitar:!!state.instruments?.acousticGuitar,keyboard:!!state.instruments?.keyboard,audioInterface:!!state.instruments?.audioInterface,studioMic:!!state.instruments?.studioMic,monitorHeadphones:!!state.instruments?.monitorHeadphones};
  state.equippedInstruments=(Array.isArray(state.equippedInstruments)?state.equippedInstruments:[]).filter(k=>state.instruments[k]).slice(0,3);
  state.items={bakcas:Math.max(0,Number(state.items?.bakcas)||0),bakcasUsedToday:Math.max(0,Number(state.items?.bakcasUsedToday)||0),mealsToday:Math.max(0,Number(state.items?.mealsToday)||0)};
@@ -331,6 +333,7 @@ function normalizeState(){
  state.stalker={active:!!state.stalker?.active,resolved:!!state.stalker?.resolved,encounters:Math.max(0,Math.min(5,Number(state.stalker?.encounters)||0)),safety:Number(state.stalker?.safety)||0};
  const narrative=state.narrative||{};state.narrative={lastMajorEventDay:Number(narrative.lastMajorEventDay??-99),twentyDaySeen:[...new Set((Array.isArray(narrative.twentyDaySeen)?narrative.twentyDaySeen:[]).map(String))]};
  const gambling=state.gambling||{},cards=gambling.cards||{};state.gambling={cards:{C:Math.max(0,Math.floor(Number(cards.C)||0)),U:Math.max(0,Math.floor(Number(cards.U)||0)),R:Math.max(0,Math.floor(Number(cards.R)||0)),SR:Math.max(0,Math.floor(Number(cards.SR)||0)),SEC:Math.max(0,Math.floor(Number(cards.SEC)||0)),SP:Math.max(0,Math.floor(Number(cards.SP)||0))},totalCardDraws:Math.max(0,Math.floor(Number(gambling.totalCardDraws)||0)),lotteryTickets:(Array.isArray(gambling.lotteryTickets)?gambling.lotteryTickets:[]).filter(t=>t&&Array.isArray(t.numbers)).map(t=>({id:String(t.id||`${t.purchaseDay||state.day}-${Math.random()}`),numbers:[...new Set(t.numbers.map(Number).filter(n=>n>=1&&n<=45))].slice(0,6).sort((a,b)=>a-b),purchaseDay:Math.max(1,Math.floor(Number(t.purchaseDay)||state.day)),drawDay:Math.max(1,Math.floor(Number(t.drawDay)||state.day+7)),status:t.status==='drawn'?'drawn':'pending'})).filter(t=>t.numbers.length===6),lotteryResults:(Array.isArray(gambling.lotteryResults)?gambling.lotteryResults:[]).slice(-20)};
+ const minigames=state.minigames||{};state.minigames={songSurvivalLastDay:Number(minigames.songSurvivalLastDay??-99),quizShowLastDay:Number(minigames.quizShowLastDay??-99),songBestStage:Math.max(0,Math.min(3,Math.floor(Number(minigames.songBestStage)||0))),quizBest:Math.max(0,Math.min(10,Math.floor(Number(minigames.quizBest)||0))),quizBag:[...new Set((Array.isArray(minigames.quizBag)?minigames.quizBag:[]).map(Number).filter(n=>Number.isInteger(n)&&n>=0&&n<30))]};
  state.arrogance={lastDay:Number(state.arrogance?.lastDay??-99),count:Math.max(0,Number(state.arrogance?.count)||0),lesson:Number(state.arrogance?.lesson)||0};
  const defaultCooldowns={managerTalk:-99,recruit:-99,audition:-99,concert:-99,broadcast:-99,fanmeeting:-99,album:-99,fanEvent:-99,snsPost:-99};
  state.cooldowns={...defaultCooldowns,...(state.cooldowns||{})};
@@ -351,7 +354,7 @@ function normalizeState(){
  delete state.romance;
  syncEndingCollection();
 }
-const SAVE_VERSION='1.1';
+const SAVE_VERSION='1.2';
 const AUTO_SAVE_KEY='ryuGameAuto';
 const MANUAL_SAVE_KEYS=['ryuGameSlot1','ryuGameSlot2','ryuGameSlot3'];
 function makeSaveRecord(){return {version:SAVE_VERSION,savedAt:new Date().toISOString(),state:JSON.parse(JSON.stringify(state))}}
@@ -372,12 +375,13 @@ function openSaveManager(mode='all'){
  showModal(mode==='load'?'저장 데이터 불러오기':'저장 / 불러오기',html);
  $$('[data-save-slot]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.saveSlot),key=MANUAL_SAVE_KEYS[i-1],existing=readSave(key);if(existing&&!confirm(`현재 진행 상황으로 저장 슬롯 ${i}을 덮어쓰시겠습니까?`))return;if(writeSave(key,true))openSaveManager(mode)});
  $$('[data-delete-slot]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.deleteSlot);if(!confirm(`저장 슬롯 ${i}을 삭제하시겠습니까?\n삭제 후 복구할 수 없습니다.`))return;const storage=getStorage();if(storage)storage.removeItem(MANUAL_SAVE_KEYS[i-1]);toast(`저장 슬롯 ${i}을 삭제했습니다.`);openSaveManager(mode)});
- $$('[data-load-key]').forEach(b=>b.onclick=()=>{const key=b.dataset.loadKey;if($('#gameScreen').classList.contains('active')&&!confirm('현재 진행 내용은 자동 저장되지만, 마지막 행동 이후 변경 내용이 있을 수 있습니다. 불러오시겠습니까?'))return;if(!load(key))return toast('저장 데이터를 불러오지 못했습니다.');setChoiceLock(false);exitEndingMusic();$('#titleScreen').classList.remove('active');$('#gameScreen').classList.add('active');closeModal();render();toast('저장 데이터를 불러왔습니다.')});
+ $$('[data-load-key]').forEach(b=>b.onclick=()=>{const key=b.dataset.loadKey;if($('#gameScreen').classList.contains('active')&&!confirm('현재 진행 내용은 자동 저장되지만, 마지막 행동 이후 변경 내용이 있을 수 있습니다. 불러오시겠습니까?'))return;forceAudioOn();if(!load(key))return toast('저장 데이터를 불러오지 못했습니다.');setChoiceLock(false);exitEndingMusic();$('#titleScreen').classList.remove('active');$('#gameScreen').classList.add('active');closeModal();render();toast('저장 데이터를 불러왔습니다.')});
 }
-function loadAudioSettings(){try{const raw=localStorage.getItem('ryuAudioSettings');if(raw)audioSettings={...audioSettings,...JSON.parse(raw)}}catch{}updateAudioButton()}
-function saveAudioSettings(){try{localStorage.setItem('ryuAudioSettings',JSON.stringify(audioSettings))}catch{}updateAudioButton()}
+function loadAudioSettings(){try{const raw=localStorage.getItem('ryuAudioSettings'),saved=raw?JSON.parse(raw):{};const savedVolume=Number(saved.volume);audioSettings={bgm:true,sfx:true,volume:Number.isFinite(savedVolume)&&savedVolume>=.12?Math.min(1,savedVolume):.42}}catch{audioSettings={bgm:true,sfx:true,volume:.42}}updateAudioButton()}
+function saveAudioSettings(){audioSettings.bgm=true;audioSettings.sfx=true;audioSettings.volume=Math.max(.12,Math.min(1,Number(audioSettings.volume)||.42));try{localStorage.setItem('ryuAudioSettings',JSON.stringify(audioSettings))}catch{}updateAudioButton()}
 function updateAudioButton(){const b=$('#audioBtn');if(!b)return;const on=audioSettings.bgm||audioSettings.sfx;b.textContent=on?'♪':'♩';b.classList.toggle('audio-on',on);b.classList.toggle('audio-off',!on);b.setAttribute('aria-label',on?'음악 및 효과음 켜짐':'음악 및 효과음 꺼짐')}
 function ensureAudio(){if(!audioCtx){const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return false;audioCtx=new Ctx();audioMaster=audioCtx.createGain();bgmGain=audioCtx.createGain();sfxGain=audioCtx.createGain();audioMaster.gain.value=audioSettings.volume;bgmGain.gain.value=audioSettings.bgm ? .23 : 0;sfxGain.gain.value=audioSettings.sfx ? .5 : 0;bgmGain.connect(audioMaster);sfxGain.connect(audioMaster);audioMaster.connect(audioCtx.destination)}if(audioCtx.state==='suspended')audioCtx.resume();syncAudioGains();if(audioSettings.bgm&&!bgmTimer)startBgm();return true}
+function forceAudioOn(){audioSettings.bgm=true;audioSettings.sfx=true;if(audioSettings.volume<.12)audioSettings.volume=.42;saveAudioSettings();const ok=ensureAudio();if(ok&&audioCtx?.state==='running'){syncAudioGains();if(!bgmTimer)startBgm()}return ok}
 function syncAudioGains(){if(!audioCtx)return;const t=audioCtx.currentTime;audioMaster.gain.setTargetAtTime(audioSettings.volume,t,.04);bgmGain.gain.setTargetAtTime(audioSettings.bgm ? (endingMusicMode?.19:.23) : 0,t,.08);sfxGain.gain.setTargetAtTime(audioSettings.sfx ? .5 : 0,t,.04);if(audioSettings.bgm&&!bgmTimer)startBgm();if(!audioSettings.bgm&&bgmTimer){clearInterval(bgmTimer);bgmTimer=null}}
 const bgmScales={home:[48,52,55,59,55,52,50,55],store:[50,53,57,60,57,53,52,57],practice:[45,52,57,60,57,52,48,55],park:[48,55,59,62,59,55,52,59],stage:[45,52,56,59,64,59,56,52]};
 function midiHz(n){return 440*Math.pow(2,(n-69)/12)}
@@ -415,7 +419,7 @@ function startBgm(){if(!audioCtx||bgmTimer||!audioSettings.bgm)return;scheduleBg
 function playSfx(type='tap'){if(!audioSettings.sfx||!ensureAudio()||!sfxGain)return;const now=audioCtx.currentTime+.01;const note=(n,d=.12,g=.12,w='sine',delay=0)=>softNote(midiHz(n),now+delay,d,g,w,sfxGain);switch(type){case'move':note(60,.12,.09,'triangle');note(67,.18,.08,'triangle',.1);break;case'coin':note(76,.1,.12,'square');note(83,.16,.09,'triangle',.08);break;case'save':note(64,.12,.08,'sine');note(69,.15,.08,'sine',.09);note(76,.22,.07,'sine',.18);break;case'success':note(60,.12,.09,'triangle');note(64,.15,.09,'triangle',.1);note(67,.2,.09,'triangle',.2);note(72,.3,.08,'sine',.3);break;case'fail':note(55,.2,.08,'sawtooth');note(50,.3,.07,'triangle',.15);break;case'busking':note(57,.11,.08,'triangle');note(64,.11,.08,'triangle',.09);note(69,.2,.08,'triangle',.18);break;case'drink':note(72,.08,.07,'sine');note(79,.12,.06,'sine',.08);break;case'event':note(48,.18,.07,'sine');note(60,.24,.08,'triangle',.13);break;case'click':case'tap':default:note(69,.07,.035,'sine');}}
 function toggleBgm(){audioSettings.bgm=!audioSettings.bgm;saveAudioSettings();ensureAudio();syncAudioGains();playSfx('tap');renderAudioSettingsIfOpen()}
 function toggleSfx(){audioSettings.sfx=!audioSettings.sfx;saveAudioSettings();ensureAudio();syncAudioGains();if(audioSettings.sfx)playSfx('success');renderAudioSettingsIfOpen()}
-function setAudioVolume(v){audioSettings.volume=Math.max(0,Math.min(1,Number(v)||0));saveAudioSettings();ensureAudio();syncAudioGains()}
+function setAudioVolume(v){audioSettings.bgm=true;audioSettings.sfx=true;audioSettings.volume=Math.max(.12,Math.min(1,Number(v)||.42));saveAudioSettings();ensureAudio();syncAudioGains()}
 
 function gameGuideHtml(){return `<div class="game-guide">
   <section class="guide-hero">
@@ -428,6 +432,8 @@ function gameGuideHtml(){return `<div class="game-guide">
   </nav>
   <div class="guide-pages">
     <section class="guide-page active" data-guide-page="start">
+      <div class="guide-callout"><b>먼저 화면을 이렇게 읽으세요.</b><p>화면 위에는 날짜·시간대와 체력·보컬·작곡·인지도가 표시됩니다. 장소 버튼으로 이동하고, 화면 아래의 행동 버튼을 누르면 하루의 시간이 진행됩니다. 하루는 4칸이며 시간 미소모 행동은 버튼 설명에 따로 표시됩니다. 회색 버튼은 조건 부족, 하루 제한 또는 재도전 대기 중이라는 뜻입니다.</p></div>
+      <div class="guide-step"><b>처음 1~7일 추천 흐름</b><p>편의점 아르바이트로 생활비를 확보한 뒤 연습실에서 보컬을 올리고, 공원에서 버스킹으로 팬과 인지도를 모으세요. 체력이 낮아지면 자취방의 식사나 깊은 휴식을 사용합니다. 정답은 하나가 아니며 돈·체력·스트레스가 무너지지 않도록 활동을 섞는 것이 핵심입니다.</p></div>
       <div class="guide-step"><b>1. 초반 생활비를 확보하세요.</b><p>편의점 아르바이트로 월세와 식비를 마련합니다. 돈만 벌면 성장 속도가 느려지므로 체력이 남는 날에는 훈련이나 홍보를 섞는 것이 좋습니다.</p></div>
       <div class="guide-step"><b>2. 연습실에서 보컬과 작곡을 올리세요.</b><p>보컬은 버스킹·오디션·공연 성공과 수입에 큰 영향을 줍니다. 작곡은 앨범 완성도와 자작곡 성장에 중요합니다. 미니게임 성공 시 추가 성장을 얻습니다.</p></div>
       <div class="guide-step"><b>3. 공원에서 버스킹으로 첫 팬을 모으세요.</b><p>솔로 또는 밴드 버스킹으로 팬·인지도·수입을 얻습니다. 하루 최대 2회이며 두 번째 공연은 효율이 낮습니다. 랜덤 리듬게임 성공 시 추가 보상을 받습니다.</p></div>
@@ -441,14 +447,14 @@ function gameGuideHtml(){return `<div class="game-guide">
       <article><b>인지도</b><p>100점마다 레벨이 1 상승하며 최대 Lv.100입니다. 높은 레벨에서 대형 커리어 이벤트가 열립니다.</p></article><article><b>밴드 결속력</b><p>밴드 활동의 안정성과 일부 사건 결과에 영향을 줍니다.</p></article>
     </div></section>
     <section class="guide-page" data-guide-page="career">
-      <div class="guide-table"><div><b>훈련</b><span>보컬·작곡 성장의 기본입니다.</span></div><div><b>버스킹</b><span>초반 팬과 현금을 동시에 얻는 활동입니다.</span></div><div><b>오디션</b><span>첫 합격 보상이 크며 충분한 능력치가 필요합니다.</span></div><div><b>앨범 제작</b><span>연습실에서 진행합니다. 싱글·미니·정규 순으로 비용과 보상이 커집니다.</span></div><div><b>공연</b><span>팬, 인지도, 수익을 함께 얻습니다.</span></div><div><b>방송 출연</b><span>인지도 성장에 효과적이며 재도전 간격이 있습니다.</span></div><div><b>특별 이벤트</b><span>특정 날짜·레벨·조건에서 열리고 엔딩에도 영향을 줍니다.</span></div></div>
+      <div class="guide-table"><div><b>훈련</b><span>보컬·작곡 성장의 기본입니다.</span></div><div><b>버스킹</b><span>초반 팬과 현금을 동시에 얻는 활동입니다.</span></div><div><b>오디션</b><span>첫 합격 보상이 크며 충분한 능력치가 필요합니다.</span></div><div><b>앨범 제작</b><span>연습실에서 진행합니다. 싱글·미니·정규 순으로 비용과 보상이 커집니다.</span></div><div><b>공연</b><span>팬, 인지도, 수익을 함께 얻습니다.</span></div><div><b>방송 출연</b><span>인지도 성장에 효과적이며 재도전 간격이 있습니다.</span></div><div><b>366일 방송 미니게임</b><span>공연장의 노래 서바이벌과 O/X 퀴즈쇼는 각각 7일 간격으로 참가합니다.</span></div><div><b>특별 이벤트</b><span>특정 날짜·레벨·조건에서 열리고 엔딩에도 영향을 줍니다.</span></div></div>
       <div class="guide-callout"><b>추천 성장 흐름</b><p>초반: 홍보·버스킹·오디션 → 중반: 앨범·공연·방송 → 후반: 전국 페스티벌·투어·해외 쇼케이스</p></div>
     </section>
     <section class="guide-page" data-guide-page="money"><div class="guide-grid">
       <article><b>수입</b><p>아르바이트, 버스킹, 공연, 방송, 앨범으로 얻습니다. 채무가 있으면 수입 일부가 자동 상환됩니다.</p></article><article><b>고정비</b><p>월세와 생활비가 정기적으로 발생하며 매니저·밴드 유지비가 추가될 수 있습니다.</p></article><article><b>채무</b><p>비용 부족이나 고정비 미납 시 부족분이 채무가 됩니다.</p></article><article><b>채무 제한</b><p>앨범 제작, 장비·의상 구매, 이사 등 일부 투자 행동이 막힙니다.</p></article>
     </div><div class="guide-callout warning"><b>채무가 있어도 회복할 수 있습니다.</b><p>훈련, 아르바이트, 버스킹은 계속 가능합니다. 돈을 벌어 가계부에서 상환하세요.</p></div></section>
     <section class="guide-page" data-guide-page="save">
-      <div class="guide-step"><b>자동 저장</b><p>이동·행동·날짜 변경 때 최근 진행 상황이 저장됩니다.</p></div><div class="guide-step"><b>수동 저장 슬롯 3개</b><p>중요 선택이나 엔딩 분기 전에 서로 다른 슬롯에 저장하세요.</p></div><div class="guide-step"><b>추억 앨범</b><p>완료한 특별 이벤트의 이미지와 스토리를 다시 볼 수 있으며 보상은 중복 지급되지 않습니다.</p></div><div class="guide-step"><b>저장 주의</b><p>브라우저 사이트 데이터를 삭제하면 저장이 사라질 수 있으며 다른 기기와 자동 동기화되지 않습니다.</p></div>
+      <div class="guide-step"><b>자동 저장</b><p>이동·행동·날짜 변경 때 최근 진행 상황이 저장됩니다.</p></div><div class="guide-step"><b>소리 재생</b><p>새 게임·이어하기 등 첫 화면의 첫 터치부터 BGM과 효과음이 자동으로 시작됩니다. 브라우저 정책상 페이지를 열기만 한 상태에서는 소리가 나지 않을 수 있지만, 게임을 시작하면 별도의 음악 버튼을 누를 필요가 없습니다.</p></div><div class="guide-step"><b>수동 저장 슬롯 3개</b><p>중요 선택이나 엔딩 분기 전에 서로 다른 슬롯에 저장하세요.</p></div><div class="guide-step"><b>추억 앨범</b><p>완료한 특별 이벤트의 이미지와 스토리를 다시 볼 수 있으며 보상은 중복 지급되지 않습니다.</p></div><div class="guide-step"><b>저장 주의</b><p>브라우저 사이트 데이터를 삭제하면 저장이 사라질 수 있으며 다른 기기와 자동 동기화되지 않습니다.</p></div>
     </section>
     <section class="guide-page" data-guide-page="tips"><ol class="guide-tip-list">
       <li><b>초반에는 보컬을 우선하세요.</b><span>버스킹 성공과 수입이 안정됩니다.</span></li><li><b>체력을 전부 쓰지 마세요.</b><span>예상치 못한 사건에 대비해 15~25 정도 남겨 두는 편이 안전합니다.</span></li><li><b>월말 전에 현금을 남겨 두세요.</b><span>채무가 생기면 앨범과 장비 투자가 막힙니다.</span></li><li><b>하루 제한 행동을 확인하세요.</b><span>홍보, 단골 응대, 라이벌 관찰 등은 하루 제한이 있습니다.</span></li><li><b>두 번째 버스킹은 선택적으로 하세요.</b><span>보상이 줄고 스트레스가 늘어납니다.</span></li><li><b>매니저는 자금이 안정된 뒤 고용해도 됩니다.</b><span>추가 콘텐츠가 열리지만 유지비도 발생합니다.</span></li><li><b>중요 선택 전 수동 저장하세요.</b><span>슬롯을 나누면 여러 엔딩을 확인하기 쉽습니다.</span></li><li><b>능력치를 방치하지 마세요.</b><span>보컬과 작곡은 14일의 유예기간 후 7일마다 3씩 낮아집니다. 공연·방송은 보컬 유지, 편곡·앨범은 작곡 유지에 도움이 됩니다.</span></li><li><b>한 행동만 반복하지 마세요.</b><span>후반에는 공연·방송·앨범·특별 이벤트를 조합해야 Lv.100까지 자연스럽게 성장합니다.</span></li>
@@ -458,11 +464,11 @@ function gameGuideHtml(){return `<div class="game-guide">
 function bindGameGuide(){$$('[data-guide-tab]').forEach(btn=>btn.onclick=()=>{$$('[data-guide-tab]').forEach(x=>x.classList.toggle('active',x===btn));$$('[data-guide-page]').forEach(page=>page.classList.toggle('active',page.dataset.guidePage===btn.dataset.guideTab))})}
 function openGameGuide(){showModal('게임 설명 · 진행 가이드',gameGuideHtml());bindGameGuide()}
 
-function audioSettingsHtml(){return `<div class="audio-settings"><div class="audio-row"><div><label>잔잔한 배경음악</label><small>장소마다 코드 분위기가 조금씩 달라집니다.</small></div><button id="toggleBgm" class="audio-toggle ${audioSettings.bgm?'on':''}">${audioSettings.bgm?'켜짐':'꺼짐'}</button></div><div class="audio-row"><div><label>효과음</label><small>이동, 구매, 버스킹, 저장 등에 재생됩니다.</small></div><button id="toggleSfx" class="audio-toggle ${audioSettings.sfx?'on':''}">${audioSettings.sfx?'켜짐':'꺼짐'}</button></div><div><label for="audioVolume">전체 볼륨 ${Math.round(audioSettings.volume*100)}%</label><input id="audioVolume" class="audio-volume" type="range" min="0" max="1" step="0.05" value="${audioSettings.volume}"></div><p class="audio-hint">휴대전화 브라우저 정책 때문에 첫 화면 터치 후 음악이 시작됩니다. 이어폰 사용 시 볼륨을 낮게 설정해 주세요.</p></div>`}
+function audioSettingsHtml(){return `<div class="audio-settings"><div class="audio-row"><div><label>잔잔한 배경음악</label><small>게임이 실행되는 동안 장소에 맞는 음악이 계속 재생됩니다.</small></div><span class="audio-always-on">항상 켜짐</span></div><div class="audio-row"><div><label>효과음</label><small>이동, 버튼, 구매, 버스킹, 저장 등에 자동으로 재생됩니다.</small></div><span class="audio-always-on">항상 켜짐</span></div><div><label for="audioVolume">전체 볼륨 ${Math.round(audioSettings.volume*100)}%</label><input id="audioVolume" class="audio-volume" type="range" min="0.12" max="1" step="0.05" value="${audioSettings.volume}"></div><p class="audio-hint">브라우저의 자동 재생 제한 때문에 웹페이지를 연 순간에는 소리를 강제로 낼 수 없습니다. 새 게임·이어하기·게임 설명 등 첫 터치부터 자동으로 음악과 효과음이 시작되며, 화면을 다시 켜거나 앱으로 돌아오면 자동 재개됩니다.</p></div>`}
 function openAudioSettings(){ensureAudio();showModal('음악·효과음 설정',audioSettingsHtml());bindAudioSettings()}
-function bindAudioSettings(){const bgm=$('#toggleBgm'),sfx=$('#toggleSfx'),vol=$('#audioVolume');if(bgm)bgm.onclick=toggleBgm;if(sfx)sfx.onclick=toggleSfx;if(vol)vol.oninput=e=>{setAudioVolume(e.target.value);const label=e.target.previousElementSibling;if(label)label.textContent=`전체 볼륨 ${Math.round(audioSettings.volume*100)}%`}}
+function bindAudioSettings(){const vol=$('#audioVolume');if(vol)vol.oninput=e=>{setAudioVolume(e.target.value);const label=e.target.previousElementSibling;if(label)label.textContent=`전체 볼륨 ${Math.round(audioSettings.volume*100)}%`}}
 function renderAudioSettingsIfOpen(){if($('#modal')?.open&&$('#modalTitle')?.textContent==='음악·효과음 설정'){ $('#modalBody').innerHTML=audioSettingsHtml();bindAudioSettings()}}
-let toastTimer=null,toastMessage='';
+let toastTimer=null,toastMessage='',toastSerial=0;
 function syncToastLayer(){
  const modal=$('#modal'),modalToast=$('#modalToast'),pageToast=$('#toast');
  const useModal=!!(modal&&modal.open&&modalToast),active=useModal?modalToast:pageToast,inactive=useModal?pageToast:modalToast;
@@ -472,6 +478,7 @@ function syncToastLayer(){
  active.classList.toggle('show',!!toastMessage);
 }
 function toast(t){
+ toastSerial++;
  toastMessage=String(t??'');
  if(toastTimer)clearTimeout(toastTimer);
  syncToastLayer();
@@ -571,10 +578,17 @@ function moveHome(){
  addHistory(`🏠 주거 업그레이드 · ${next[0]}에 새 보금자리를 마련했다.`);
  showDialogue('류현상',`${next[0]}으로 이사했다. 이제 깊은 휴식은 체력 ${restAmount()}, 식사는 체력 ${mealRecovery()}을 회복한다.`);save(false);advance(1)
 }
+function forcedRestConditionMet(){
+ const stress=Number(state.stats?.stress)||0;
+ const hp=Number(state.stats?.hp)||0;
+ return stress>=15&&hp<=20
+}
 function forcedRestChance(){
- if(state.stats.stress<15||state.stats.hp>20)return 0;
- const stressBonus=Math.max(0,state.stats.stress-15)*.006;
- const hpBonus=Math.max(0,20-state.stats.hp)*.02;
+ if(!forcedRestConditionMet())return 0;
+ const stress=Number(state.stats.stress)||0;
+ const hp=Number(state.stats.hp)||0;
+ const stressBonus=Math.max(0,stress-15)*.006;
+ const hpBonus=Math.max(0,20-hp)*.02;
  return Math.min(.95,.30+stressBonus+hpBonus)
 }
 function runPostAdvanceEvents(source='action',crossedDay=false){
@@ -592,23 +606,27 @@ function advance(hours=1,source='action'){
  state.time+=hours;
  while(state.time>=4){state.time-=4;state.day++;dailyTick(false);crossedDay=true}
  const chance=forcedRestChance();
- const canForce=!['forcedRest','gambling'].includes(source)&&state.lastAction!=='rest'&&chance>0&&state.forcedRest.lastTriggeredDay!==state.day;
- if(canForce&&Math.random()<chance){
+ const forcedRestHp=Number(state.stats.hp)||0;
+ const forcedRestStress=Number(state.stats.stress)||0;
+ const canForce=!['forcedRest','gambling'].includes(source)&&state.lastAction!=='rest'&&forcedRestConditionMet()&&chance>0&&state.forcedRest.lastTriggeredDay!==state.day;
+ if(canForce&&forcedRestConditionMet()&&Math.random()<chance){
   const triggerDay=state.day;
+  const triggerHp=forcedRestHp;
+  const triggerStress=forcedRestStress;
   state.forcedRest.count++;
   state.forcedRest.lastTriggeredDay=triggerDay;
   stat('hp',30);stat('stress',-15);
   state.time+=4;
   while(state.time>=4){state.time-=4;state.day++;dailyTick(false);crossedDay=true}
-  addHistory(`🛌 강제 휴식 · 몸에 무리가 와 하루를 쉬었다. 발생 확률 ${Math.round(chance*100)}%`,`forced-rest:${triggerDay}:${state.forcedRest.count}`);
-  state.dialogue={name:'나레이션',text:'휴식을 하지 않아 몸에 무리가 왔다. 류현상은 예정된 일정을 모두 취소하고 하루 동안 강제로 쉬었다.'};
+  addHistory(`🛌 강제 휴식 · 발생 직전 체력 ${triggerHp}, 스트레스 ${triggerStress} · 하루를 쉬었다. 발생 확률 ${Math.round(chance*100)}%`,`forced-rest:${triggerDay}:${state.forcedRest.count}`);
+  state.dialogue={name:'나레이션',text:`체력 ${triggerHp}, 스트레스 ${triggerStress} 상태에서 몸에 무리가 왔다. 류현상은 예정된 일정을 모두 취소하고 하루 동안 강제로 쉬었다.`};
   save(false);checkProgress();render();
-  showModal('강제 휴식',`<div class="info-card"><b>휴식을 하지 않아 몸에 무리가 왔다.</b><p>스트레스와 낮은 체력 때문에 모든 일정을 취소하고 하루가 지났습니다.</p><p>현재 체력 <strong>${state.stats.hp}</strong> · 스트레스 <strong>${state.stats.stress}</strong></p><button id="forcedRestConfirm" class="primary wide">확인</button></div>`);
+  showModal('강제 휴식',`<div class="info-card"><b>체력 20 이하와 스트레스 15 이상 조건이 동시에 충족되었습니다.</b><p>발생 직전: 체력 <strong>${triggerHp}</strong> · 스트레스 <strong>${triggerStress}</strong></p><p>강제 휴식 후: 체력 <strong>${state.stats.hp}</strong> · 스트레스 <strong>${state.stats.stress}</strong></p><small>강제 휴식 후 표시되는 체력은 휴식 회복과 다음 날 자연 회복이 반영된 수치입니다.</small><button id="forcedRestConfirm" class="primary wide">확인</button></div>`);
   const confirm=$('#forcedRestConfirm');if(confirm)confirm.onclick=()=>{closeModal();render();setTimeout(()=>runPostAdvanceEvents('forcedRest',true),180)};
   return
  }
  save(false);checkProgress();render();
- if(source==='gambling'){deferredPostAdvance={source,crossedDay};return}
+ if(['gambling','minigame'].includes(source)){deferredPostAdvance={source,crossedDay};return}
  setTimeout(()=>runPostAdvanceEvents(source,crossedDay),180)
 }
 function markSkillUse(type){if(!['vocal','compose'].includes(type))return;const key=type==='vocal'?'lastVocalUseDay':'lastComposeUseDay',countKey=type==='vocal'?'vocalDecayCount':'composeDecayCount';state.skillMaintenance=state.skillMaintenance||{};state.skillMaintenance[key]=state.day;state.skillMaintenance[countKey]=0}
@@ -837,6 +855,29 @@ const rivalStories=[
 ];
 function runLinearStory(title,scenes,onFinish){let page=0,finished=false;const draw=()=>{const [name,text]=scenes[page];showModal(title,`<div class="ending-story"><div class="ending-count">STORY · ${page+1} / ${scenes.length}</div><h3>${name}</h3><p>${text}</p><div class="ending-nav"><button id="linearPrev" ${page===0?'disabled':''}>이전 장면</button><button id="linearNext" class="primary">${page===scenes.length-1?'이야기를 마친다':'다음 장면'}</button></div></div>`);$('#linearPrev').onclick=()=>{if(page>0){page--;draw()}};$('#linearNext').onclick=()=>{if(finished)return;if(page<scenes.length-1){page++;draw();return}finished=true;closeModal();onFinish&&onFinish()}};draw()}
 function maybeRivalStory(){const next=rivalStories[state.rival.stage];if(!next||fameLevel()<next.lv||state.day-state.rival.lastEventDay<5)return false;state.rival.met=true;runLinearStory(next.title,next.scenes,()=>{state.rival.stage++;state.rival.respect+=10;state.rival.lastEventDay=state.day;gainSkill('vocal',2,'rival');stat('fame',15);addHistory(`⚔️ 라이벌 카인 · ${next.title}`,`rival:${state.rival.stage}`);save(false);render();toast('라이벌 스토리 완료 · 보컬 +2 / 인지도 +15')});return true}
+const restNightmareStories=[
+ {id:'military',title:'다시 제대하는 꿈',text:'류현상은 이미 끝난 군 생활을 다시 시작한 듯한 꿈속에서 군복을 입고 연병장에 서 있었다. 멀리서 누군가 행사 출발 시간이 다 됐다고 외쳤지만, 몸은 생활관 밖으로 한 발짝도 움직이지 않았다.\n\n“아... 안 돼... 나 행사 가야 된단 말이야!!! 이렇게 갈 순 없어!”\n\n그 순간 군대 기상음이 귀를 찢을 듯 울렸고, 류현상은 이불을 걷어차며 벌떡 일어났다. 방 안은 조용했고 휴대전화 알람도 울리지 않았다.\n\n“너무 오래 잤나... 최악이다. 이런 꿈을 꾸네...”'},
+ {id:'stalker',title:'창밖의 찰칵 소리',text:'자취방에서 깊이 잠들어 있던 류현상의 귓가에 희미한 소리가 반복해서 들렸다. 찰칵. 찰칵. 처음에는 빗소리라고 생각했지만 소리는 일정한 간격으로 창문 쪽에서 들려왔다.\n\n잠든 류현상의 모습을 누군가 창문 너머에서 계속 촬영하고 있었다. 인기척을 느낀 류현상이 무거운 눈을 겨우 떴을 때 창밖에는 아무도 없었고, 커튼만 가볍게 흔들리고 있었다.\n\n“으... 그만 자야겠다...”\n\n꿈이었다는 것을 알면서도 류현상은 한동안 창문을 제대로 바라보지 못했다.'},
+ {id:'sleep-paralysis',title:'보컬 능력치가 떨어지는 소리',text:'류현상은 눈을 떴지만 손가락 하나 움직일 수 없었다. 침실 문 근처에 긴 머리의 누군가가 희미하게 서 있었다. 익숙한 실루엣처럼 보여 류현상은 떨리는 목소리로 간신히 중얼거렸다.\n\n“혹시... 김종서 선배님...?”\n\n희미한 형체가 점점 뚜렷해졌다. 하지만 그것은 사람이 아니었다. 긴 머리의 귀신이 찢어진 입으로 웃으며 침대 쪽으로 고개를 기울였다.\n\n“낄낄낄... 보컬 능력치 떨어지는 소리가 들린다, 들려...”\n\n류현상은 비명을 지르려다 목소리도 내지 못한 채 깨어났다. 가장 먼저 보컬 능력치부터 확인한 자신이 조금 한심했다.'}
+];
+function maybeRestNightmare(source='action'){
+ if(source!=='rest'||state.location!=='home')return false;
+ const data=state.restNightmares||(state.restNightmares={totalRests:0,lastTriggeredRest:0,seen:[]});
+ if(data.totalRests<5)return false;
+ if(data.totalRests-data.lastTriggeredRest<2)return false;
+ if(Math.random()>=.40)return false;
+ let available=restNightmareStories.filter(x=>!data.seen.includes(x.id));
+ if(!available.length){data.seen=[];available=[...restNightmareStories]}
+ const story=pick(available);data.seen.push(story.id);data.lastTriggeredRest=data.totalRests;
+ stat('stress',2);actionNoticeSequence++;markMajorNarrativeEvent();
+ state.dialogue={name:'돌발 스토리',text:`【${story.title}】\n\n${story.text}`};
+ addHistory(`🌙 과도한 휴식의 악몽 · ${story.title} · 스트레스 +2`,`rest-nightmare:${data.totalRests}:${story.id}`);
+ playSfx('event');
+ const badge=$('#eventBadge');if(badge){badge.textContent='악몽';badge.classList.remove('hidden');setTimeout(()=>{badge.classList.add('hidden');badge.textContent='돌발 사건'},2800)}
+ save(false);render();
+ setTimeout(()=>toast('너무 오랜 휴식으로 악몽을 꿔 스트레스 받았다. · 스트레스 +2'),260);
+ return true;
+}
 function maybeStoryEvent(source='action'){
  if(state.skipNextStory){state.skipNextStory=false;return false}
  if(state.pendingEnding||choiceLock||state.specialScene?.active||$('#modal')?.open)return false;
@@ -844,6 +885,7 @@ function maybeStoryEvent(source='action'){
  if(maybeFixedDaySpecialEvent()){markMajorNarrativeEvent();return true}
  if(maybeTwentyDayEpisode())return true;
  if(maybeCareerMilestoneEvent()){markMajorNarrativeEvent();return true}
+ if(maybeRestNightmare(source))return true
  if(maybeMysteriousMerchantEvent()){markMajorNarrativeEvent();return true}
  if(maybeHiddenRandomSpecialEvent()){markMajorNarrativeEvent();return true}
  if(maybeRivalStory()){markMajorNarrativeEvent();return true}
@@ -973,7 +1015,7 @@ function doAction(key){
  const actionResultBefore=snapshotActionResult();
  const s=state.stats;
  const f={
- rest:()=>{const atHome=state.location==='home',gain=atHome?restAmount():15;state.restStreak=(state.restStreak||0)+1;let repeated='',vocalLoss=0,composeLoss=0;if(state.restStreak>=2){vocalLoss=Math.min(1,state.stats.vocal);composeLoss=Math.min(1,state.stats.compose);stat('vocal',-vocalLoss);stat('compose',-composeLoss);state.restStreak=0;repeated=` 연속으로 두 번 깊은 휴식을 해 보컬 -${vocalLoss}, 작곡 -${composeLoss}.`;addHistory(`🛌 과도한 휴식 · 보컬 -${vocalLoss}, 작곡 -${composeLoss}`,`double-rest:${state.day}:${state.time}`)}stat('hp',gain);stat('stress',atHome?-10:-6);showDialogue('류현상',atHome?`${pickActionDialogue('rest')} 현재 집에서는 체력 ${gain}을 회복했고 반나절이 지났다.${repeated}`:`잠깐 앉아 호흡을 고르고 체력 ${gain}을 회복했다. 집이 아니어서 깊게 쉬지는 못했다.${repeated}`);if(repeated)toast(`연속 휴식으로 보컬 -${vocalLoss}, 작곡 -${composeLoss}`);advance(2)},
+ rest:()=>{const atHome=state.location==='home',gain=atHome?restAmount():15;state.restNightmares=state.restNightmares||{totalRests:0,lastTriggeredRest:0,seen:[]};state.restNightmares.totalRests++;state.restStreak=(state.restStreak||0)+1;let repeated='',vocalLoss=0,composeLoss=0;if(state.restStreak>=2){vocalLoss=Math.min(1,state.stats.vocal);composeLoss=Math.min(1,state.stats.compose);stat('vocal',-vocalLoss);stat('compose',-composeLoss);state.restStreak=0;repeated=` 연속으로 두 번 깊은 휴식을 해 보컬 -${vocalLoss}, 작곡 -${composeLoss}.`;addHistory(`🛌 과도한 휴식 · 보컬 -${vocalLoss}, 작곡 -${composeLoss}`,`double-rest:${state.day}:${state.time}`)}stat('hp',gain);stat('stress',atHome?-10:-6);showDialogue('류현상',atHome?`${pickActionDialogue('rest')} 현재 집에서는 체력 ${gain}을 회복했고 반나절이 지났다.${repeated}`:`잠깐 앉아 호흡을 고르고 체력 ${gain}을 회복했다. 집이 아니어서 깊게 쉬지는 못했다.${repeated}`);if(repeated)toast(`연속 휴식으로 보컬 -${vocalLoss}, 작곡 -${composeLoss}`);advance(2,'rest')},
  compose:()=>trainingAction('compose',10),
  meal:()=>{if((state.items.mealsToday||0)>=2)return toast('오늘은 더 이상 식사할 수 없습니다.');if(s.hp>=100)return toast('체력이 이미 최대입니다.');if(s.money<8000)return toast('돈이 부족합니다.');const gain=mealRecovery();state.items.mealsToday=(state.items.mealsToday||0)+1;stat('money',-8000);stat('hp',gain);showDialogue('류현상',`${pickActionDialogue('meal')} 현재 집 등급 효과로 체력 ${gain}을 회복했다. 식사에는 시간이 지나지 않는다.`);save(false);render();toast(`체력 +${gain} · 시간 미소모`)},
  wardrobe:()=>openWardrobe(),
@@ -991,9 +1033,112 @@ function doAction(key){
  rehearse:()=>{if(!state.band.formed)return toast('먼저 밴드를 결성해야 합니다.');if(!costHp(18))return;state.band.bond=clamp(state.band.bond+12);state.soloStreak=0;const gain=gainSkill('vocal',2,'rehearse');showDialogue('류현상',`${pickActionDialogue('rehearse')}${gain===0?' 보컬은 일반 성장 한계인 95에 도달해 더 오르지 않았다.':''}`);if(gain>0)toast(`보컬 +${gain}`);advance(1)},
  recruit:()=>recruit(),arrange:()=>{if(!state.band.formed)return toast('밴드가 필요합니다.');if(!costHp(15))return;markDailyPractice('compose');const gain=gainSkill('compose',2,'arrange');state.band.bond=clamp(state.band.bond+5);showDialogue('류현상',actionStory('rehearse',`각 악기의 빈자리를 줄이자 곡이 훨씬 선명해졌다.${gain===0?' 작곡은 일반 성장 한계인 95에 도달해 더 오르지 않았다.':''}`));if(gain>0)toast(`작곡 +${gain}`);advance(1)},
  album:()=>openAlbum(),busking:()=>busking(false),bandBusking:()=>busking(true),walk:()=>{stat('stress',-15);showDialogue('류현상',pickActionDialogue('walk'));advance(1)},flyerPromo:()=>{if(state.storeDaily.flyerDay===state.day)return toast('공연 전단 홍보는 하루에 한 번만 할 수 있습니다.');if(state.stats.money<20000)return toast('전단 제작비 2만원이 필요합니다.');if(!costHp(8))return;state.storeDaily.flyerDay=state.day;stat('money',-20000);const fanGain=8+Math.floor(Math.random()*8);stat('fans',fanGain);stat('fame',1);showDialogue('류현상',actionStory('busking',`공원 주변에 다음 버스킹 일정을 알리는 전단을 나눠 줬다. 팬 ${fanGain}명이 새로 관심을 보였다.`));advance(1)},audienceResearch:()=>{if(state.preparation?.buskingInsight)return toast('이미 다음 버스킹을 위한 관객 조사를 마쳤습니다.');if(!costHp(6))return;stat('stress',-3);state.preparation.buskingInsight=true;state.preparation.buskingInsightDay=state.day;showDialogue('류현상',actionStory('busking','공원 관객이 멈춰 서는 곡과 시간대를 살폈다. 다음 버스킹은 성공률과 팬 증가량이 상승한다.'));advance(1)},observe:()=>{if(state.storeDaily.observeDay===state.day)return toast('라이벌 관찰은 하루에 한 번만 할 수 있습니다.');if(state.stats.vocal>=95)return toast('보컬 95 이상은 특별 이벤트·앨범·대형 무대로만 성장할 수 있습니다.');if(!costHp(6))return;state.storeDaily.observeDay=state.day;const gain=gainSkill('vocal',1,'observe');stat('stress',1);showDialogue('류현상',pickActionDialogue('observe'));if(gain>0)toast(`보컬 +${gain}`);advance(1)},repair:()=>{if(!state.equipment.mic&&!state.equipment.amp)return toast('먼저 마이크나 음향장비를 구입해야 합니다.');const micNeeds=state.equipment.mic&&state.equipmentDurability.mic<equipmentMaxDurability('mic');const ampNeeds=state.equipment.amp&&state.equipmentDurability.amp<equipmentMaxDurability('amp');if(!micNeeds&&!ampNeeds){const status=`마이크 ${equipmentStatusText('mic')} · 음향장비 ${equipmentStatusText('amp')}`;showDialogue('장비 점검',`마이크와 음향장비 내구도가 이미 최대다. ${status}. 보호 케이스는 50회 소모품이라 점검으로 회복되지 않는다.`);toast('장비 내구도가 이미 최대입니다.');pendingLocationActionStress=false;save(false);render();return}if(s.money<50000)return toast('장비 점검비 50,000원이 필요합니다.');stat('money',-50000);if(state.equipment.mic)state.equipmentDurability.mic=equipmentMaxDurability('mic');if(state.equipment.amp)state.equipmentDurability.amp=equipmentMaxDurability('amp');state.equipmentDamage={mic:false,amp:false};const status=`마이크 ${equipmentStatusText('mic')} · 음향장비 ${equipmentStatusText('amp')}`;showDialogue('류현상',actionStory('rehearse',`장비 점검으로 마이크와 음향장비의 내구도를 전부 회복했다. ${status}. 보호 케이스는 소모품이라 회복되지 않는다.`));toast('50,000원으로 장비 내구도를 모두 회복했습니다.');advance(1)},
- stageRehearsal:()=>stageRehearsal(),audition:()=>audition(),concert:()=>concert(),broadcast:()=>broadcast(),fanmeeting:()=>fanmeeting(),national:()=>national()
- };pendingLocationActionStress=['store','practice','stage'].includes(state.location)&&!['wardrobe','gear','moveHome','finance','national','digimonCard','lottery'].includes(key);if(key!=='rest')state.restStreak=0;state.lastAction=key;if(!['wardrobe','gear','album','manager','digimonInventory'].includes(key))pulseScene(key);const soundMap={stockWork:'coin',finance:'coin',flyerPromo:'tap',audienceResearch:'tap',stageRehearsal:'busking',work:'coin',buyBakcas:'coin',snack:'drink',meal:'drink',storePromo:'tap',customerPractice:'tap',digimonCard:'coin',lottery:'coin',bakcas:'drink',busking:'busking',bandBusking:'busking',concert:'busking',audition:'busking',repair:'coin'};playSfx(soundMap[key]||'tap');f[key]?.();scheduleActionResultNotice(actionResultBefore);
+ stageRehearsal:()=>stageRehearsal(),audition:()=>audition(),concert:()=>concert(),broadcast:()=>broadcast(),fanmeeting:()=>fanmeeting(),national:()=>national(),songSurvival:()=>startSongSurvival(),quizShow:()=>startQuizShow()
+ };pendingLocationActionStress=['store','practice','stage'].includes(state.location)&&!['wardrobe','gear','moveHome','finance','national','digimonCard','lottery','songSurvival','quizShow'].includes(key);if(key!=='rest')state.restStreak=0;state.lastAction=key;if(!['wardrobe','gear','album','manager','digimonInventory','songSurvival','quizShow'].includes(key))pulseScene(key);const soundMap={stockWork:'coin',finance:'coin',flyerPromo:'tap',audienceResearch:'tap',stageRehearsal:'busking',work:'coin',buyBakcas:'coin',snack:'drink',meal:'drink',storePromo:'tap',customerPractice:'tap',digimonCard:'coin',lottery:'coin',bakcas:'drink',busking:'busking',bandBusking:'busking',concert:'busking',audition:'busking',repair:'coin'};playSfx(soundMap[key]||'tap');f[key]?.();if(!['songSurvival','quizShow'].includes(key))scheduleActionResultNotice(actionResultBefore);
 }
+
+
+// --- 366일 이후 방송 미니게임: 노래 서바이벌 · 도전 퀴즈쇼 ---
+const SHOW_UNLOCK_DAY=366;
+const SHOW_COOLDOWN_DAYS=7;
+const songSurvivalRewards={
+ 0:{label:'참가 보상',money:50000,fans:30,fame:0,exp:8},
+ 1:{label:'1단계 통과',money:300000,fans:250,fame:40,exp:24},
+ 2:{label:'2단계 통과',money:800000,fans:650,fame:100,exp:45},
+ 3:{label:'최종 우승',money:1800000,fans:1400,fame:220,exp:75}
+};
+const songSurvivalStages=[
+ {rows:3,cols:6,speed:4.25,paddle:142,hardChance:0,tripleChance:0},
+ {rows:4,cols:7,speed:5.0,paddle:122,hardChance:.28,tripleChance:0},
+ {rows:5,cols:8,speed:5.75,paddle:106,hardChance:.45,tripleChance:.12}
+];
+const quizShowRewards=[
+ {min:0,max:3,label:'참가상',money:50000,fans:30,fame:0,exp:8},
+ {min:4,max:6,label:'분위기 메이커상',money:250000,fans:150,fame:25,exp:18},
+ {min:7,max:8,label:'퀴즈 실력자',money:600000,fans:400,fame:70,exp:35},
+ {min:9,max:9,label:'준우승',money:1200000,fans:800,fame:140,exp:55},
+ {min:10,max:10,label:'전 문제 정답·우승',money:2200000,fans:1400,fame:240,exp:80,stress:-5}
+];
+const ryuOxQuiz=[
+ {q:'류현상은 1994년 10월 4일에 태어났다.',a:true,why:'1994년 10월 4일 출생이다.'},
+ {q:'류현상의 고향은 태어난 곳 기준으로 충청북도 청주시다.',a:true,why:'청주에서 태어난 후 바로 천안으로 이사했다.'},
+ {q:'류현상의 키는 180cm, 몸무게는 70kg이며 혈액형은 A형이다.',a:false,why:'실제 신체 정보는 181cm, 68kg, B형이다.'},
+ {q:"류현상은 밴드 '스칼레티아(Scarletia)'의 리더, 보컬리스트, 기타리스트로 활동하고 있다.",a:true,why:'스칼레티아의 리더이자 보컬·기타리스트다.'},
+ {q:'류현상의 데뷔일은 2013년 5월 1일이다.',a:true,why:'2013년 5월 1일 데뷔했다.'},
+ {q:"류현상의 데뷔 싱글 타이틀곡은 'Listen to my love'이다.",a:false,why:"'Listen to my love'는 앨범명이며 타이틀곡은 '사랑이라는게'다."},
+ {q:'류현상의 MBTI 검사 결과는 항상 INTJ로 나온다.',a:true,why:'검사 결과는 항상 INTJ로 나온다.'},
+ {q:'류현상은 평소 자신의 MBTI가 ENFP라고 자주 소개한다.',a:false,why:'MBTI는 INTJ이며 최근 INFJ가 되어가는 것 같다고 느낀 적은 있다.'},
+ {q:'류현상은 2023년 Mnet 초대형 노래방 서바이벌 VS에 출연한 적이 있다.',a:true,why:"2023년 출연해 izi의 '응급실' 무대로 360만 뷰를 기록했다."},
+ {q:"류현상은 2024년 지상파 음악 방송인 KBS 2TV '뮤직뱅크'에 출연했다.",a:true,why:'2024년 뮤직뱅크에 출연했다.'},
+ {q:"류현상은 서울 홍대 거리에서 생일 기념 팬미팅 'H B D'를 개최했다.",a:false,why:'서울 홍대가 아니라 천안 JB 아트홀에서 개최했다.'},
+ {q:"류현상이 진행하는 자체 제작 팟캐스트 콘텐츠의 이름은 '꿀단지'이다.",a:true,why:"자체 제작 팟캐스트 이름은 '꿀단지'다."},
+ {q:"'꿀단지' EP.0의 게스트는 자작가수 이원이다.",a:false,why:'EP.0 게스트는 김시도이며 자작가수 이원은 EP.1 게스트다.'},
+ {q:"류현상은 OBS 라디오 '파워라이브'에 고정 게스트로 참여하고 있다.",a:true,why:'매주 금요일 고정 게스트로 참여하고 있다.'},
+ {q:"류현상은 2025년에 izi의 곡 '응급실'을 리메이크하여 발매했다.",a:true,why:"2025년 11월 4일 '응급실 (2025)'을 발매했다."},
+ {q:'2025년 12월에 발매된 음반 《From the Scarletia》는 더블 타이틀곡을 가지고 있다.',a:true,why:"'상처'와 '아무 일도 없던 것처럼 사랑하지 않은 것처럼'이 더블 타이틀이다."},
+ {q:'2026년 6월에는 웹툰 "천도박멸"과 콜라보한 OST 음원을 발매했다.',a:true,why:'2026년 6월 21일 웹툰 천도박멸 X 류현상 OST를 발매했다.'},
+ {q:"2013년 데뷔 앨범의 원래 타이틀곡은 '눈물만 눈물만'이 될 예정이었으나 변경되었다.",a:true,why:"원래 '눈물만 눈물만'이 타이틀곡이 될 예정이었으나 변경됐다."},
+ {q:'2015년에 발매된 음반의 실제 올바른 타이틀은 《Listen to my tears》이다.',a:true,why:'배급사 등록 실수와 별개로 실제 올바른 타이틀은 《Listen to my tears》다.'},
+ {q:'밴드 라이오네시스의 멤버 주기훈과 류현상은 서로 다른 세대의 선후배 관계이다.',a:false,why:'두 사람은 선후배가 아니라 1994년생 동갑내기 친구다.'},
+ {q:"류현상은 라이오네시스 멤버 주기훈의 싱글 'Remember'를 작사·작곡했다.",a:true,why:"주기훈의 싱글 'Remember' 작사·작곡에 참여했다."},
+ {q:'유튜버이자 웹툰 작가인 와나나의 천안 집에 놀러갔다가 웹툰 OST 참여가 급전개되었다.',a:true,why:'와나나의 천안 집에 놀러 갔다가 OST 참여가 빠르게 결정됐다.'},
+ {q:'류현상의 취미에는 영화 보기, 요리, MCU 레고 수집이 포함된다.',a:true,why:'영화 보기, 요리, MCU 레고 수집을 취미로 한다.'},
+ {q:'류현상은 새로운 취미로 디지몬 카드 게임을 하고 있다.',a:true,why:'새로운 취미로 디지몬 카드 게임을 즐긴다.'},
+ {q:"류현상은 영화 '극한직업'을 보며 펑펑 울고 가사 20곡을 쓴 적이 있다.",a:false,why:"'극한직업'이 아니라 '슬픔보다 더 슬픈 이야기'를 보고 울며 가사 20곡을 썼다."},
+ {q:'류현상은 초등학교 5학년 때 동방신기, 버즈를 보고 음악을 시작했다.',a:true,why:'초등학교 5학년 때 동방신기와 버즈를 보고 음악을 시작했다.'},
+ {q:'류현상이 존경하는 아티스트로 서태지, 신해철, 이승환이 언급된다.',a:false,why:'존경하는 아티스트로 김종서, 동물원, TraxX가 언급된다.'},
+ {q:'류현상이 보유한 운전면허는 1종 보통이다.',a:false,why:'보유 면허는 2종 보통이다.'},
+ {q:"류현상은 육성재의 'EXHIBITION : Look Closely / Be somebody' M/V에 밴드 기타 멤버로 참여했다.",a:true,why:'육성재 밴드의 기타 멤버로 해당 M/V에 참여했다.'},
+ {q:'류현상은 태어나서 성인이 될 때까지 쭉 청주에서 거주하다가 서울로 상경했다.',a:false,why:'청주에서 태어나자마자 천안으로 이사해 성장했다.'}
+];
+function shuffleInPlace(list){for(let i=list.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[list[i],list[j]]=[list[j],list[i]]}return list}
+function showCooldownRemaining(lastDay,label){const remaining=SHOW_COOLDOWN_DAYS-(state.day-lastDay);if(remaining>0){toast(`${label} 재도전까지 ${remaining}일 남았습니다.`);return true}return false}
+function startSongSurvival(){
+ if(state.day<SHOW_UNLOCK_DAY)return toast(`${SHOW_UNLOCK_DAY}일차부터 노래 서바이벌에 참가할 수 있습니다.`);
+ if(showCooldownRemaining(state.minigames.songSurvivalLastDay,'노래 서바이벌'))return;
+ if(!costHp(16))return;
+ stat('stress',4);state.minigames.songSurvivalLastDay=state.day;save(false);
+ memoryGameActive=true;
+ let stage=1,clearedStage=0,lives=3,raf=0,finished=false,running=false,leftHeld=false,rightHeld=false;
+ let canvas,ctx,overlay,paddle,ball,bricks=[];
+ const W=720,H=500,notes=['♪','♫','♬','♩','𝄞'];
+ showModal('노래 서바이벌 · 음표 벽돌깨기',`<div class="survival-head"><div><b>음표 공으로 모든 벽돌을 깨세요.</b><small>3단계로 갈수록 공이 빨라지고 단단한 벽돌이 늘어납니다. 키보드 ← → 또는 화면 터치로 조작합니다.</small></div><div class="survival-status"><span id="survivalStage">1단계</span><span id="survivalLives">목숨 3</span></div></div><div class="survival-canvas-wrap"><canvas id="survivalCanvas" width="720" height="500" aria-label="노래 서바이벌 벽돌깨기 게임"></canvas><div id="survivalOverlay" class="survival-overlay"><b>노래 서바이벌</b><p>3단계를 모두 통과하면 최종 우승 보상을 받습니다.</p><button id="survivalOverlayButton" class="primary">1단계 시작</button></div></div><div class="survival-controls"><button id="survivalLeft" aria-label="왼쪽 이동">◀</button><button id="survivalLaunch" class="primary">공 다시 띄우기</button><button id="survivalRight" aria-label="오른쪽 이동">▶</button></div><div class="survival-reward-guide"><span>1단계 30만원·팬 250·인지도 40</span><span>2단계 80만원·팬 650·인지도 100</span><span>3단계 180만원·팬 1,400·인지도 220</span></div>`);
+ canvas=$('#survivalCanvas');ctx=canvas.getContext('2d');overlay=$('#survivalOverlay');
+ const status=()=>{const se=$('#survivalStage'),le=$('#survivalLives');if(se)se.textContent=`${stage}단계`;if(le)le.textContent=`목숨 ${lives}`};
+ const setOverlay=(title,text,label,handler)=>{running=false;overlay.innerHTML=`<b>${title}</b><p>${text}</p><button id="survivalOverlayButton" class="primary">${label}</button>`;overlay.classList.remove('hidden');$('#survivalOverlayButton').onclick=handler};
+ const resetBall=()=>{const cfg=songSurvivalStages[stage-1];const angle=(Math.random()*.7-.35);ball={x:W/2,y:H-58,r:11,dx:cfg.speed*Math.sin(angle),dy:-cfg.speed*Math.cos(angle),note:pick(notes)};paddle.x=(W-paddle.w)/2};
+ const buildStage=()=>{const cfg=songSurvivalStages[stage-1];paddle={x:(W-cfg.paddle)/2,y:H-32,w:cfg.paddle,h:14};lives=3;bricks=[];const margin=28,gap=8,top=55,bh=24,bw=(W-margin*2-gap*(cfg.cols-1))/cfg.cols;for(let r=0;r<cfg.rows;r++){for(let c=0;c<cfg.cols;c++){let hp=1;if(Math.random()<cfg.hardChance)hp=2;if(Math.random()<cfg.tripleChance)hp=3;bricks.push({x:margin+c*(bw+gap),y:top+r*(bh+gap),w:bw,h:bh,hp,maxHp:hp})}}resetBall();status();drawFrame()};
+ const drawFrame=()=>{if(!ctx)return;ctx.clearRect(0,0,W,H);const grad=ctx.createLinearGradient(0,0,0,H);grad.addColorStop(0,'#111b32');grad.addColorStop(1,'#070b14');ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);ctx.strokeStyle='rgba(142,174,225,.18)';ctx.lineWidth=1;for(let y=40;y<H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}for(const b of bricks){if(b.hp<=0)continue;ctx.fillStyle=b.hp>=3?'#d95d91':b.hp===2?'#7c6ee6':'#3f8edb';ctx.fillRect(b.x,b.y,b.w,b.h);ctx.strokeStyle='rgba(255,255,255,.45)';ctx.strokeRect(b.x+.5,b.y+.5,b.w-1,b.h-1);if(b.hp>1){ctx.fillStyle='#fff';ctx.font='700 13px system-ui';ctx.textAlign='center';ctx.fillText(String(b.hp),b.x+b.w/2,b.y+17)}}ctx.fillStyle='#dbe9ff';ctx.fillRect(paddle.x,paddle.y,paddle.w,paddle.h);ctx.fillStyle='#83b7ff';ctx.fillRect(paddle.x+8,paddle.y+3,paddle.w-16,4);ctx.fillStyle='#fff';ctx.font='900 27px serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(ball.note,ball.x,ball.y)};
+ const normalizeBallSpeed=()=>{const cfg=songSurvivalStages[stage-1],mag=Math.hypot(ball.dx,ball.dy)||1;ball.dx=ball.dx/mag*cfg.speed;ball.dy=ball.dy/mag*cfg.speed};
+ const loseLife=()=>{lives--;status();if(lives<=0){finish(false,'failed');return}resetBall();running=false;setOverlay('음표를 놓쳤다',`목숨이 ${lives}개 남았습니다.`, '계속 도전',()=>{overlay.classList.add('hidden');running=true;loop()})};
+ const nextStage=()=>{clearedStage=stage;if(stage>=3){finish(true,'clear');return}stage++;buildStage();setOverlay(`${stage-1}단계 통과!`,`${stage}단계는 공이 더 빠르고 단단한 벽돌이 등장합니다.`,` ${stage}단계 시작`,()=>{overlay.classList.add('hidden');running=true;loop()})};
+ const update=()=>{const cfg=songSurvivalStages[stage-1];if(leftHeld)paddle.x-=8;if(rightHeld)paddle.x+=8;paddle.x=Math.max(0,Math.min(W-paddle.w,paddle.x));const prevX=ball.x,prevY=ball.y;ball.x+=ball.dx;ball.y+=ball.dy;if(ball.x-ball.r<=0&&ball.dx<0){ball.x=ball.r;ball.dx*=-1}if(ball.x+ball.r>=W&&ball.dx>0){ball.x=W-ball.r;ball.dx*=-1}if(ball.y-ball.r<=0&&ball.dy<0){ball.y=ball.r;ball.dy*=-1}if(ball.dy>0&&ball.y+ball.r>=paddle.y&&prevY+ball.r<=paddle.y+8&&ball.x>=paddle.x&&ball.x<=paddle.x+paddle.w){ball.y=paddle.y-ball.r;const hit=(ball.x-(paddle.x+paddle.w/2))/(paddle.w/2);ball.dx=cfg.speed*hit*.95;ball.dy=-Math.sqrt(Math.max(1,cfg.speed*cfg.speed-ball.dx*ball.dx));normalizeBallSpeed();ball.note=pick(notes)}for(const b of bricks){if(b.hp<=0)continue;if(ball.x+ball.r>b.x&&ball.x-ball.r<b.x+b.w&&ball.y+ball.r>b.y&&ball.y-ball.r<b.y+b.h){b.hp--;const cameFromTop=prevY+ball.r<=b.y||prevY-ball.r>=b.y+b.h;if(cameFromTop)ball.dy*=-1;else ball.dx*=-1;ball.note=pick(notes);playSfx(b.hp<=0?'tap':'click');break}}if(bricks.every(b=>b.hp<=0)){nextStage();return}if(ball.y-ball.r>H){loseLife();return}};
+ const loop=()=>{cancelAnimationFrame(raf);const frame=()=>{if(finished||!running)return;update();drawFrame();if(running&&!finished)raf=requestAnimationFrame(frame)};raf=requestAnimationFrame(frame)};
+ const finish=(won,reason)=>{if(finished)return;finished=true;running=false;cancelAnimationFrame(raf);removeEventListener('keydown',keyDown);removeEventListener('keyup',keyUp);memoryGameActive=false;activeTrainingAbort=null;closeModal(true);const reward=songSurvivalRewards[clearedStage];stat('money',reward.money);stat('fans',reward.fans);stat('fame',reward.fame);state.exp+=reward.exp;const vocalGain=clearedStage===3?gainSkill('vocal',1,'majorStage'):0;state.minigames.songBestStage=Math.max(state.minigames.songBestStage,clearedStage);addHistory(`🎵 노래 서바이벌 · ${reward.label} · ${clearedStage}/3단계 · ${reward.money.toLocaleString()}원, 팬 +${reward.fans}, 인지도 +${reward.fame}${vocalGain?`, 보컬 +${vocalGain}`:''}`,`song-survival:${state.day}`);state.dialogue={name:'노래 서바이벌',text:clearedStage===3?'세 단계의 음표 벽돌을 모두 깨며 최종 우승했다. 류현상은 게임 공이 음표라는 사실보다 자신이 이겼다는 사실에 더 만족했다.':clearedStage?`${clearedStage}단계까지 통과했다. 마지막 음표를 놓친 류현상은 “다음 주에는 저 벽돌부터 부순다”고 조용히 이를 갈았다.`:'첫 단계에서 탈락했다. 류현상은 벽돌깨기에도 박자가 중요하다는 다소 억지스러운 결론을 내렸다.'};advance(1,'minigame');showModal('노래 서바이벌 결과',`<div class="show-result-card"><span class="show-result-rank">${reward.label}</span><h3>${clearedStage}/3단계 통과</h3><p>상금 <strong>${reward.money.toLocaleString()}원</strong> · 팬 <strong>+${reward.fans.toLocaleString()}</strong> · 인지도 <strong>+${reward.fame}</strong>${vocalGain?` · 보컬 <strong>+${vocalGain}</strong>`:''}</p><small>${reason==='closed'?'중도 종료되어 현재까지 통과한 단계 기준으로 정산되었습니다.':'방송 재도전은 7일 뒤 가능합니다.'}</small><button id="songResultConfirm" class="primary wide">확인</button></div>`);$('#songResultConfirm').onclick=()=>closeModal()};
+ const keyDown=e=>{if(e.key==='ArrowLeft'||e.key==='a'){leftHeld=true;e.preventDefault()}if(e.key==='ArrowRight'||e.key==='d'){rightHeld=true;e.preventDefault()}if((e.key===' '||e.key==='Enter')&&!running&&!finished){$('#survivalOverlayButton')?.click();e.preventDefault()}};
+ const keyUp=e=>{if(e.key==='ArrowLeft'||e.key==='a')leftHeld=false;if(e.key==='ArrowRight'||e.key==='d')rightHeld=false};
+ addEventListener('keydown',keyDown);addEventListener('keyup',keyUp);
+ const hold=(button,direction)=>{button.onpointerdown=e=>{e.preventDefault();if(direction<0)leftHeld=true;else rightHeld=true;button.setPointerCapture?.(e.pointerId)};const stop=()=>{if(direction<0)leftHeld=false;else rightHeld=false};button.onpointerup=stop;button.onpointercancel=stop;button.onpointerleave=stop};
+ hold($('#survivalLeft'),-1);hold($('#survivalRight'),1);$('#survivalLaunch').onclick=()=>{if(!running&&!finished)$('#survivalOverlayButton')?.click()};canvas.onpointermove=e=>{if(!running)return;const rect=canvas.getBoundingClientRect();const x=(e.clientX-rect.left)/rect.width*W;paddle.x=Math.max(0,Math.min(W-paddle.w,x-paddle.w/2))};canvas.onpointerdown=e=>{canvas.setPointerCapture?.(e.pointerId);const rect=canvas.getBoundingClientRect();const x=(e.clientX-rect.left)/rect.width*W;paddle.x=Math.max(0,Math.min(W-paddle.w,x-paddle.w/2))};
+ activeTrainingAbort=()=>finish(false,'closed');buildStage();setOverlay('노래 서바이벌','음표 공으로 벽돌을 모두 깨고 3단계 우승에 도전하세요.','1단계 시작',()=>{overlay.classList.add('hidden');running=true;loop()})
+}
+function drawQuizQuestionSet(){
+ if(!Array.isArray(state.minigames.quizBag)||state.minigames.quizBag.length<10)state.minigames.quizBag=shuffleInPlace(Array.from({length:ryuOxQuiz.length},(_,i)=>i));
+ return state.minigames.quizBag.splice(0,10).map(i=>ryuOxQuiz[i]);
+}
+function quizRewardFor(score){return quizShowRewards.find(r=>score>=r.min&&score<=r.max)||quizShowRewards[0]}
+function startQuizShow(){
+ if(state.day<SHOW_UNLOCK_DAY)return toast(`${SHOW_UNLOCK_DAY}일차부터 도전 퀴즈쇼에 참가할 수 있습니다.`);
+ if(showCooldownRemaining(state.minigames.quizShowLastDay,'도전 퀴즈쇼'))return;
+ if(!costHp(8))return;
+ stat('stress',2);state.minigames.quizShowLastDay=state.day;const questions=drawQuizQuestionSet();save(false);
+ memoryGameActive=true;let index=0,correct=0,finished=false,answered=false;
+ const draw=()=>{const item=questions[index];showModal('도전 퀴즈쇼 · 류현상 O/X',`<div class="quiz-show-head"><div><small>문제 ${index+1} / ${questions.length}</small><div class="quiz-progress"><i style="width:${(index/questions.length)*100}%"></i></div></div><b id="quizScore">정답 ${correct}개</b></div><article class="quiz-question-card"><span>O / X</span><h3>${item.q}</h3></article><div class="ox-buttons"><button id="quizO" class="ox-o">O</button><button id="quizX" class="ox-x">X</button></div><div id="quizFeedback" class="quiz-feedback hidden"></div>`);answered=false;$('#quizO').onclick=()=>answer(true);$('#quizX').onclick=()=>answer(false)};
+ const answer=value=>{if(answered||finished)return;answered=true;const item=questions[index],isCorrect=value===item.a;if(isCorrect)correct++;$('#quizO').disabled=$('#quizX').disabled=true;$('#quizO').classList.toggle('selected',value===true);$('#quizX').classList.toggle('selected',value===false);const feedback=$('#quizFeedback');feedback.className=`quiz-feedback ${isCorrect?'correct':'wrong'}`;feedback.innerHTML=`<b>${isCorrect?'정답입니다!':'틀렸습니다.'} 정답은 ${item.a?'O':'X'}</b><p>${item.why}</p><button id="quizNext" class="primary wide">${index===questions.length-1?'결과 보기':'다음 문제'}</button>`;$('#quizScore').textContent=`정답 ${correct}개`;$('#quizNext').onclick=()=>{if(index===questions.length-1)finish(false);else{index++;draw()}}};
+ const finish=aborted=>{if(finished)return;finished=true;memoryGameActive=false;activeTrainingAbort=null;closeModal(true);const scored=aborted?0:correct,reward=quizRewardFor(scored);stat('money',reward.money);stat('fans',reward.fans);stat('fame',reward.fame);if(reward.stress)stat('stress',reward.stress);state.exp+=reward.exp;state.minigames.quizBest=Math.max(state.minigames.quizBest,aborted?0:correct);addHistory(`⭕ 도전 퀴즈쇼 · ${aborted?'중도 종료':`${correct}/10 정답`} · ${reward.label} · ${reward.money.toLocaleString()}원, 팬 +${reward.fans}, 인지도 +${reward.fame}`,`quiz-show:${state.day}`);state.dialogue={name:'도전 퀴즈쇼',text:aborted?'퀴즈쇼를 중도에 마쳤다. 류현상은 자신에 관한 문제인데도 왜 이렇게 긴장되는지 모르겠다며 안경을 고쳐 썼다.':correct===10?'열 문제를 모두 맞혔다. 류현상은 “내 문제니까 당연하지”라고 말했지만, 제작진은 본인도 틀리는 출연자가 꽤 많다고 알려 줬다.':`${correct}문제를 맞혔다. 틀린 문제의 해설을 듣던 류현상은 “그건 문제 표현이 애매한 것 같은데요”라며 조용히 제작진에게 항의했다.`};advance(1,'minigame');showModal('도전 퀴즈쇼 결과',`<div class="show-result-card"><span class="show-result-rank">${reward.label}</span><h3>${aborted?'중도 종료':`${correct} / 10 정답`}</h3><p>상금 <strong>${reward.money.toLocaleString()}원</strong> · 팬 <strong>+${reward.fans.toLocaleString()}</strong> · 인지도 <strong>+${reward.fame}</strong></p><small>${aborted?'중도 종료로 참가상만 지급되었습니다.':'출제 문제는 제공된 30문제에서 무작위로 나오며, 3회 동안 중복 없이 순환합니다.'}</small><button id="quizResultConfirm" class="primary wide">확인</button></div>`);$('#quizResultConfirm').onclick=()=>closeModal()};
+ activeTrainingAbort=()=>finish(true);draw()
+}
+
 const specialSceneImageMap={
  iziViral:'assets/images/izi-suwon-viral.jpg',waitedMoreViral:'assets/images/waited-more-myeongdong-viral.jpg',
  day30Hair:'assets/images/special-day30-hair.jpg',day60Workout:'assets/images/special-day60-workout.jpg',day90Live:'assets/images/special-day90-live.jpg',day120Chat:'assets/images/special-day120-kakaotalk.jpg',day150Birthday:'assets/images/special-day150-birthday.jpg',
@@ -1180,7 +1325,7 @@ function maybeCareerMilestoneEvent(){
  return true;
 }
 function maybeMysteriousMerchantEvent(){
- if(state.specialEvents?.mysteriousMerchantPurchased||Math.random()>=.01)return false;
+ if(state.specialEvents?.mysteriousMerchantPurchased||Math.random()>=.002)return false;
  runMysteriousMerchantEvent();return true;
 }
 const hiddenRandomSpecialEvents=[
@@ -1633,7 +1778,7 @@ function snapshotStats(){return Object.fromEntries(Object.entries(changeFields).
 function describeStatChanges(before){const parts=[];for(const [k,[label,get]] of Object.entries(changeFields)){const d=get()-(before[k]||0);if(d)parts.push(`${label} ${d>0?'+':''}${d.toLocaleString()}`)}return parts.length?`능력치 변화 · ${parts.join(' / ')}`:''}
 let actionNoticeSequence=0;
 function snapshotActionResult(){
- return {...snapshotStats(),day:state.day,time:state.time,bakcas:Number(state.items?.bakcas||0),meals:Number(state.items?.mealsToday||0),micDurability:Number(state.equipmentDurability?.mic||0),ampDurability:Number(state.equipmentDurability?.amp||0),caseDurability:Number(state.equipmentDurability?.battery||0),housing:Number(state.housing||0)}
+ return {...snapshotStats(),day:state.day,time:state.time,bakcas:Number(state.items?.bakcas||0),meals:Number(state.items?.mealsToday||0),micDurability:Number(state.equipmentDurability?.mic||0),ampDurability:Number(state.equipmentDurability?.amp||0),caseDurability:Number(state.equipmentDurability?.battery||0),housing:Number(state.housing||0),toastSerial}
 }
 function describeActionResult(before){
  const parts=[];
@@ -1655,7 +1800,14 @@ function describeActionResult(before){
 }
 function scheduleActionResultNotice(before){
  const sequence=++actionNoticeSequence;
- setTimeout(()=>{if(sequence!==actionNoticeSequence)return;const message=describeActionResult(before);if(message)toast(message)},420)
+ const actionToastSerial=Number(before?.toastSerial||0);
+ setTimeout(()=>{
+  if(sequence!==actionNoticeSequence)return;
+  // 행동 함수가 이미 성공·실패 알림을 띄웠다면 같은 결과를 다시 표시하지 않는다.
+  if(toastSerial>actionToastSerial)return;
+  const message=describeActionResult(before);
+  if(message)toast(message)
+ },420)
 }
 const fanComments=[
  '현상 씨 목소리 듣고 오늘도 퇴근할 이유를 찾았습니다.','얼굴은 냉정한데 목소리는 왜 이렇게 다정한가요. 고소하겠습니다. 제 심장 훔친 죄로요.','장발이 바람에 날릴 때마다 제 인생 계획도 같이 날아갑니다.','안경 밀어 올리는 동작만으로 앙코르 가능한 사람 처음 봐요.','노래 한 곡 들었는데 제 통장도 팬클럽 가입비 낼 준비를 합니다.','형, 디지몬 얘기할 때만 눈이 반짝이는 거 너무 귀여워요.','오늘 고음에서 제 영혼이 디지털 월드까지 갔다 왔습니다.','무표정인데 팬서비스가 되는 건 반칙 아닌가요.','현상 씨가 까칠하게 “감사합니다” 할 때마다 수명이 늘어납니다.','노래 끝났는데 왜 제 심장은 아직 후렴구인가요.','류현상 존재 자체가 장르입니다.','오늘도 잘생김이 과로 중이네요.','저는 팬이 아니라 현상 씨 음악의 장기 구독자입니다.','마이크보다 제가 더 떨고 있습니다.','가수님이 숨 쉬었어요. 오늘 공연 레전드.'
@@ -1815,7 +1967,8 @@ function render(){
    // 이동도 1시간을 소비하는 정상 진행으로 처리해 특별 이벤트·돌발 스토리를 검사한다.
    advance(1,'move');
  });
- $('#actionButtons').innerHTML=actions[state.location].map(([n,d,k])=>{const used=(k==='storePromo'&&state.storeDaily.promoDay===state.day)||(k==='customerPractice'&&state.storeDaily.customerDay===state.day)||(k==='flyerPromo'&&state.storeDaily.flyerDay===state.day)||(k==='observe'&&state.storeDaily.observeDay===state.day)||((k==='busking'||k==='bandBusking')&&state.storeDaily.buskingDay===state.day&&state.storeDaily.buskingCount>=2);return `<button class="action-card" data-action="${k}" aria-label="${n}${used?' · 오늘 이용 완료':''}" ${used?'disabled':''}><b>${n}</b></button>`}).join('');$$('[data-action]').forEach(b=>b.onclick=()=>doAction(b.dataset.action));
+ const visibleActions=actions[state.location].filter(([, ,k])=>state.day>=366||!['songSurvival','quizShow'].includes(k));
+ $('#actionButtons').innerHTML=visibleActions.map(([n,d,k])=>{const cooldownKey=k==='songSurvival'?'songSurvivalLastDay':k==='quizShow'?'quizShowLastDay':null;const cooldownUsed=cooldownKey&&state.day-state.minigames[cooldownKey]<7;const used=(k==='storePromo'&&state.storeDaily.promoDay===state.day)||(k==='customerPractice'&&state.storeDaily.customerDay===state.day)||(k==='flyerPromo'&&state.storeDaily.flyerDay===state.day)||(k==='observe'&&state.storeDaily.observeDay===state.day)||((k==='busking'||k==='bandBusking')&&state.storeDaily.buskingDay===state.day&&state.storeDaily.buskingCount>=2)||cooldownUsed;const label=cooldownUsed?`${n} · ${7-(state.day-state.minigames[cooldownKey])}일 후 재도전`:n;return `<button class="action-card" data-action="${k}" aria-label="${label}${used?' · 이용 제한':''}" ${used?'disabled':''}><b>${label}</b></button>`}).join('');$$('[data-action]').forEach(b=>b.onclick=()=>doAction(b.dataset.action));
 }
 function openFanCommunity(){const total=Object.values(state.fanGroups).reduce((a,b)=>a+b,0);showModal('팬 커뮤니티',`<div class="fan-group-grid"><div class="metric-card"><small>일반 팬</small><b>${state.fanGroups.regular.toLocaleString()}명</b></div><div class="metric-card"><small>열혈 팬</small><b>${state.fanGroups.enthusiast.toLocaleString()}명</b></div><div class="metric-card"><small>게이 팬</small><b>${state.fanGroups.gay.toLocaleString()}명</b></div><div class="metric-card"><small>해외 팬</small><b>${state.fanGroups.overseas.toLocaleString()}명</b></div></div><div class="info-card"><b>팬 유형 안내</b><p>팬 유형은 우열이나 능력치가 아니라 팬덤의 다양성을 보여 주는 분류입니다. 게이 팬은 희화화하지 않고 개별 취향과 전문성을 지닌 팬으로 등장합니다.</p><small>분류된 팬 ${total.toLocaleString()}명 / 전체 팬 ${state.stats.fans.toLocaleString()}명</small></div>`)}
 function openSNS(){const canPost=state.day!==state.sns.lastPostDay;showModal('SNS',`<div class="info-card"><b>팔로워·팬 ${state.stats.fans.toLocaleString()}명</b><p>오늘의 짧은 게시물을 올리면 다양한 반응이 발생합니다. 하루에 한 번만 직접 게시할 수 있습니다.</p><button id="snsPost" ${canPost?'':'disabled'}>${canPost?'게시물 올리기':'오늘 게시 완료'}</button></div><div class="card-list">${snsScenarios.slice(0,6).map(x=>`<div class="info-card"><b>${x.title}</b><p>${x.text}</p></div>`).join('')}</div>`);const b=$('#snsPost');if(b)b.onclick=()=>{if(!canPost)return;const ev=pick(snsScenarios);state.sns.lastPostDay=state.day;state.sns.totalPosts++;const before=snapshotStats();stat('fans',ev.fans);stat('fame',ev.fame);stat('stress',ev.stress);addHistory(`📱 SNS 게시 · ${ev.title}`,`sns-post:${state.day}`);closeModal();showDialogue('SNS 반응',`【${ev.title}】\n\n${ev.text}`);const changes=describeStatChanges(before);if(changes)setTimeout(()=>toast(changes),250);advance(1)}}
@@ -1830,9 +1983,9 @@ function openItemMenu(){
 }
 function openPhone(type){if(state.specialScene?.active)return toast('진행 중인 특별 이벤트를 먼저 마쳐 주세요.');if(type==='manager')managerEvent();if(type==='band')showBand();if(type==='fan')openFanCommunity();if(type==='sns')openSNS();if(type==='items')openItemMenu()}
 function showBand(){showModal('밴드 멤버',Object.entries(state.band.members).map(([k,v])=>`<div class="info-card"><b>${k.toUpperCase()}</b><p>${v||'공석'}</p></div>`).join('')+`<p>결속력: ${state.band.bond}</p>`)}
-$('#newGameBtn').onclick=()=>{const collected=loadMetaEndings();state=structuredClone(baseState);state.endings=collected;startPrologue()};
-$('#continueBtn').onclick=()=>{migrateLegacySave();const hasAny=!!readSave(AUTO_SAVE_KEY)||MANUAL_SAVE_KEYS.some(k=>!!readSave(k));if(!hasAny)return toast('저장된 게임이 없습니다.');openSaveManager('load')};
-$('#howBtn').onclick=()=>showModal('게임 설명','<p>류현상을 연습시키고 버스킹 장비를 구입해 팬과 인지도를 늘리세요. 파트별 조건을 충족해 멤버 오디션을 진행하고 완전체 밴드를 결성한 뒤에는 솔로 버스킹만 반복하지 말고 합주와 밴드 공연으로 결속력을 관리해야 합니다. 인지도 Lv.20부터 후라보노를 고용할 수 있으며, 고용하면 방송과 주요 이벤트가 열립니다. 오디션은 인지도 Lv.10·보컬 50, 공연은 인지도 Lv.15·팬 5,000명·보컬 70, 방송 출연은 후라보노 고용·보컬 85, 팬미팅은 팬 15,000명부터 도전할 수 있습니다. 인지도 Lv.31 이상부터는 류현상이 가끔 성공에 취해 꺼드럭대고 후라보노가 제지하는 선택형 스토리가 발생합니다. 날씨·평일·주말·공휴일에 따라 버스킹 성공률과 체력 소모가 달라집니다. 장비 고장 상태는 없으며, 마이크와 음향장비는 내구도를 모두 사용하면 사라집니다. 방수·전원 보호케이스는 50회 동안 장비 내구도 소모를 막고, 보호케이스가 없을 때는 10% 확률로 내구도가 2배 소모됩니다. 팬은 활동과 이벤트로 늘지만 논란·무성의한 대응·반복되는 공연으로 감소할 수도 있습니다. 인지도 100마다 레벨이 오릅니다. 오디션·공연·방송은 7일, 앨범은 30일의 준비 기간이 필요합니다. 체력이 10 이하로 내려가면 보컬과 작곡이 각각 2 감소하며, 깊은 휴식은 반나절인 시간 2칸을 사용합니다. 깊은 휴식을 연속 두 번 하면 보컬과 작곡이 각각 1 감소합니다. 식사는 시간을 쓰지 않고 집 등급마다 회복량이 3씩 증가합니다. 편의점 알바와 야간 진열 보조는 보컬과 작곡을 각각 2 감소시킵니다. 하루 동안 보컬 연습을 하지 않으면 다음 날 보컬 -1, 작곡 연습 또는 신곡 편곡을 하지 않으면 작곡 -1이 적용됩니다. 공연에서는 낮은 확률로 도트 류현상 음표 피하기 미니게임이 열릴 수 있습니다. 인지도 Lv.70·80·90에서는 전국 페스티벌, 전국 투어, 해외 쇼케이스 커리어 이벤트가 열리며 후반 공연·방송 인지도 보상도 단계적으로 상승합니다. 월드 엔딩은 밴드·싱어송라이터·솔로 보컬의 세 경로가 있으며, 인지도뿐 아니라 실력·앨범·공연·해외 팬·결속력이 함께 평가됩니다. 인지도 성장에 따라 라이벌 카인 스토리가 이어지며, 휴대전화에서 팬 유형과 SNS를 확인할 수 있습니다. 악기는 최대 3개만 장착할 수 있고, 능력치 40 이상부터는 훈련 성장 속도가 점차 둔화됩니다. 편의점에서는 디지몬 카드를 1장 1,500원 또는 10장 15,000원에 뽑을 수 있으며, 10장 뽑기도 시간은 1칸만 사용합니다. 보관함 확인과 판매는 자취방에서 할 수 있고, SP 카드가 나오면 폭죽 효과가 발생합니다. 복권은 1~45 중 6개를 골라 구매하며 7일 뒤 당첨 번호 6개와 보너스 번호가 자동 추첨됩니다. 게임 20일차부터 20일 간격으로 총 10개의 일상 에피소드가 순서대로 등장하며, 같은 날 다른 핵심 이벤트는 겹치지 않고 다음 날로 미뤄집니다. 스토커 사건은 총 5단계이며 안전도 5를 확보해야 해결됩니다.</p>');
+$('#newGameBtn').onclick=()=>{forceAudioOn();const collected=loadMetaEndings();state=structuredClone(baseState);state.endings=collected;startPrologue()};
+$('#continueBtn').onclick=()=>{forceAudioOn();migrateLegacySave();const hasAny=!!readSave(AUTO_SAVE_KEY)||MANUAL_SAVE_KEYS.some(k=>!!readSave(k));if(!hasAny)return toast('저장된 게임이 없습니다.');openSaveManager('load')};
+$('#howBtn').onclick=()=>{forceAudioOn();openGameGuide()};
 $('#closeModal').onclick=()=>closeModal();$('#modal').addEventListener('cancel',e=>{if(memoryGameActive){e.preventDefault();closeModal()}});$('#audioBtn').onclick=openAudioSettings;$('#menuBtn').onclick=()=>showModal('메뉴','<div class="card-list"><button id="gameGuideBtn" class="primary">게임 설명 · 진행 가이드</button><button id="manualSave">저장 / 불러오기</button><button id="backTitle">타이틀로 돌아가기</button></div>');
 $('#modal').addEventListener('click',e=>{if(e.target===$('#modal'))closeModal()});
 $$('[data-phone]').forEach(b=>b.onclick=()=>openPhone(b.dataset.phone));
@@ -1850,9 +2003,15 @@ document.addEventListener('click',e=>{
 
 migrateLegacySave();
 loadAudioSettings();
-const unlockAudio=()=>{ensureAudio();document.removeEventListener('pointerdown',unlockAudio);document.removeEventListener('keydown',unlockAudio)};
-document.addEventListener('pointerdown',unlockAudio,{once:true});document.addEventListener('keydown',unlockAudio,{once:true});
-document.addEventListener('click',e=>{if(e.target.closest('button')&&!e.target.closest('#toggleBgm,#toggleSfx,#audioBtn'))playSfx('click')});
+// 브라우저는 사용자 동작 전 유음 자동재생을 막는다. 첫 입력을 받는 순간부터는 항상 BGM·효과음을 유지한다.
+const unlockAudio=()=>forceAudioOn();
+document.addEventListener('pointerdown',unlockAudio,{capture:true,once:true});
+document.addEventListener('touchstart',unlockAudio,{capture:true,once:true,passive:true});
+document.addEventListener('keydown',unlockAudio,{capture:true,once:true});
+const resumeGameAudio=()=>{if(document.visibilityState!=='hidden')forceAudioOn()};
+window.addEventListener('focus',resumeGameAudio);window.addEventListener('pageshow',resumeGameAudio);
+document.addEventListener('visibilitychange',resumeGameAudio);
+document.addEventListener('click',e=>{if(e.target.closest('button')&&!e.target.closest('#audioBtn'))playSfx('click')});
 const installBtn=$('#installBtn'),installHint=$('#installHint');
 const isStandalone=()=>window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
 const isIos=()=>/iphone|ipad|ipod/i.test(navigator.userAgent);
@@ -1884,7 +2043,7 @@ if(installBtn)installBtn.onclick=async()=>{
 };
 refreshInstallUi();
 try{window.matchMedia('(display-mode: standalone)').addEventListener('change',refreshInstallUi)}catch(_){}
-if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',async()=>{try{const reg=await navigator.serviceWorker.register('service-worker.js?v=66-episodes-gambling-stalker5',{updateViaCache:'none'});await reg.update();refreshInstallUi()}catch(err){console.warn('서비스워커 등록 실패',err);refreshInstallUi()}});
+if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',async()=>{try{const reg=await navigator.serviceWorker.register('service-worker.js?v=69-broadcast-minigames',{updateViaCache:'none'});await reg.update();refreshInstallUi()}catch(err){console.warn('서비스워커 등록 실패',err);refreshInstallUi()}});
 
 
 /* v36: iOS standalone PWA viewport synchronization */
