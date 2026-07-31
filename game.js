@@ -1,6 +1,6 @@
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const locations={home:{name:'자취방',cls:'home'},store:{name:'편의점',cls:'store'},practice:{name:'연습실',cls:'practice'},park:{name:'공원',cls:'park'},stage:{name:'공연장',cls:'stage'}};
-const baseState={day:1,slot:0,time:0,location:'home',level:1,exp:0,rank:'무명 가수',weather:'sun',housing:0,endingPrompted:{},pendingEnding:null,stats:{hp:80,vocal:22,compose:16,looks:35,fame:0,fans:0,money:800000,stress:10},equipment:{mic:false,amp:false,battery:false},equipmentModel:{mic:null,amp:null},equipmentDamage:{mic:false,amp:false},equipmentDurability:{mic:0,amp:0,battery:0},forcedRest:{count:0,lastTriggeredDay:-99},restStreak:0,restNightmares:{totalRests:0,lastTriggeredRest:0,seen:[]},dailyPractice:{vocalDay:0,composeDay:0,vocalPenaltyCount:0,composePenaltyCount:0,penaltyInterval:7},instruments:{acousticGuitar:false,keyboard:false,audioInterface:false,studioMic:false,monitorHeadphones:false},fanGroups:{regular:0,enthusiast:0,gay:0,overseas:0},sns:{lastPostDay:-99,totalPosts:0,controversy:0,lastEventDay:-99},rival:{met:false,stage:0,respect:0,lastEventDay:-99},items:{bakcas:1,bakcasUsedToday:0,mealsToday:0},storeDaily:{promoDay:-99,customerDay:-99,flyerDay:-99,observeDay:-99,buskingDay:-99,buskingCount:0},storeJobs:{workCount:0,stockWorkCount:0},dailyUse:{styleCareDay:-99},economy:{workStreak:0,lastWorkDay:-99,debt:0,totalDebtRepaid:0,lastDebtNoticeDay:-99},equippedInstruments:[],career:{peakFame:0,totalWork:0,totalConcerts:0,totalBroadcasts:0,totalBusking:0},skillMaintenance:{lastVocalUseDay:1,lastComposeUseDay:1,vocalDecayCount:0,composeDecayCount:0},manager:{hired:false,bond:0,wedding:false},band:{formed:false,bond:60,members:{guitar:null,bass:null,piano:null,drums:null}},albums:[],endings:[],history:[],dialogue:null,seenEvents:[],soloStreak:0,outfit:0,ownedOutfits:[0],performanceCount:0,stalker:{active:false,resolved:false,encounters:0,safety:0},narrative:{lastMajorEventDay:-99,twentyDaySeen:[]},gambling:{cards:{C:0,U:0,R:0,SR:0,SEC:0,SP:0},totalCardDraws:0,lotteryTickets:[],lotteryResults:[]},minigames:{songSurvivalLastDay:-99,quizShowLastDay:-99,songBestStage:0,quizBest:0,quizBag:[]},arrogance:{lastDay:-99,count:0,lesson:0},specialEvents:{iziViral:false,waitedMoreViral:false,day30Hair:false,day60Workout:false,day90Live:false,day120Chat:false,day150Birthday:false,day180Archive:false,day210Demo:false,day240Meme:false,day300Promise:false,hiddenGameOst:false,hiddenRadioDj:false,hiddenDingo:false,careerLv70:false,careerLv80:false,careerLv90:false,mysteriousMerchantPurchased:false},specialScene:{active:false,key:null},preparation:{stageReady:false,stageReadyDay:-99,buskingInsight:false,buskingInsightDay:-99},cooldowns:{managerTalk:-99,recruit:-99,audition:-99,concert:-99,broadcast:-99,fanmeeting:-99,album:-99,fanEvent:-99,snsPost:-99},milestones:{firstAudition:false,firstConcert:false,firstBroadcast:false,firstFanmeeting:false,firstAlbum:false,managerHired:false,bandFormed:false,stalkerResolved:false,randomSeen:[]},historyKeys:[],lastAction:null,prologueSeen:false};
+const baseState={day:1,slot:0,time:0,location:'home',level:1,exp:0,rank:'무명 가수',weather:'sun',housing:0,endingPrompted:{},pendingEnding:null,stats:{hp:80,vocal:22,compose:16,looks:35,fame:0,fans:0,money:800000,stress:10},equipment:{mic:false,amp:false,battery:false},equipmentModel:{mic:null,amp:null},equipmentDamage:{mic:false,amp:false},equipmentDurability:{mic:0,amp:0,battery:0},forcedRest:{count:0,lastTriggeredDay:-99},restStreak:0,restNightmares:{totalRests:0,lastTriggeredRest:0,seen:[]},dailyPractice:{vocalDay:0,composeDay:0,vocalPenaltyCount:0,composePenaltyCount:0,penaltyInterval:7},instruments:{acousticGuitar:false,keyboard:false,audioInterface:false,studioMic:false,monitorHeadphones:false},fanGroups:{regular:0,enthusiast:0,gay:0,overseas:0},sns:{lastPostDay:-99,totalPosts:0,controversy:0,lastEventDay:-99},rival:{met:false,stage:0,respect:0,lastEventDay:-99},items:{bakcas:1,bakcasUsedToday:0,mealsToday:0},storeDaily:{promoDay:-99,customerDay:-99,flyerDay:-99,observeDay:-99,buskingDay:-99,buskingCount:0},storeJobs:{workCount:0,stockWorkCount:0},dailyUse:{styleCareDay:-99,styleCareLastDay:1,styleDecayCount:0},economy:{workStreak:0,lastWorkDay:-99,debt:0,totalDebtRepaid:0,lastDebtNoticeDay:-99},equippedInstruments:[],career:{peakFame:0,totalWork:0,totalConcerts:0,totalBroadcasts:0,totalBusking:0},skillMaintenance:{lastVocalUseDay:1,lastComposeUseDay:1,vocalDecayCount:0,composeDecayCount:0},manager:{hired:false,bond:0,wedding:false},band:{formed:false,bond:60,members:{guitar:null,bass:null,piano:null,drums:null}},albums:[],endings:[],history:[],dialogue:null,seenEvents:[],soloStreak:0,outfit:0,ownedOutfits:[0],performanceCount:0,stalker:{active:false,resolved:false,encounters:0,safety:0},narrative:{lastMajorEventDay:-99,twentyDaySeen:[]},gambling:{cards:{C:0,U:0,R:0,SR:0,SEC:0,SP:0},totalCardDraws:0,lotteryTickets:[],lotteryResults:[]},minigames:{songSurvivalLastDay:-99,quizShowLastDay:-99,songBestStage:0,quizBest:0,quizBag:[]},arrogance:{lastDay:-99,count:0,lesson:0},specialEvents:{iziViral:false,waitedMoreViral:false,day30Hair:false,day60Workout:false,day90Live:false,day120Chat:false,day150Birthday:false,day180Archive:false,day210Demo:false,day240Meme:false,day300Promise:false,hiddenGameOst:false,hiddenRadioDj:false,hiddenDingo:false,careerLv70:false,careerLv80:false,careerLv90:false,mysteriousMerchantPurchased:false},specialScene:{active:false,key:null},preparation:{stageReady:false,stageReadyDay:-99,buskingInsight:false,buskingInsightDay:-99},cooldowns:{managerTalk:-99,recruit:-99,audition:-99,concert:-99,broadcast:-99,fanmeeting:-99,album:-99,fanEvent:-99,snsPost:-99},milestones:{firstAudition:false,firstConcert:false,firstBroadcast:false,firstFanmeeting:false,firstAlbum:false,managerHired:false,bandFormed:false,stalkerResolved:false,randomSeen:[]},historyKeys:[],lastAction:null,prologueSeen:false};
 let state=structuredClone(baseState);let deferredPrompt=null;let audioCtx=null;let motionTimer=null;let burstTimer=null;let memoryGameActive=false;let activeTrainingAbort=null;
 let audioMaster=null,bgmGain=null,sfxGain=null,bgmTimer=null,bgmStep=0;
 let choiceLock=false,endingMusicMode=false,endingMusicName='';
@@ -11,8 +11,8 @@ let pendingTrainingActionBefore=null;
 let audioSettings={bgm:true,sfx:true,volume:.72};
 const actions={
  home:[
-  ['깊은 휴식','체력 +25~45 · 스트레스 -10 · 시간 +2 · 2회 연속 시 보컬·작곡 -1 · 누적 5회 이후 악몽 가능','rest'],
-  ['식사','체력 +12~24 · 돈 -8,000원 · 시간 미소모','meal'],
+  ['깊은 휴식','체력 +25~45 · 스트레스 -10 · 시간 +2 · 2회 연속 시 보컬·작곡 -1 · 누적 5회 이후 휴식 3회 간격·20% 악몽','rest'],
+  ['식사','체력 +12~27 · 집 등급마다 비용 2배(8,000~128,000원) · 시간 미소모','meal'],
   ['옷장','의상 변경 · 헤어 스타일 관리 1일 1회 · 체력 -4·돈 -500,000원·외모 +2','wardrobe'],
   ['이사','돈 -1,000만~1억원 · 집 등급 상승 · 시간 +1','moveHome'],
   ['가계부·채무','채무 상환 시 보유금 감소 · 시간 미소모','finance'],
@@ -38,8 +38,8 @@ const actions={
   ['앨범 제작','돈 -540만~6,300만원 · 팬·인지도·정산 증가 · 스트레스 +1 · 시간 +1','album']
  ],
  park:[
-  ['버스킹','보컬·인지도에 따라 수입 변화 · 팬·인지도 증가 · 시간 +1','busking'],
-  ['밴드 버스킹','보컬·인지도에 따라 수입 변화 · 솔로보다 높은 수입 · 시간 +1','bandBusking'],
+  ['버스킹','성공 시 보컬 +1 · 보컬·인지도·장비에 따라 수입 변화 · 시간 +1','busking'],
+  ['밴드 버스킹','성공 시 보컬 +1 · 솔로보다 높은 수입 · 시간 +1','bandBusking'],
   ['산책','스트레스 -15 · 시간 +1','walk'],
   ['라이벌 관찰','체력 -6 · 보컬 +1 · 스트레스 +1 · 시간 +1','observe'],
   ['공연 전단 홍보','체력 -8 · 돈 -20,000원 · 팬 +8~15 · 인지도 +1 · 시간 +1','flyerPromo'],
@@ -48,7 +48,7 @@ const actions={
  stage:[
   ['무대 리허설','다음 무대 보너스 · 공연비는 최대 3,900,000원 · 시간 +1','stageRehearsal'],
   ['오디션','체력 -20 · 성공 시 스트레스 +1·팬 +45~150·인지도 +18~45 / 실패 시 스트레스 +6 · 시간 +1','audition'],
-  ['공연','체력 -28 · 스트레스 +5 · 팬·돈·인지도 +변동 · 시간 +1','concert'],
+  ['공연','성공 시 보컬 +1 · 체력 -28 · 팬·돈·인지도 +변동 · 시간 +1','concert'],
   ['방송 출연','체력 -22 · 스트레스 +7 · 팬 +250~690 · 인지도 +90~138 · 관계 +5 · 시간 +1','broadcast'],
   ['팬미팅','체력 -20 · 돈 -300,000원 · 팬 +220~450 · 스트레스 -7 · 시간 +1','fanmeeting'],
   ['대형 콘서트','조건 충족 시 월드 엔딩 진행 · 시간 미소모','national'],
@@ -315,7 +315,7 @@ function normalizeState(){
  state.instruments={acousticGuitar:!!state.instruments?.acousticGuitar,keyboard:!!state.instruments?.keyboard,audioInterface:!!state.instruments?.audioInterface,studioMic:!!state.instruments?.studioMic,monitorHeadphones:!!state.instruments?.monitorHeadphones};
  state.equippedInstruments=(Array.isArray(state.equippedInstruments)?state.equippedInstruments:[]).filter(k=>state.instruments[k]).slice(0,3);
  state.items={bakcas:Math.max(0,Number(state.items?.bakcas)||0),bakcasUsedToday:Math.max(0,Number(state.items?.bakcasUsedToday)||0),mealsToday:Math.max(0,Number(state.items?.mealsToday)||0)};
- state.storeDaily={promoDay:Number(state.storeDaily?.promoDay??-99),customerDay:Number(state.storeDaily?.customerDay??-99),flyerDay:Number(state.storeDaily?.flyerDay??-99),observeDay:Number(state.storeDaily?.observeDay??-99),buskingDay:Number(state.storeDaily?.buskingDay??-99),buskingCount:Math.max(0,Number(state.storeDaily?.buskingCount)||0)};const sj=state.storeJobs||{};state.storeJobs={workCount:Math.max(0,Math.floor(Number(sj.workCount)||0)),stockWorkCount:Math.max(0,Math.floor(Number(sj.stockWorkCount)||0))};const du=state.dailyUse||{};state.dailyUse={styleCareDay:Number(du.styleCareDay??-99)};
+ state.storeDaily={promoDay:Number(state.storeDaily?.promoDay??-99),customerDay:Number(state.storeDaily?.customerDay??-99),flyerDay:Number(state.storeDaily?.flyerDay??-99),observeDay:Number(state.storeDaily?.observeDay??-99),buskingDay:Number(state.storeDaily?.buskingDay??-99),buskingCount:Math.max(0,Number(state.storeDaily?.buskingCount)||0)};const sj=state.storeJobs||{};state.storeJobs={workCount:Math.max(0,Math.floor(Number(sj.workCount)||0)),stockWorkCount:Math.max(0,Math.floor(Number(sj.stockWorkCount)||0))};const du=state.dailyUse||{};const hasStyleCareLastDay=Number.isFinite(Number(du.styleCareLastDay));state.dailyUse={styleCareDay:Number(du.styleCareDay??-99),styleCareLastDay:hasStyleCareLastDay?Math.max(1,Number(du.styleCareLastDay)):Math.max(1,state.day),styleDecayCount:hasStyleCareLastDay?Math.max(0,Math.floor(Number(du.styleDecayCount)||0)):0};
  state.economy={workStreak:Math.max(0,Number(state.economy?.workStreak)||0),lastWorkDay:Number(state.economy?.lastWorkDay??-99),debt:Math.max(0,Number(state.economy?.debt)||0),totalDebtRepaid:Math.max(0,Number(state.economy?.totalDebtRepaid)||0),lastDebtNoticeDay:Number(state.economy?.lastDebtNoticeDay??-99)};
  state.career={peakFame:Math.max(Number(state.career?.peakFame)||0,Number(state.stats.fame)||0),totalWork:Math.max(0,Number(state.career?.totalWork)||0),totalConcerts:Math.max(0,Number(state.career?.totalConcerts)||0),totalBroadcasts:Math.max(0,Number(state.career?.totalBroadcasts)||0),totalBusking:Math.max(0,Number(state.career?.totalBusking)||0)};
  const sm=state.skillMaintenance||{};state.skillMaintenance={lastVocalUseDay:Number.isFinite(Number(sm.lastVocalUseDay))?Math.max(1,Number(sm.lastVocalUseDay)):state.day,lastComposeUseDay:Number.isFinite(Number(sm.lastComposeUseDay))?Math.max(1,Number(sm.lastComposeUseDay)):state.day,vocalDecayCount:Math.max(0,Math.floor(Number(sm.vocalDecayCount)||0)),composeDecayCount:Math.max(0,Math.floor(Number(sm.composeDecayCount)||0))};
@@ -448,7 +448,7 @@ function gameGuideHtml(){return `<div class="game-guide">
       <article><b>인지도</b><p>100점마다 레벨이 1 상승하며 최대 Lv.100입니다. 높은 레벨에서 대형 커리어 이벤트가 열립니다.</p></article><article><b>밴드 결속력</b><p>밴드 활동의 안정성과 일부 사건 결과에 영향을 줍니다.</p></article>
     </div></section>
     <section class="guide-page" data-guide-page="career">
-      <div class="guide-callout"><b>최근 밸런스 규칙</b><p>보컬은 보컬 훈련을, 작곡은 작곡 훈련 또는 편곡을 7일 연속 하지 않았을 때 각각 1 감소합니다. 장소 이동은 시간과 능력치를 소모하지 않지만 도착 장소의 돌발 스토리는 발생할 수 있습니다. 강제 휴식은 스트레스 50 이상·체력 15 이하에서 판정됩니다. 편의점 알바와 야간 진열 보조는 각각 누적 10·30·80회에 승급해 급여가 증가합니다. 편의점 알바 급여는 수습 45,000원→1단계 55,000원→2단계 70,000원→3단계 90,000원, 야간 진열 보조는 25,000원→32,000원→42,000원→55,000원입니다. 복권은 주 100장 제한이며 1장과 10장 자동 구매 모두 시간 미소모입니다.</p></div><div class="guide-table"><div><b>훈련</b><span>보컬·작곡 성장의 기본입니다.</span></div><div><b>버스킹</b><span>초반 팬과 현금을 동시에 얻는 활동입니다.</span></div><div><b>오디션</b><span>첫 합격 보상이 크며 충분한 능력치가 필요합니다.</span></div><div><b>앨범 제작</b><span>연습실에서 진행합니다. 싱글·미니·정규 순으로 비용과 보상이 커집니다.</span></div><div><b>공연</b><span>팬, 인지도, 수익을 함께 얻습니다.</span></div><div><b>방송 출연</b><span>인지도 성장에 효과적이며 재도전 간격이 있습니다.</span></div><div><b>366일 방송 미니게임</b><span>공연장의 노래 서바이벌과 O/X 퀴즈쇼는 각각 7일 간격으로 참가합니다.</span></div><div><b>특별 이벤트</b><span>특정 날짜·레벨·조건에서 열리고 엔딩에도 영향을 줍니다.</span></div></div>
+      <div class="guide-callout"><b>최근 밸런스 규칙</b><p>보컬은 보컬 훈련을, 작곡은 작곡 훈련 또는 편곡을 7일 연속 하지 않았을 때 각각 1 감소합니다. 장소 이동은 시간과 능력치를 소모하지 않지만 도착 장소의 돌발 스토리는 발생할 수 있습니다. 강제 휴식은 스트레스 50 이상·체력 15 이하에서 판정됩니다. 편의점 알바와 야간 진열 보조는 각각 누적 10·30·80회에 승급해 급여가 증가합니다. 편의점 알바 급여는 수습 45,000원→1단계 55,000원→2단계 70,000원→3단계 90,000원, 야간 진열 보조는 25,000원→32,000원→42,000원→55,000원입니다. 복권은 주 100장 제한이며 1장과 10장 자동 구매 모두 시간 미소모입니다. SNS 게시물은 팬 규모가 커질수록 보상이 조금씩 증가합니다. 깊은 휴식 악몽은 누적 휴식 5회부터, 최근 악몽 이후 휴식 3회가 지난 경우 20% 확률로 발생합니다. 보컬·작곡 훈련 미니게임은 19%, 버스킹 리듬게임은 17.5% 확률로 등장합니다. 집 등급이 오를 때마다 식사비는 2배가 되고, 지하 단칸방보다 높은 집은 기존보다 체력 회복량이 3 높습니다.</p></div><div class="guide-table"><div><b>훈련</b><span>보컬·작곡 성장의 기본입니다.</span></div><div><b>버스킹</b><span>초반 팬과 현금을 동시에 얻는 활동입니다.</span></div><div><b>오디션</b><span>첫 합격 보상이 크며 충분한 능력치가 필요합니다.</span></div><div><b>앨범 제작</b><span>연습실에서 진행합니다. 싱글·미니·정규 순으로 비용과 보상이 커집니다.</span></div><div><b>공연</b><span>팬, 인지도, 수익을 함께 얻습니다.</span></div><div><b>방송 출연</b><span>인지도 성장에 효과적이며 재도전 간격이 있습니다.</span></div><div><b>366일 방송 미니게임</b><span>공연장의 노래 서바이벌과 O/X 퀴즈쇼는 각각 7일 간격으로 참가합니다.</span></div><div><b>특별 이벤트</b><span>특정 날짜·레벨·조건에서 열리고 엔딩에도 영향을 줍니다.</span></div></div>
       <div class="guide-callout"><b>추천 성장 흐름</b><p>초반: 홍보·버스킹·오디션 → 중반: 앨범·공연·방송 → 후반: 전국 페스티벌·투어·해외 쇼케이스</p></div>
     </section>
     <section class="guide-page" data-guide-page="money"><div class="guide-grid">
@@ -458,7 +458,7 @@ function gameGuideHtml(){return `<div class="game-guide">
       <div class="guide-step"><b>자동 저장</b><p>이동·행동·날짜 변경 때 최근 진행 상황이 저장됩니다.</p></div><div class="guide-step"><b>소리 재생</b><p>새 게임·이어하기 등 첫 화면의 첫 터치부터 BGM과 효과음이 자동으로 시작됩니다. 브라우저 정책상 페이지를 열기만 한 상태에서는 소리가 나지 않을 수 있지만, 게임을 시작하면 별도의 음악 버튼을 누를 필요가 없습니다.</p></div><div class="guide-step"><b>수동 저장 슬롯 3개</b><p>중요 선택이나 엔딩 분기 전에 서로 다른 슬롯에 저장하세요.</p></div><div class="guide-step"><b>추억 앨범</b><p>완료한 특별 이벤트의 이미지와 스토리를 다시 볼 수 있으며 보상은 중복 지급되지 않습니다.</p></div><div class="guide-step"><b>저장 주의</b><p>브라우저 사이트 데이터를 삭제하면 저장이 사라질 수 있으며 다른 기기와 자동 동기화되지 않습니다.</p></div>
     </section>
     <section class="guide-page" data-guide-page="tips"><ol class="guide-tip-list">
-      <li><b>초반에는 보컬을 우선하세요.</b><span>버스킹 성공과 수입이 안정되며, 더 좋은 마이크·음향장비는 버스킹 수입을 조금 더 끌어올립니다.</span></li><li><b>체력을 전부 쓰지 마세요.</b><span>예상치 못한 사건에 대비해 15~25 정도 남겨 두는 편이 안전합니다.</span></li><li><b>월말 전에 현금을 남겨 두세요.</b><span>채무가 생기면 앨범과 장비 투자가 막힙니다.</span></li><li><b>하루 제한 행동을 확인하세요.</b><span>홍보, 단골 응대, 라이벌 관찰 등은 하루 제한이 있습니다.</span></li><li><b>두 번째 버스킹은 선택적으로 하세요.</b><span>보상이 줄고 스트레스가 늘어납니다.</span></li><li><b>매니저는 자금이 안정된 뒤 고용해도 됩니다.</b><span>추가 콘텐츠가 열리지만 유지비도 발생합니다.</span></li><li><b>중요 선택 전 수동 저장하세요.</b><span>슬롯을 나누면 여러 엔딩을 확인하기 쉽습니다.</span></li><li><b>능력치를 방치하지 마세요.</b><span>보컬과 작곡은 14일의 유예기간 후 7일마다 3씩 낮아집니다. 공연·방송은 보컬 유지, 편곡·앨범은 작곡 유지에 도움이 됩니다.</span></li><li><b>한 행동만 반복하지 마세요.</b><span>후반에는 공연·방송·앨범·특별 이벤트를 조합해야 Lv.100까지 자연스럽게 성장합니다.</span></li>
+      <li><b>초반에는 보컬을 우선하세요.</b><span>버스킹 성공과 수입이 안정되며, 성공한 버스킹과 공연은 보컬을 1 올립니다. 더 좋은 마이크·음향장비는 버스킹 수입을 조금 더 끌어올립니다.</span></li><li><b>체력을 전부 쓰지 마세요.</b><span>예상치 못한 사건에 대비해 15~25 정도 남겨 두는 편이 안전합니다.</span></li><li><b>월말 전에 현금을 남겨 두세요.</b><span>채무가 생기면 앨범과 장비 투자가 막힙니다.</span></li><li><b>하루 제한 행동을 확인하세요.</b><span>홍보, 단골 응대, 라이벌 관찰 등은 하루 제한이 있습니다.</span></li><li><b>두 번째 버스킹은 선택적으로 하세요.</b><span>보상이 줄고 스트레스가 늘어납니다.</span></li><li><b>매니저는 자금이 안정된 뒤 고용해도 됩니다.</b><span>추가 콘텐츠가 열리지만 유지비도 발생합니다.</span></li><li><b>중요 선택 전 수동 저장하세요.</b><span>슬롯을 나누면 여러 엔딩을 확인하기 쉽습니다.</span></li><li><b>능력치를 방치하지 마세요.</b><span>보컬과 작곡은 14일의 유예기간 후 7일마다 3씩 낮아집니다. 공연·방송은 보컬 유지, 편곡·앨범은 작곡 유지에 도움이 됩니다.</span></li><li><b>한 행동만 반복하지 마세요.</b><span>후반에는 공연·방송·앨범·특별 이벤트를 조합해야 Lv.100까지 자연스럽게 성장합니다.</span></li>
     </ol></section>
   </div>
 </div>`}
@@ -512,7 +512,7 @@ function distributeFanGrowth(delta){if(delta<=0)return;const lv=fameLevel();let 
 function stat(name,delta){
  if(name==='fame'){state.stats.fame=Math.max(0,Math.min(10000,state.stats.fame+delta));if(state.career)state.career.peakFame=Math.max(state.career.peakFame||0,state.stats.fame);return delta}
  if(name==='money'){
-  if(delta>0&&state.economy?.debt>0){const repay=Math.min(state.economy.debt,Math.max(1,Math.floor(delta*.5)));state.economy.debt-=repay;state.economy.totalDebtRepaid=(state.economy.totalDebtRepaid||0)+repay;state.stats.money=Math.max(0,state.stats.money+delta-repay);if(repay>0)toast(`수입 중 ${repay.toLocaleString()}원이 채무 상환에 사용되었습니다.`);return delta-repay}
+  if(delta>0&&state.economy?.debt>0){const repay=Math.min(state.economy.debt,Math.max(1,Math.floor(delta*.5)));state.economy.debt-=repay;state.economy.totalDebtRepaid=(state.economy.totalDebtRepaid||0)+repay;state.stats.money=Math.max(0,state.stats.money+delta-repay);return delta-repay}
   if(delta<0&&state.stats.money+delta<0){const shortage=Math.abs(delta)-state.stats.money;state.stats.money=0;addDebt(shortage,'예상 밖의 지출');return delta+shortage}
   state.stats.money=Math.max(0,state.stats.money+delta);return delta
  }
@@ -532,14 +532,13 @@ function stat(name,delta){
    state.stats.vocal=clamp(state.stats.vocal-vocalLoss);
    state.stats.compose=clamp(state.stats.compose-composeLoss);
    addHistory(`⚠️ 극심한 피로 · 체력이 10 이하로 떨어져 보컬 -${vocalLoss}, 작곡 -${composeLoss}` ,`low-hp:${state.day}:${state.time}:${state.stats.hp}`);
-   setTimeout(()=>toast(`체력이 10 이하로 떨어져 보컬 -${vocalLoss}, 작곡 -${composeLoss}`),320);
   }
   return actual
  }
  state.stats[name]=clamp(state.stats[name]+delta);return delta
 }
 function addDebt(amount,reason='미납금'){amount=Math.max(0,Math.floor(Number(amount)||0));if(!amount)return 0;state.economy.debt=(state.economy.debt||0)+amount;state.economy.lastDebtNoticeDay=state.day;addHistory(`💳 채무 발생 · ${reason} ${amount.toLocaleString()}원`,`debt:${state.day}:${state.economy.debt}`);return amount}
-function chargeMonthlyUpkeep(){let upkeep=500000;if(state.manager.hired)upkeep+=250000;if(state.band.formed)upkeep+=400000;const paid=Math.min(state.stats.money,upkeep);state.stats.money-=paid;const unpaid=upkeep-paid;if(unpaid>0)addDebt(unpaid,'월 고정비 미납');toast(unpaid>0?`월 고정비 ${upkeep.toLocaleString()}원 중 ${unpaid.toLocaleString()}원이 채무로 남았습니다.`:`월 고정비 ${upkeep.toLocaleString()}원이 빠져나갔습니다.`)}
+function chargeMonthlyUpkeep(){let upkeep=500000;if(state.manager.hired)upkeep+=250000;if(state.band.formed)upkeep+=400000;const paid=Math.min(state.stats.money,upkeep);state.stats.money-=paid;const unpaid=upkeep-paid;if(unpaid>0)addDebt(unpaid,'월 고정비 미납');addHistory(`🏠 월 고정비 정산 · ${upkeep.toLocaleString()}원${unpaid>0?` · 미납 ${unpaid.toLocaleString()}원 채무 발생`:''}`,`monthly-upkeep:${state.day}`)}
 function debtBlocked(label='이 활동'){if((state.economy?.debt||0)<=0)return false;toast(`채무 ${state.economy.debt.toLocaleString()}원을 먼저 줄여야 ${label}을 진행할 수 있습니다.`);return true}
 function costHp(n){if(state.stats.hp<n){toast('체력이 부족합니다.');return false}stat('hp',-n);return true}
 function scaledFanLoss(rate=.03,min=10,max=180){return Math.min(max,Math.max(min,Math.floor(state.stats.fans*rate)))}
@@ -550,7 +549,8 @@ function dayType(){const y=((state.day-1)%365)+1;if([1,15,50,100,150,200,250,300
 function rollWeather(){const r=Math.random();state.weather=r<.58?'sun':r<.82?'rain':'snow'}
 function weatherLabel(){return weatherInfo[state.weather].label}
 function restAmount(){return 25+state.housing*5}
-function mealRecovery(){return 12+state.housing*3}
+function mealRecovery(){return 12+state.housing*3+(state.housing>0?3:0)}
+function mealCost(){return 8000*Math.pow(2,Math.max(0,Math.min(4,Number(state.housing)||0)))}
 const equipmentCatalog={
  mic:{
   usedMic:{name:'중고 마이크',price:100000,durability:10},
@@ -594,17 +594,30 @@ function consumeBuskingEquipment(){
  }
  if(multiplier===2)notes.push(' 보호 케이스가 없어 10% 확률의 장비 충격이 발생해 내구도가 2씩 소모됐다.');
  else notes.push(' 마이크와 음향장비 내구도가 1씩 소모됐다.');
- if(expired.length){const message=`${expired.join('와 ')}의 내구도를 모두 사용해 장비가 사라졌습니다.`;addHistory(`🎙 장비 소모 · ${message}`,`gear-expired:${state.day}:${expired.join('-')}`);setTimeout(()=>toast(message),420);notes.push(` ${message}`)}
+ if(expired.length){const message=`${expired.join('와 ')}의 내구도를 모두 사용해 장비가 사라졌습니다.`;addHistory(`🎙 장비 소모 · ${message}`,`gear-expired:${state.day}:${expired.join('-')}`);notes.push(` ${message}`)}
  return notes.join('');
 }
 function moveHome(){
  if(debtBlocked('이사'))return;
  if(state.housing>=housingInfo.length-1)return toast('이미 펜트하우스에 살고 있습니다.');
  const next=housingInfo[state.housing+1];
+ const current=housingInfo[state.housing];
  if(state.stats.money<next[1])return toast(`${next[0]} 이사 비용 ${next[1].toLocaleString()}원이 필요합니다.`);
- stat('money',-next[1]);state.housing++;
- addHistory(`🏠 주거 업그레이드 · ${next[0]}에 새 보금자리를 마련했다.`);
- showDialogue('류현상',`${next[0]}으로 이사했다. 이제 깊은 휴식은 체력 ${restAmount()}, 식사는 체력 ${mealRecovery()}을 회복한다.`);save(false);advance(1)
+ const remain=state.stats.money-next[1];
+ showModal('이사를 하시겠습니까?',`<div class="info-card move-confirm-card"><p>현재 집 <b>${current[0]}</b>에서 <b>${next[0]}</b>으로 이사합니다.</p><p>이사 비용 <strong>${next[1].toLocaleString()}원</strong></p><p>이사 후 보유금 <strong>${remain.toLocaleString()}원</strong></p><small>‘네’를 선택해야 비용이 결제되고 시간이 1칸 진행됩니다.</small></div><div class="result-actions"><button id="moveHomeNo">아니오</button><button id="moveHomeYes" class="primary">네</button></div>`);
+ const no=$('#moveHomeNo'),yes=$('#moveHomeYes');
+ if(no)no.onclick=()=>closeModal();
+ if(yes)yes.onclick=()=>{
+  if(state.housing>=housingInfo.length-1){closeModal();return toast('이미 펜트하우스에 살고 있습니다.')}
+  const confirmedNext=housingInfo[state.housing+1];
+  if(state.stats.money<confirmedNext[1]){closeModal();return toast(`${confirmedNext[0]} 이사 비용 ${confirmedNext[1].toLocaleString()}원이 필요합니다.`)}
+  const before=snapshotActionResult();
+  stat('money',-confirmedNext[1]);state.housing++;
+  addHistory(`🏠 주거 업그레이드 · ${confirmedNext[0]}에 새 보금자리를 마련했다.`);
+  closeModal();
+  showDialogue('류현상',`${confirmedNext[0]}으로 이사했다. 이제 깊은 휴식은 체력 ${restAmount()}, 식사는 ${mealCost().toLocaleString()}원에 체력 ${mealRecovery()}을 회복한다.`);
+  save(false);advance(1);scheduleActionResultNotice(before)
+ }
 }
 function forcedRestConditionMet(){
  const stress=Number(state.stats?.stress)||0;
@@ -686,15 +699,29 @@ function applyDailyPracticePenalty(){
  }
  if(lost.length){
   addHistory(`📅 7일 연속 훈련 부족 · ${lost.join(' / ')}`,`seven-day-practice:${state.day}:${lost.join('|')}`);
-  setTimeout(()=>toast(`7일 동안 관련 훈련을 하지 않아 ${lost.join(', ')} 감소했습니다.`),220);
  }
+}
+function applyStyleDecay(){
+ const interval=30;
+ const lastDay=Math.max(1,Number(state.dailyUse?.styleCareLastDay)||state.day);
+ const inactiveDays=Math.max(0,state.day-lastDay);
+ const targetCount=Math.floor(inactiveDays/interval);
+ const appliedCount=Math.max(0,Math.floor(Number(state.dailyUse?.styleDecayCount)||0));
+ const due=Math.max(0,targetCount-appliedCount);
+ if(due<=0)return;
+ const actual=Math.min(due,Math.max(0,state.stats.looks));
+ if(actual>0){
+  stat('looks',-actual);
+  addHistory(`💇 외모 관리 부족 · 헤어 스타일 관리를 ${inactiveDays}일 동안 하지 않아 외모 -${actual}`,`style-decay:${state.day}:${targetCount}`);
+ }
+ state.dailyUse.styleDecayCount=targetCount;
 }
 function applySkillDecay(){
  const rules=[['vocal','lastVocalUseDay','vocalDecayCount','보컬'],['compose','lastComposeUseDay','composeDecayCount','작곡']];const lost=[];
  for(const [type,lastKey,countKey,label] of rules){const last=Math.max(1,Number(state.skillMaintenance?.[lastKey])||state.day);const inactive=Math.max(0,state.day-last);const periods=inactive<=14?0:Math.floor((inactive-15)/7)+1;const target=periods*3;const applied=Math.max(0,Number(state.skillMaintenance?.[countKey])||0);const due=Math.max(0,target-applied);if(due<=0)continue;const floor=10;const actual=Math.min(due,Math.max(0,state.stats[type]-floor));if(actual>0){stat(type,-actual);lost.push(`${label} -${actual}`)}state.skillMaintenance[countKey]=target}
- if(lost.length){addHistory(`📉 장기 미사용으로 능력치 감소 · ${lost.join(' / ')}`,`skill-decay:${state.day}:${lost.join('|')}`);toast(`오랜 기간 연습·활동을 하지 않아 ${lost.join(', ')} 감소했습니다.`)}
+ if(lost.length){addHistory(`📉 장기 미사용으로 능력치 감소 · ${lost.join(' / ')}`,`skill-decay:${state.day}:${lost.join('|')}`)}
 }
-function dailyTick(allowRandom=true){applyDailyPracticePenalty();rollWeather();stat('hp',8);stat('stress',-4);state.items.bakcasUsedToday=0;state.items.mealsToday=0;state.storeDaily.buskingDay=state.day;state.storeDaily.buskingCount=0;if(state.economy.lastWorkDay!==state.day-1)state.economy.workStreak=0;applySkillDecay();if(state.day%30===0)chargeMonthlyUpkeep();return allowRandom?randomEvent():false}
+function dailyTick(allowRandom=true){applyDailyPracticePenalty();rollWeather();stat('hp',8);stat('stress',-4);state.items.bakcasUsedToday=0;state.items.mealsToday=0;state.storeDaily.buskingDay=state.day;state.storeDaily.buskingCount=0;if(state.economy.lastWorkDay!==state.day-1)state.economy.workStreak=0;applySkillDecay();applyStyleDecay();if(state.day%30===0)chargeMonthlyUpkeep();return allowRandom?randomEvent():false}
 function randomEvent(){
  if(Math.random()>.22)return false;
  const candidates=[
@@ -708,10 +735,9 @@ function randomEvent(){
  ];
  const pool=candidates.filter(x=>x.condition());if(!pool.length)return false;
  const e=pick(pool),before=snapshotStats();e.effect();const changes=describeStatChanges(before);
- showDialogue('돌발 사건',`${e.title} — ${e.text}`);playSfx('event');
+ showDialogue('돌발 사건',dialogueWithStatChanges(`${e.title} — ${e.text}`,changes));playSfx('event');
  addHistory(`⚡ 돌발 사건 · ${e.title}`,`random:${e.id}`);
  $('#eventBadge').classList.remove('hidden');setTimeout(()=>$('#eventBadge').classList.add('hidden'),2500);
- if(changes)setTimeout(()=>toast(changes),250);
  return true;
 }
 function memberLeave(){const keys=Object.keys(state.band.members).filter(k=>state.band.members[k]);if(!keys.length)return '';const k=pick(keys),n=state.band.members[k];state.band.members[k]=null;state.band.formed=false;state.band.bond=35;state.soloStreak=0;addHistory(`🎸 밴드 이탈 · ${n}이(가) 팀을 떠났다.`);return `${n}이(가) 반복되는 솔로 활동에 서운함을 느껴 밴드를 떠났다.`}
@@ -743,7 +769,7 @@ function displayDialogue(name,text,choices=[]){
  if(art.getAttribute('src')!==src){art.setAttribute('src',src);wrap.classList.add('speaker-enter');$('#scene').classList.add('character-switch');setTimeout(()=>{wrap.classList.remove('speaker-enter');$('#scene').classList.remove('character-switch')},560)}
  wrap.classList.toggle('manager-mode',isManager);art.alt=isManager?'후라보노':'류현상';
  box.classList.remove('dialogue-pop');plate.classList.remove('speaker-pop');void box.offsetWidth;box.classList.add('dialogue-pop');plate.classList.add('speaker-pop');
- const area=$('#choiceArea');area.innerHTML='';area.classList.toggle('hidden',!choices.length);setChoiceLock(choices.length>0);choices.forEach(c=>{const b=document.createElement('button');b.textContent=c[0];b.onclick=()=>{area.classList.add('hidden');setChoiceLock(false);try{const before=snapshotStats();const result=c[1]();const changes=describeStatChanges(before);showDialogue(result&&result.name?result.name:name,result&&result.text?result.text:(typeof result==='string'?result:'선택을 마쳤다.'));save(false);render();checkProgress();if(changes)setTimeout(()=>toast(changes),250)}catch(err){console.error(err);setChoiceLock(true);toast('이벤트 처리 중 오류가 발생했습니다.')}};area.appendChild(b)});
+ const area=$('#choiceArea');area.innerHTML='';area.classList.toggle('hidden',!choices.length);setChoiceLock(choices.length>0);choices.forEach(c=>{const b=document.createElement('button');b.textContent=c[0];b.onclick=()=>{area.classList.add('hidden');setChoiceLock(false);try{const before=snapshotStats();const result=c[1]();const changes=describeStatChanges(before);const resultText=result&&result.text?result.text:(typeof result==='string'?result:'선택을 마쳤다.');showDialogue(result&&result.name?result.name:name,dialogueWithStatChanges(resultText,changes));save(false);render();checkProgress()}catch(err){console.error(err);setChoiceLock(true);toast('이벤트 처리 중 오류가 발생했습니다.')}};area.appendChild(b)});
 }
 function showDialogue(name,text,choices=[]){state.dialogue={name,text};displayDialogue(name,text,choices)}
 const motionLabels={stockWork:'진열 보조',finance:'가계부',flyerPromo:'전단 홍보',audienceResearch:'관객 조사',stageRehearsal:'리허설',storePromo:'홍보 방송',customerPractice:'응대 연습',rest:'휴식',sleep:'SLEEP',compose:'작곡',vocal:'보컬',work:'ALBA',busking:'BUSKING',bandBusking:'BAND LIVE',rehearse:'합주',recruit:'멤버 영입',arrange:'편곡',audition:'오디션',concert:'LIVE',broadcast:'ON AIR',fanmeeting:'팬미팅',date:'DATE',walk:'산책',observe:'관찰',repair:'CHECK',meal:'식사',snack:'간식',buyBakcas:'박칵스',bakcas:'BOOST',digimonCard:'CARD',lottery:'LOTTO'};
@@ -869,7 +895,13 @@ function maybeFanCommunityEvent(){
   {min:1500,title:'해외 팬의 번역 계정',speaker:'해외 팬',text:'해외 팬들이 자발적으로 가사와 인터뷰를 번역하는 계정을 만들었다. 완벽하지 않은 번역도 있었지만, 노래의 감정을 전하려는 마음은 분명했다.',gain:()=>{stat('fans',40);stat('fame',25)}},
   {min:3000,title:'팬덤의 선행 프로젝트',speaker:'팬카페 운영진',text:'생일 광고 대신 류현상의 이름으로 유기동물 보호소에 기부하자는 제안이 올라왔다. 팬들은 가수의 이미지를 과장하기보다 좋은 영향력을 함께 만들고 싶다고 말했다.',gain:()=>{stat('fans',60);stat('fame',35);stat('stress',-4)}}
  ].filter(x=>state.stats.fans>=x.min);
- if(!events.length)return false;const ev=pick(events);state.cooldowns.fanEvent=state.day;const before=snapshotStats();ev.gain();addHistory(`👥 팬 커뮤니티 · ${ev.title}`,`fan:${state.day}:${ev.title}`);showDialogue(ev.speaker,`【${ev.title}】\n\n${ev.text}`);const changes=describeStatChanges(before);if(changes)setTimeout(()=>toast(changes),250);return true;
+ if(!events.length)return false;const ev=pick(events);state.cooldowns.fanEvent=state.day;const before=snapshotStats();ev.gain();addHistory(`👥 팬 커뮤니티 · ${ev.title}`,`fan:${state.day}:${ev.title}`);const changes=describeStatChanges(before);showDialogue(ev.speaker,dialogueWithStatChanges(`【${ev.title}】\n\n${ev.text}`,changes));return true;
+}
+function snsPostReward(ev){
+ const currentFans=Math.max(0,Number(state.stats.fans)||0);
+ const fanMultiplier=1+Math.min(1.5,Math.sqrt(currentFans)/300);
+ const fameMultiplier=1+Math.min(.75,Math.sqrt(currentFans)/600);
+ return {fans:Math.max(1,Math.round(ev.fans*fanMultiplier)),fame:Math.max(0,Math.round(ev.fame*fameMultiplier)),stress:ev.stress,fanMultiplier,fameMultiplier};
 }
 const snsScenarios=[
  {title:'연습실 15초 라이브',text:'완성되지 않은 후렴구 15초를 올렸다. 팬들은 짧은 영상 속 숨소리와 기타 소리까지 분석하며 정식 발매를 기다렸다.',fans:15,fame:8,stress:1},
@@ -887,7 +919,7 @@ const snsScenarios=[
 ];
 function maybePassiveSnsEvent(){
  if(state.stats.fans<200||state.day-state.sns.lastEventDay<6||Math.random()>=.08)return false;
- const ev=pick(snsScenarios);state.sns.lastEventDay=state.day;const before=snapshotStats();stat('fans',ev.fans);stat('fame',ev.fame);stat('stress',ev.stress);addHistory(`📱 SNS · ${ev.title}`,`sns:${state.day}:${ev.title}`);showDialogue('SNS 반응',`【${ev.title}】\n\n${ev.text}`);const changes=describeStatChanges(before);if(changes)setTimeout(()=>toast(changes),250);return true;
+ const ev=pick(snsScenarios);state.sns.lastEventDay=state.day;const before=snapshotStats();stat('fans',ev.fans);stat('fame',ev.fame);stat('stress',ev.stress);addHistory(`📱 SNS · ${ev.title}`,`sns:${state.day}:${ev.title}`);const changes=describeStatChanges(before);showDialogue('SNS 반응',dialogueWithStatChanges(`【${ev.title}】\n\n${ev.text}`,changes));return true;
 }
 const rivalStories=[
  {lv:30,title:'첫 만남 — 카인',scenes:[['나레이션','오디션 대기실 한쪽에서 검은 단발의 남자가 조용히 이어폰을 빼고 있었다. 그는 최근 인디 신에서 이름이 오르기 시작한 싱어송라이터 카인이었다. 류현상과 비슷한 시기에 무대에 서기 시작했지만, 정돈된 이미지와 정확한 라이브로 먼저 주목받고 있었다.'],['카인','“류현상 씨죠? 버스킹 영상 봤습니다. 감정은 좋은데, 고음에서 힘으로 버티는 습관이 있더군요.” 칭찬인지 지적인지 모를 말투였다. 류현상은 표정이 굳었지만 틀린 말은 아니라는 걸 알았다.'],['류현상','“남의 영상 분석할 시간에 본인 노래나 더 하시죠.” 말은 까칠하게 나갔지만, 카인이 지적한 호흡 위치는 머릿속에 남았다. 카인은 기분 나빠하기보다 짧게 웃었다. “그 성격이면 오래 기억되긴 하겠네요.”'],['나레이션','둘은 같은 오디션 무대에 올랐다. 카인은 정교했고 류현상은 거칠지만 절박했다. 결과는 둘 다 다음 단계 진출. 경쟁은 아직 시작에 불과했지만, 서로의 이름은 분명하게 기억됐다.']]},
@@ -897,7 +929,7 @@ const rivalStories=[
  {lv:90,title:'시상식 뒤편의 약속',scenes:[['나레이션','시상식 후보 발표 뒤, 류현상과 카인은 무대 뒤 비상계단에서 마주쳤다. 수많은 카메라와 팬덤 경쟁에서 벗어난 조용한 공간이었다.'],['카인','“처음엔 당신이 금방 사라질 줄 알았습니다. 감정만 앞서는 사람이라고 생각했어요. 그런데 계속 살아남더군요.”'],['류현상','“나도 당신이 재미없는 완벽주의자인 줄 알았어요. 지금도 절반은 맞는 것 같고.” 카인은 웃었고, 류현상도 아주 조금 웃었다.'],['나레이션','둘은 언젠가 경쟁이 아니라 공동 앨범으로 다시 만나자고 약속했다. 라이벌은 상대를 쓰러뜨리기 위한 존재가 아니라, 혼자였다면 도달하지 못할 높이를 보여 주는 사람이 되었다.']]}
 ];
 function runLinearStory(title,scenes,onFinish){let page=0,finished=false;const draw=()=>{const [name,text]=scenes[page];showModal(title,`<div class="ending-story"><div class="ending-count">STORY · ${page+1} / ${scenes.length}</div><h3>${name}</h3><p>${text}</p><div class="ending-nav"><button id="linearPrev" ${page===0?'disabled':''}>이전 장면</button><button id="linearNext" class="primary">${page===scenes.length-1?'이야기를 마친다':'다음 장면'}</button></div></div>`);$('#linearPrev').onclick=()=>{if(page>0){page--;draw()}};$('#linearNext').onclick=()=>{if(finished)return;if(page<scenes.length-1){page++;draw();return}finished=true;closeModal();onFinish&&onFinish()}};draw()}
-function maybeRivalStory(){const next=rivalStories[state.rival.stage];if(!next||fameLevel()<next.lv||state.day-state.rival.lastEventDay<5)return false;state.rival.met=true;runLinearStory(next.title,next.scenes,()=>{state.rival.stage++;state.rival.respect+=10;state.rival.lastEventDay=state.day;gainSkill('vocal',2,'rival');stat('fame',15);addHistory(`⚔️ 라이벌 카인 · ${next.title}`,`rival:${state.rival.stage}`);save(false);render();toast('라이벌 스토리 완료 · 보컬 +2 / 인지도 +15')});return true}
+function maybeRivalStory(){const next=rivalStories[state.rival.stage];if(!next||fameLevel()<next.lv||state.day-state.rival.lastEventDay<5)return false;state.rival.met=true;runLinearStory(next.title,next.scenes,()=>{state.rival.stage++;state.rival.respect+=10;state.rival.lastEventDay=state.day;gainSkill('vocal',2,'rival');stat('fame',15);addHistory(`⚔️ 라이벌 카인 · ${next.title}`,`rival:${state.rival.stage}`);state.dialogue={name:'나레이션',text:'라이벌 스토리를 마쳤다.\n\n【수치 변화】 보컬 +2 · 인지도 +15'};save(false);render()});return true}
 const restNightmareStories=[
  {id:'military',title:'다시 제대하는 꿈',text:'류현상은 이미 끝난 군 생활을 다시 시작한 듯한 꿈속에서 군복을 입고 연병장에 서 있었다. 멀리서 누군가 행사 출발 시간이 다 됐다고 외쳤지만, 몸은 생활관 밖으로 한 발짝도 움직이지 않았다.\n\n“아... 안 돼... 나 행사 가야 된단 말이야!!! 이렇게 갈 순 없어!”\n\n그 순간 군대 기상음이 귀를 찢을 듯 울렸고, 류현상은 이불을 걷어차며 벌떡 일어났다. 방 안은 조용했고 휴대전화 알람도 울리지 않았다.\n\n“너무 오래 잤나... 최악이다. 이런 꿈을 꾸네...”'},
  {id:'stalker',title:'창밖의 찰칵 소리',text:'자취방에서 깊이 잠들어 있던 류현상의 귓가에 희미한 소리가 반복해서 들렸다. 찰칵. 찰칵. 처음에는 빗소리라고 생각했지만 소리는 일정한 간격으로 창문 쪽에서 들려왔다.\n\n잠든 류현상의 모습을 누군가 창문 너머에서 계속 촬영하고 있었다. 인기척을 느낀 류현상이 무거운 눈을 겨우 떴을 때 창밖에는 아무도 없었고, 커튼만 가볍게 흔들리고 있었다.\n\n“으... 그만 자야겠다...”\n\n꿈이었다는 것을 알면서도 류현상은 한동안 창문을 제대로 바라보지 못했다.'},
@@ -907,18 +939,17 @@ function maybeRestNightmare(source='action'){
  if(source!=='rest'||state.location!=='home')return false;
  const data=state.restNightmares||(state.restNightmares={totalRests:0,lastTriggeredRest:0,seen:[]});
  if(data.totalRests<5)return false;
- if(data.totalRests-data.lastTriggeredRest<2)return false;
- if(Math.random()>=.40)return false;
+ if(data.totalRests-data.lastTriggeredRest<3)return false;
+ if(Math.random()>=.20)return false;
  let available=restNightmareStories.filter(x=>!data.seen.includes(x.id));
  if(!available.length){data.seen=[];available=[...restNightmareStories]}
  const story=pick(available);data.seen.push(story.id);data.lastTriggeredRest=data.totalRests;
- stat('stress',2);actionNoticeSequence++;markMajorNarrativeEvent();
+ stat('stress',2);markMajorNarrativeEvent();
  state.dialogue={name:'돌발 스토리',text:`【${story.title}】\n\n${story.text}`};
  addHistory(`🌙 과도한 휴식의 악몽 · ${story.title} · 스트레스 +2`,`rest-nightmare:${data.totalRests}:${story.id}`);
  playSfx('event');
  const badge=$('#eventBadge');if(badge){badge.textContent='악몽';badge.classList.remove('hidden');setTimeout(()=>{badge.classList.add('hidden');badge.textContent='돌발 사건'},2800)}
  save(false);render();
- setTimeout(()=>toast('너무 오랜 휴식으로 악몽을 꿔 스트레스 받았다. · 스트레스 +2'),260);
  return true;
 }
 function maybeStoryEvent(source='action'){
@@ -973,7 +1004,7 @@ function openDigimonCardHub(){
 function openDigimonInventory(){showModal('디지몬 카드 보관함',digimonInventoryHtml());bindDigimonInventory()}
 function sellDigimonCard(grade,count){
  const owned=state.gambling.cards[grade]||0;count=Math.max(0,Math.min(owned,Math.floor(Number(count)||0)));if(!count)return;
- const amount=digimonCardGrades[grade].value*count;state.gambling.cards[grade]-=count;stat('money',amount);addHistory(`💳 디지몬 카드 판매 · ${grade} ${count}장, ${amount.toLocaleString()}원`,`card-sell:${state.day}:${Date.now()}`);playSfx('coin');save(false);render();openDigimonInventory();toast(`${grade} ${count}장 판매 · +${amount.toLocaleString()}원`)
+ const amount=digimonCardGrades[grade].value*count;state.gambling.cards[grade]-=count;stat('money',amount);addHistory(`💳 디지몬 카드 판매 · ${grade} ${count}장, ${amount.toLocaleString()}원`,`card-sell:${state.day}:${Date.now()}`);state.dialogue={name:'카드 판매',text:`${grade} 카드 ${count}장을 판매했다.\n\n【수치 변화】 돈 +${amount.toLocaleString()}`};playSfx('coin');save(false);render();openDigimonInventory()
 }
 function showDigimonCardResult(grades){
  const counts={C:0,U:0,R:0,SR:0,SEC:0,SP:0};
@@ -1050,7 +1081,7 @@ function openFinance(){
  if(debt<=0)return showModal('가계부·채무','<p>현재 채무가 없습니다. 월 고정비와 다음 달 지출을 확인하며 현금을 관리하세요.</p>');
  const options=[100000,500000,debt].filter((v,i,a)=>v<=debt&&v<=state.stats.money&&a.indexOf(v)===i);
  showModal('가계부·채무',`<p>현재 채무 <b>${debt.toLocaleString()}원</b> · 보유금 <b>${state.stats.money.toLocaleString()}원</b></p><p>수입 발생 시 50%가 자동 상환되며, 여기서 원하는 금액을 즉시 상환할 수 있습니다.</p>${options.length?options.map(v=>`<button class="wide" data-repay-debt="${v}">${v===debt?'전액 ':''}${v.toLocaleString()}원 상환</button>`).join(''):'<p>현재 보유금으로 상환할 수 없습니다.</p>'}`);
- $$('[data-repay-debt]').forEach(b=>b.onclick=()=>{const amount=Math.min(Number(b.dataset.repayDebt)||0,state.stats.money,state.economy.debt);if(amount<=0)return;state.stats.money-=amount;state.economy.debt-=amount;state.economy.totalDebtRepaid=(state.economy.totalDebtRepaid||0)+amount;addHistory(`💳 직접 채무 상환 · ${amount.toLocaleString()}원`,`debt:manual:${state.day}:${state.economy.debt}`);save(false);render();openFinance();toast(`${amount.toLocaleString()}원을 상환했습니다.`)})
+ $$('[data-repay-debt]').forEach(b=>b.onclick=()=>{const amount=Math.min(Number(b.dataset.repayDebt)||0,state.stats.money,state.economy.debt);if(amount<=0)return;state.stats.money-=amount;state.economy.debt-=amount;state.economy.totalDebtRepaid=(state.economy.totalDebtRepaid||0)+amount;addHistory(`💳 직접 채무 상환 · ${amount.toLocaleString()}원`,`debt:manual:${state.day}:${state.economy.debt}`);state.dialogue={name:'가계부',text:`채무 ${amount.toLocaleString()}원을 직접 상환했다.\n\n【수치 변화】 돈 -${amount.toLocaleString()} · 채무 -${amount.toLocaleString()}`};save(false);render();openFinance()})
 }
 function stageRehearsal(){
  if(!concertRequirementMet())return toast(`공연을 열 수 있는 수준이 되어야 리허설도 가능합니다. ${concertRequirementText()}`);
@@ -1062,14 +1093,14 @@ function useBakcas(fromItemMenu=false){
  if(state.items.bakcas<1){toast('박칵스가 없습니다.');if(fromItemMenu)openItemMenu();return false}
  if(state.items.bakcasUsedToday>=2){toast('오늘은 박칵스를 더 마실 수 없습니다.');if(fromItemMenu)openItemMenu();return false}
  if(state.stats.hp>=100){toast('체력이 이미 최대입니다.');if(fromItemMenu)openItemMenu();return false}
+ const before=snapshotActionResult();
  state.items.bakcas--;
  state.items.bakcasUsedToday++;
  stat('hp',state.items.bakcasUsedToday===1?25:20);
  if(state.items.bakcasUsedToday===2)stat('stress',4);
  showDialogue('류현상',state.items.bakcasUsedToday===1?pickActionDialogue('bakcas'):'두 번째 박칵스를 마셨다. 정신은 들었지만 심장이 빠르게 뛰고 스트레스가 조금 쌓였다.');
- toast(`박칵스 사용 ${state.items.bakcasUsedToday}/2`);
  save(false);render();
- if(fromItemMenu)openItemMenu();
+ if(fromItemMenu){appendStatChangesToDialogue(describeActionResult(before));openItemMenu()}
  return true
 }
 const STORE_JOB_STAGES={
@@ -1104,7 +1135,6 @@ function storeJobAction(key){
  const fatigue=key==='work'&&state.economy.workStreak>=3?' 연속 근무로 피로가 크게 쌓였다.':'';
  const promotion=promoted?` ${info.name}로 승급해 급여가 올랐다!`:'';
  showDialogue('류현상',`${pickActionDialogue('work')} ${def.label} ${info.name} 급여 ${info.reward.toLocaleString()}원을 받았다.${promotion} 반복 근무로 보컬과 작곡 능력이 각각 2 감소했다.${fatigue} ${progress}.`);
- toast(`${def.label} ${info.name} · ${info.reward.toLocaleString()}원 · ${progress}`);
  advance(1)
 }
 function doAction(key){
@@ -1112,24 +1142,24 @@ function doAction(key){
  const actionResultBefore=snapshotActionResult();
  const s=state.stats;
  const f={
- rest:()=>{const atHome=state.location==='home',gain=atHome?restAmount():15;state.restNightmares=state.restNightmares||{totalRests:0,lastTriggeredRest:0,seen:[]};state.restNightmares.totalRests++;state.restStreak=(state.restStreak||0)+1;let repeated='',vocalLoss=0,composeLoss=0;if(state.restStreak>=2){vocalLoss=Math.min(1,state.stats.vocal);composeLoss=Math.min(1,state.stats.compose);stat('vocal',-vocalLoss);stat('compose',-composeLoss);state.restStreak=0;repeated=` 연속으로 두 번 깊은 휴식을 해 보컬 -${vocalLoss}, 작곡 -${composeLoss}.`;addHistory(`🛌 과도한 휴식 · 보컬 -${vocalLoss}, 작곡 -${composeLoss}`,`double-rest:${state.day}:${state.time}`)}stat('hp',gain);stat('stress',atHome?-10:-6);showDialogue('류현상',atHome?`${pickActionDialogue('rest')} 현재 집에서는 체력 ${gain}을 회복했고 반나절이 지났다.${repeated}`:`잠깐 앉아 호흡을 고르고 체력 ${gain}을 회복했다. 집이 아니어서 깊게 쉬지는 못했다.${repeated}`);if(repeated)toast(`연속 휴식으로 보컬 -${vocalLoss}, 작곡 -${composeLoss}`);advance(2,'rest')},
+ rest:()=>{const atHome=state.location==='home',gain=atHome?restAmount():15;state.restNightmares=state.restNightmares||{totalRests:0,lastTriggeredRest:0,seen:[]};state.restNightmares.totalRests++;state.restStreak=(state.restStreak||0)+1;let repeated='',vocalLoss=0,composeLoss=0;if(state.restStreak>=2){vocalLoss=Math.min(1,state.stats.vocal);composeLoss=Math.min(1,state.stats.compose);stat('vocal',-vocalLoss);stat('compose',-composeLoss);state.restStreak=0;repeated=` 연속으로 두 번 깊은 휴식을 해 보컬 -${vocalLoss}, 작곡 -${composeLoss}.`;addHistory(`🛌 과도한 휴식 · 보컬 -${vocalLoss}, 작곡 -${composeLoss}`,`double-rest:${state.day}:${state.time}`)}stat('hp',gain);stat('stress',atHome?-10:-6);showDialogue('류현상',atHome?`${pickActionDialogue('rest')} 현재 집에서는 체력 ${gain}을 회복했고 반나절이 지났다.${repeated}`:`잠깐 앉아 호흡을 고르고 체력 ${gain}을 회복했다. 집이 아니어서 깊게 쉬지는 못했다.${repeated}`);advance(2,'rest')},
  compose:()=>trainingAction('compose',10),
- meal:()=>{if((state.items.mealsToday||0)>=2)return toast('오늘은 더 이상 식사할 수 없습니다.');if(s.hp>=100)return toast('체력이 이미 최대입니다.');if(s.money<8000)return toast('돈이 부족합니다.');const gain=mealRecovery();state.items.mealsToday=(state.items.mealsToday||0)+1;stat('money',-8000);stat('hp',gain);showDialogue('류현상',`${pickActionDialogue('meal')} 현재 집 등급 효과로 체력 ${gain}을 회복했다. 식사에는 시간이 지나지 않는다.`);save(false);render();toast(`체력 +${gain} · 시간 미소모`)},
+ meal:()=>{if((state.items.mealsToday||0)>=2)return toast('오늘은 더 이상 식사할 수 없습니다.');if(s.hp>=100)return toast('체력이 이미 최대입니다.');const cost=mealCost();if(s.money<cost)return toast(`식사 비용 ${cost.toLocaleString()}원이 필요합니다.`);const gain=mealRecovery();state.items.mealsToday=(state.items.mealsToday||0)+1;stat('money',-cost);stat('hp',gain);showDialogue('류현상',`${pickActionDialogue('meal')} ${housingInfo[state.housing][0]} 생활비 기준으로 ${cost.toLocaleString()}원을 사용해 체력 ${gain}을 회복했다. 식사에는 시간이 지나지 않는다.`);save(false);render()},
  wardrobe:()=>openWardrobe(),
  bakcas:()=>useBakcas(false),
  moveHome:()=>moveHome(),finance:()=>openFinance(),
  
  stockWork:()=>storeJobAction('stockWork'),
  work:()=>storeJobAction('work'),
- buyBakcas:()=>{if(s.money<15000)return toast('돈이 부족합니다.');stat('money',-15000);state.items.bakcas++;pendingLocationActionStress=false;showDialogue('류현상',actionStory('bakcas','박칵스 하나를 가방에 넣었다. 오늘은 조금 더 버틸 수 있겠다.'));toast('박칵스 1개를 샀습니다.');save(false);render()},
+ buyBakcas:()=>{if(s.money<15000)return toast('돈이 부족합니다.');stat('money',-15000);state.items.bakcas++;pendingLocationActionStress=false;showDialogue('류현상',actionStory('bakcas','박칵스 하나를 가방에 넣었다. 오늘은 조금 더 버틸 수 있겠다.'));save(false);render()},
  snack:()=>{if(s.hp>=100)return toast('체력이 이미 최대입니다.');if(s.money<2500)return toast('돈이 부족합니다.');stat('money',-2500);stat('hp',8);pendingLocationActionStress=false;showDialogue('류현상',`${pickActionDialogue('snack')} 삼각김밥으로 허기를 달랬다. 시간도, 스트레스도 변하지 않았다.`);save(false);render()},
- storePromo:()=>{if(state.storeDaily.promoDay===state.day)return toast('매장 홍보 방송은 하루에 한 번만 할 수 있습니다.');if(!costHp(8))return;state.storeDaily.promoDay=state.day;const fanGain=8+Math.floor(Math.random()*13);stat('fans',fanGain);stat('fame',2);stat('stress',3);showDialogue('류현상',actionStory('work',`점장의 허락을 받아 매장 안내 방송 끝에 오늘의 버스킹 일정을 짧게 홍보했다. 무심한 척했지만 목소리를 알아본 손님들이 휴대전화를 꺼냈다. 팬 ${fanGain}명이 늘었다.`));toast(`팬 +${fanGain} / 인지도 +2`);advance(1)},
+ storePromo:()=>{if(state.storeDaily.promoDay===state.day)return toast('매장 홍보 방송은 하루에 한 번만 할 수 있습니다.');if(!costHp(8))return;state.storeDaily.promoDay=state.day;const fanGain=8+Math.floor(Math.random()*13);stat('fans',fanGain);stat('fame',2);stat('stress',3);showDialogue('류현상',actionStory('work',`점장의 허락을 받아 매장 안내 방송 끝에 오늘의 버스킹 일정을 짧게 홍보했다. 무심한 척했지만 목소리를 알아본 손님들이 휴대전화를 꺼냈다. 팬 ${fanGain}명이 늘었다.`));advance(1)},
  digimonCard:()=>openDigimonCardHub(),digimonInventory:()=>openDigimonInventory(),lottery:()=>openLottery(),
  customerPractice:()=>{if(state.storeDaily.customerDay===state.day)return toast('단골 손님 응대는 하루에 한 번만 할 수 있습니다.');if(!costHp(6))return;state.storeDaily.customerDay=state.day;const tips=3000+Math.floor(Math.random()*5001);const fanGain=2+Math.floor(Math.random()*5);stat('money',tips);stat('fans',fanGain);stat('stress',1);showDialogue('류현상',actionStory('work',`자주 오던 손님의 부탁을 차분히 해결했다. 손님은 고맙다며 작은 팁을 남기고 버스킹 일정도 물었다. 팁 ${tips.toLocaleString()}원, 팬 ${fanGain}명이 늘었다.`));advance(1)},
  gear:()=>openGear(),vocal:()=>trainingAction('vocal',12),
  rehearse:()=>{if(!state.band.formed)return toast('먼저 밴드를 결성해야 합니다.');if(!costHp(18))return;state.band.bond=clamp(state.band.bond+12);state.soloStreak=0;const gain=gainSkill('vocal',2,'rehearse');showDialogue('류현상',`${pickActionDialogue('rehearse')}${gain===0?' 보컬은 일반 성장 한계인 95에 도달해 더 오르지 않았다.':''}`);advance(1)},
  recruit:()=>recruit(),arrange:()=>{if(!state.band.formed)return toast('밴드가 필요합니다.');if(!costHp(15))return;markDailyPractice('compose');const gain=gainSkill('compose',2,'arrange');state.band.bond=clamp(state.band.bond+5);showDialogue('류현상',actionStory('rehearse',`각 악기의 빈자리를 줄이자 곡이 훨씬 선명해졌다.${gain===0?' 작곡은 일반 성장 한계인 95에 도달해 더 오르지 않았다.':''}`));advance(1)},
- album:()=>openAlbum(),busking:()=>busking(false),bandBusking:()=>busking(true),walk:()=>{stat('stress',-15);showDialogue('류현상',pickActionDialogue('walk'));advance(1)},flyerPromo:()=>{if(state.storeDaily.flyerDay===state.day)return toast('공연 전단 홍보는 하루에 한 번만 할 수 있습니다.');if(state.stats.money<20000)return toast('전단 제작비 2만원이 필요합니다.');if(!costHp(8))return;state.storeDaily.flyerDay=state.day;stat('money',-20000);const fanGain=8+Math.floor(Math.random()*8);stat('fans',fanGain);stat('fame',1);showDialogue('류현상',actionStory('busking',`공원 주변에 다음 버스킹 일정을 알리는 전단을 나눠 줬다. 팬 ${fanGain}명이 새로 관심을 보였다.`));advance(1)},audienceResearch:()=>{if(state.preparation?.buskingInsight)return toast('이미 다음 버스킹을 위한 관객 조사를 마쳤습니다.');if(!costHp(6))return;stat('stress',-3);state.preparation.buskingInsight=true;state.preparation.buskingInsightDay=state.day;showDialogue('류현상',actionStory('busking','공원 관객이 멈춰 서는 곡과 시간대를 살폈다. 다음 버스킹은 성공률과 팬 증가량이 상승한다.'));advance(1)},observe:()=>{if(state.storeDaily.observeDay===state.day)return toast('라이벌 관찰은 하루에 한 번만 할 수 있습니다.');if(state.stats.vocal>=95)return toast('보컬 95 이상은 특별 이벤트·앨범·대형 무대로만 성장할 수 있습니다.');if(!costHp(6))return;state.storeDaily.observeDay=state.day;const gain=gainSkill('vocal',1,'observe');stat('stress',1);showDialogue('류현상',pickActionDialogue('observe'));advance(1)},repair:()=>{if(!state.equipment.mic&&!state.equipment.amp)return toast('먼저 마이크나 음향장비를 구입해야 합니다.');const micNeeds=state.equipment.mic&&state.equipmentDurability.mic<equipmentMaxDurability('mic');const ampNeeds=state.equipment.amp&&state.equipmentDurability.amp<equipmentMaxDurability('amp');if(!micNeeds&&!ampNeeds){const status=`마이크 ${equipmentStatusText('mic')} · 음향장비 ${equipmentStatusText('amp')}`;showDialogue('장비 점검',`마이크와 음향장비 내구도가 이미 최대다. ${status}. 보호 케이스는 50회 소모품이라 점검으로 회복되지 않는다.`);toast('장비 내구도가 이미 최대입니다.');pendingLocationActionStress=false;save(false);render();return}if(s.money<50000)return toast('장비 점검비 50,000원이 필요합니다.');stat('money',-50000);if(state.equipment.mic)state.equipmentDurability.mic=equipmentMaxDurability('mic');if(state.equipment.amp)state.equipmentDurability.amp=equipmentMaxDurability('amp');state.equipmentDamage={mic:false,amp:false};const status=`마이크 ${equipmentStatusText('mic')} · 음향장비 ${equipmentStatusText('amp')}`;showDialogue('류현상',actionStory('rehearse',`장비 점검으로 마이크와 음향장비의 내구도를 전부 회복했다. ${status}. 보호 케이스는 소모품이라 회복되지 않는다.`));toast('50,000원으로 장비 내구도를 모두 회복했습니다.');advance(1)},
+ album:()=>openAlbum(),busking:()=>busking(false),bandBusking:()=>busking(true),walk:()=>{stat('stress',-15);showDialogue('류현상',pickActionDialogue('walk'));advance(1)},flyerPromo:()=>{if(state.storeDaily.flyerDay===state.day)return toast('공연 전단 홍보는 하루에 한 번만 할 수 있습니다.');if(state.stats.money<20000)return toast('전단 제작비 2만원이 필요합니다.');if(!costHp(8))return;state.storeDaily.flyerDay=state.day;stat('money',-20000);const fanGain=8+Math.floor(Math.random()*8);stat('fans',fanGain);stat('fame',1);showDialogue('류현상',actionStory('busking',`공원 주변에 다음 버스킹 일정을 알리는 전단을 나눠 줬다. 팬 ${fanGain}명이 새로 관심을 보였다.`));advance(1)},audienceResearch:()=>{if(state.preparation?.buskingInsight)return toast('이미 다음 버스킹을 위한 관객 조사를 마쳤습니다.');if(!costHp(6))return;stat('stress',-3);state.preparation.buskingInsight=true;state.preparation.buskingInsightDay=state.day;showDialogue('류현상',actionStory('busking','공원 관객이 멈춰 서는 곡과 시간대를 살폈다. 다음 버스킹은 성공률과 팬 증가량이 상승한다.'));advance(1)},observe:()=>{if(state.storeDaily.observeDay===state.day)return toast('라이벌 관찰은 하루에 한 번만 할 수 있습니다.');if(state.stats.vocal>=95)return toast('보컬 95 이상은 특별 이벤트·앨범·대형 무대로만 성장할 수 있습니다.');if(!costHp(6))return;state.storeDaily.observeDay=state.day;const gain=gainSkill('vocal',1,'observe');stat('stress',1);showDialogue('류현상',pickActionDialogue('observe'));advance(1)},repair:()=>{if(!state.equipment.mic&&!state.equipment.amp)return toast('먼저 마이크나 음향장비를 구입해야 합니다.');const micNeeds=state.equipment.mic&&state.equipmentDurability.mic<equipmentMaxDurability('mic');const ampNeeds=state.equipment.amp&&state.equipmentDurability.amp<equipmentMaxDurability('amp');if(!micNeeds&&!ampNeeds){const status=`마이크 ${equipmentStatusText('mic')} · 음향장비 ${equipmentStatusText('amp')}`;showDialogue('장비 점검',`마이크와 음향장비 내구도가 이미 최대다. ${status}. 보호 케이스는 50회 소모품이라 점검으로 회복되지 않는다.`);toast('장비 내구도가 이미 최대입니다.');pendingLocationActionStress=false;save(false);render();return}if(s.money<50000)return toast('장비 점검비 50,000원이 필요합니다.');stat('money',-50000);if(state.equipment.mic)state.equipmentDurability.mic=equipmentMaxDurability('mic');if(state.equipment.amp)state.equipmentDurability.amp=equipmentMaxDurability('amp');state.equipmentDamage={mic:false,amp:false};const status=`마이크 ${equipmentStatusText('mic')} · 음향장비 ${equipmentStatusText('amp')}`;showDialogue('류현상',actionStory('rehearse',`장비 점검으로 마이크와 음향장비의 내구도를 전부 회복했다. ${status}. 보호 케이스는 소모품이라 회복되지 않는다.`));advance(1)},
  stageRehearsal:()=>stageRehearsal(),audition:()=>audition(),concert:()=>concert(),broadcast:()=>broadcast(),fanmeeting:()=>fanmeeting(),national:()=>national(),songSurvival:()=>startSongSurvival(),quizShow:()=>startQuizShow()
  };pendingLocationActionStress=['store','practice','stage'].includes(state.location)&&!['wardrobe','gear','moveHome','finance','national','digimonCard','lottery','songSurvival','quizShow','buyBakcas'].includes(key);if(key!=='rest')state.restStreak=0;state.lastAction=key;if(!['wardrobe','gear','album','manager','digimonInventory','songSurvival','quizShow'].includes(key))pulseScene(key);const soundMap={stockWork:'coin',finance:'coin',flyerPromo:'tap',audienceResearch:'tap',stageRehearsal:'busking',work:'coin',buyBakcas:'coin',snack:'drink',meal:'drink',storePromo:'tap',customerPractice:'tap',digimonCard:'coin',lottery:'coin',bakcas:'drink',busking:'busking',bandBusking:'busking',concert:'busking',audition:'busking',repair:'coin'};playSfx(soundMap[key]||'tap');if(['vocal','compose'].includes(key))pendingTrainingActionBefore=actionResultBefore;f[key]?.();if(['vocal','compose'].includes(key)&&!memoryGameActive)pendingTrainingActionBefore=null;if(!['songSurvival','quizShow'].includes(key))scheduleActionResultNotice(actionResultBefore);
 }
@@ -1294,7 +1324,7 @@ function startIziViralStory(hpCost){
    state.skipNextStory=true;
    const changes=describeStatChanges(before);
    playSfx('success');
-   if(changes)setTimeout(()=>toast(changes),280);
+   if(changes)appendStatChangesToDialogue(changes);
    if(checkStalkerEvent())return;
    advance(1);
   };
@@ -1342,7 +1372,7 @@ function startWaitedMoreViralStory(){
    state.skipNextStory=true;
    const changes=describeStatChanges(before);
    playSfx('success');
-   if(changes)setTimeout(()=>toast(changes),280);
+   if(changes)appendStatChangesToDialogue(changes);
    if(checkStalkerEvent())return;
    advance(1);
   };
@@ -1392,7 +1422,7 @@ function runMysteriousMerchantEvent(){
    playSfx('success');
    const changes=describeStatChanges(before);
    finishMysteriousMerchantEvent('상인은 돈을 세어 보지도 않고 보따리를 닫았다. “좋은 선택이었는지는 무대가 알려 줄 걸세.” 다음 순간 골목의 불빛이 한 번 깜빡였고, 상인은 흔적도 없이 사라졌다. 옷장에는 이름 없는 의상 「???」만이 남았다.');
-   if(changes)setTimeout(()=>toast(changes),280);
+   if(changes)appendStatChangesToDialogue(changes);
   };
   refuse.onclick=()=>{
    finishMysteriousMerchantEvent('류현상은 고개를 저었다. “아무리 봐도 사기잖아.” 상인은 낮게 웃으며 빛나는 옷을 다시 보따리 속에 넣었다. “후회하면… 다시 만날 수도 있겠지.” 구매하지 않았으므로 이 상인은 훗날 다시 나타날 수 있다.');
@@ -1418,7 +1448,7 @@ function maybeCareerMilestoneEvent(){
 
 인지도 +${def.fame}, 팬 +${def.fans.toLocaleString()}명, 수익 ${def.money.toLocaleString()}원을 얻었다.`);
  playSfx('success');save(false);render();
- const changes=describeStatChanges(before);if(changes)setTimeout(()=>toast(changes),280);
+ const changes=describeStatChanges(before);if(changes)appendStatChangesToDialogue(changes);
  return true;
 }
 function maybeMysteriousMerchantEvent(){
@@ -1461,7 +1491,7 @@ const hiddenRandomSpecialEvents=[
 function runHiddenRandomSpecialEvent(def){
  beginSpecialScene(def.sceneKey);
  const before=snapshotStats();let page=0;const area=$('#choiceArea');
- const draw=()=>{const scene=def.scenes[page];state.dialogue={name:scene.name,text:scene.text};render();area.innerHTML='';const prev=document.createElement('button');prev.textContent='이전 장면';prev.disabled=page===0;const next=document.createElement('button');next.textContent=page===def.scenes.length-1?'특별 스토리 마치기':'다음 장면';area.append(prev,next);area.classList.remove('hidden');prev.onclick=()=>{if(page>0){page--;draw()}};next.onclick=()=>{if(page<def.scenes.length-1){page++;draw();return}def.reward();state.specialEvents[def.key]=true;endSpecialScene();addHistory(def.history,`hidden:${def.key}`);state.dialogue={name:'나레이션',text:`숨겨진 특별 이벤트 「${def.title}」가 끝났다.`};playSfx('success');save(false);render();const changes=describeStatChanges(before);if(changes)setTimeout(()=>toast(changes),280)}};playSfx('event');draw();
+ const draw=()=>{const scene=def.scenes[page];state.dialogue={name:scene.name,text:scene.text};render();area.innerHTML='';const prev=document.createElement('button');prev.textContent='이전 장면';prev.disabled=page===0;const next=document.createElement('button');next.textContent=page===def.scenes.length-1?'특별 스토리 마치기':'다음 장면';area.append(prev,next);area.classList.remove('hidden');prev.onclick=()=>{if(page>0){page--;draw()}};next.onclick=()=>{if(page<def.scenes.length-1){page++;draw();return}def.reward();state.specialEvents[def.key]=true;endSpecialScene();addHistory(def.history,`hidden:${def.key}`);state.dialogue={name:'나레이션',text:`숨겨진 특별 이벤트 「${def.title}」가 끝났다.`};playSfx('success');save(false);render();const changes=describeStatChanges(before);if(changes)appendStatChangesToDialogue(changes)}};playSfx('event');draw();
 }
 function maybeHiddenRandomSpecialEvent(){
  const pool=hiddenRandomSpecialEvents.filter(def=>!state.specialEvents?.[def.key]&&def.condition());
@@ -1566,7 +1596,7 @@ function runFixedDaySpecialEvent(def){
      const changes=describeStatChanges(before);
      state.dialogue={name:'나레이션',text:`${def.label}이(가) 끝났다. ${changes?changes.replace('능력치 변화 · ','이번 일로 '):'오늘의 기억은 조용히 스토리 기록에 남았다.'}`};
      save(false); render();
-     if(changes)setTimeout(()=>toast(changes),280);
+     if(changes)appendStatChangesToDialogue(changes);
    };
  };
  playSfx('event');
@@ -1579,19 +1609,20 @@ function maybeFixedDaySpecialEvent(){
  return false;
 }
 function finalizeBuskingResult(ctx,rhythmResult=null){
- let {band,type,weather,hpCost,success,quality,fans,money,vocalMultiplier,fameMultiplier,fameLv,gearMultiplier=1}=ctx;
+ let {band,type,weather,hpCost,success,quality,fans,money,vocalMultiplier,fameMultiplier,fameLv,gearMultiplier=1,resultBefore}=ctx;
  let rhythmLine='';
  if(rhythmResult?.success){const fanBonus=Math.max(2,Math.floor(fans*.35));const moneyBonus=Math.max(3000,Math.floor(money*.35));fans+=fanBonus;money+=moneyBonus;stat('fame',3);if(band)state.band.bond=clamp(state.band.bond+3);rhythmLine=`\n\n리듬 챌린지 성공! 팬 +${fanBonus}명, 수입 +${moneyBonus.toLocaleString()}원, 인지도 +3${band?' · 밴드 결속력 +3':''}`}
  else if(rhythmResult?.played)rhythmLine='\n\n리듬 챌린지는 아쉽게 실패했지만 기본 공연 보상은 유지됐다.';
  else if(rhythmResult?.closed)rhythmLine='\n\n리듬 챌린지를 닫아 기본 공연 결과만 적용했다.';
+ const vocalGain=success?gainSkill('vocal',1,'majorStage'):0;
  stat('fans',fans);stat('fame',success?Math.max(1,Math.floor(quality/8)):1);stat('money',money);
  let leaveNote='';
  if(band){state.band.bond=clamp(state.band.bond+(success?6:2));state.soloStreak=0}else{state.soloStreak++;if(state.band.formed){state.band.bond=clamp(state.band.bond-(state.soloStreak>=3?12:8));if(state.band.bond<=20&&Math.random()<.35)leaveNote=memberLeave()}}
  const durabilityNotice=consumeBuskingEquipment();const broken=equipmentBreakCheck();const result=success?'성공':'실패';
  state.performanceCount++;state.career.totalBusking++;state.storeDaily.buskingCount++;if(state.storeDaily.buskingCount===2)stat('stress',4);if(state.preparation?.buskingInsight)state.preparation.buskingInsight=false;
  const fanLine=pickFanComment();const story=pickActionDialogue(band?'bandBusking':'busking');
- showDialogue('팬들',`${type} · ${weather.label} 버스킹 ${result}. 체력 ${hpCost} 소모, 팬 ${fans}명, ${money.toLocaleString()}원을 얻었다. 보컬 수입 배율 ${vocalMultiplier.toFixed(2)}배 · 인지도 Lv.${fameLv} 수입 배율 ${fameMultiplier.toFixed(2)}배 · 장비 수입 배율 ${gearMultiplier.toFixed(2)}배.${broken}${durabilityNotice}${rhythmLine}\n\n팬 반응: “${fanLine}”${leaveNote?`\n\n${leaveNote}`:''}\n\n${story}`);
- if(checkStalkerEvent())return;advance(1)
+ showDialogue('팬들',`${type} · ${weather.label} 버스킹 ${result}. 체력 ${hpCost} 소모, 팬 ${fans}명, ${money.toLocaleString()}원을 얻었다. 보컬 수입 배율 ${vocalMultiplier.toFixed(2)}배 · 인지도 Lv.${fameLv} 수입 배율 ${fameMultiplier.toFixed(2)}배 · 장비 수입 배율 ${gearMultiplier.toFixed(2)}배.${vocalGain?` 성공 경험으로 보컬 +${vocalGain}.`:''}${broken}${durabilityNotice}${rhythmLine}\n\n팬 반응: “${fanLine}”${leaveNote?`\n\n${leaveNote}`:''}\n\n${story}`);
+ if(checkStalkerEvent()){if(rhythmResult&&resultBefore)setTimeout(()=>appendStatChangesToDialogue(describeActionResult(resultBefore)),260);return}advance(1);if(rhythmResult&&resultBefore)setTimeout(()=>appendStatChangesToDialogue(describeActionResult(resultBefore)),260)
 }
 function startBuskingRhythmGame(ctx){
  beginMiniGameUi();let finished=false,countdownCancel=null,step=0,hits=0,misses=0,timer=null,noteTimer=null;const keys=['←','↓','↑','→'];const sequence=Array.from({length:12},()=>Math.floor(Math.random()*4));
@@ -1609,11 +1640,12 @@ function busking(band){
  if(band&&!state.band.formed)return toast('밴드가 결성되지 않았습니다.');
  if(state.storeDaily.buskingDay!==state.day){state.storeDaily.buskingDay=state.day;state.storeDaily.buskingCount=0}
  if(state.storeDaily.buskingCount>=2)return toast('목 보호를 위해 버스킹은 하루에 두 번까지만 할 수 있습니다.');
+ const resultBefore=snapshotActionResult();
  const type=dayType(),weather=weatherInfo[state.weather];const baseHp=band?24:18,hpCost=baseHp+weather.hp+(type==='공휴일'?3:type==='주말'?1:0);
  if(maybeStartIziViralEvent(band,hpCost))return;if(maybeStartWaitedMoreViralEvent(band,hpCost))return;if(!costHp(hpCost))return;markSkillUse('vocal');
  const dayBonus=type==='공휴일'?.18:type==='주말'?.12:0;const stressPenalty=Math.max(0,(state.stats.stress-50)/250);const insightBonus=state.preparation?.buskingInsight?.08:0;const successChance=Math.max(.12,Math.min(.95,.48+dayBonus+weather.success+state.stats.vocal/250+state.stats.looks/500+(band?state.band.bond/600:0)+insightBonus-stressPenalty));
  const success=Math.random()<successChance;const quality=safe(state.stats.vocal*.65+state.stats.looks*.2+Math.random()*28)*(success?1:.28);const insightMultiplier=state.preparation?.buskingInsight?1.1:1;const repeatMultiplier=state.storeDaily.buskingCount===0?1:.7;const fans=Math.max(1,Math.floor(quality*(band?3.3:1.8)*(type==='공휴일'?1.5:type==='주말'?1.25:1)*insightMultiplier*repeatMultiplier));const vocalMultiplier=.55+state.stats.vocal*.0095;const fameLv=fameLevel();const fameMultiplier=.65+fameLv*.0135;const gearMultiplier=buskingGearIncomeMultiplier();const baseIncome=(band?18000:8000)+quality*(band?1100:600);const money=Math.max(0,Math.floor(baseIncome*vocalMultiplier*fameMultiplier*gearMultiplier*(success?1:.35)*repeatMultiplier));
- const ctx={band,type,weather,hpCost,success,quality,fans,money,vocalMultiplier,fameMultiplier,fameLv,gearMultiplier};if(Math.random()<.35){startBuskingRhythmGame(ctx);return}finalizeBuskingResult(ctx)
+ const ctx={band,type,weather,hpCost,success,quality,fans,money,vocalMultiplier,fameMultiplier,fameLv,gearMultiplier,resultBefore};if(Math.random()<.175){startBuskingRhythmGame(ctx);return}finalizeBuskingResult(ctx)
 }
 function safe(n){return Math.max(1,n)}
 function recruit(){
@@ -1683,7 +1715,7 @@ function audition(){
  advance(1)
 }
 function finalizeConcertResult(ctx,dodgeResult=null){
- let {earn,newFans,concertFame}=ctx;
+ let {earn,newFans,concertFame,resultBefore}=ctx;
  let bonusText='';
  if(dodgeResult?.success){
   const fanBonus=Math.max(180,Math.floor(newFans*.28));
@@ -1698,6 +1730,7 @@ function finalizeConcertResult(ctx,dodgeResult=null){
  }else if(dodgeResult?.closed){
   bonusText='\n\n음표 피하기 미니게임을 닫아 기본 공연 결과만 적용했다.';
  }
+ const vocalGain=gainSkill('vocal',1,'majorStage');
  stat('money',earn);stat('fame',concertFame);stat('fans',newFans);stat('stress',4);
  if(state.preparation?.stageReady)state.preparation.stageReady=false;
  if(state.band.formed)state.band.bond=clamp(state.band.bond+8);
@@ -1706,9 +1739,9 @@ function finalizeConcertResult(ctx,dodgeResult=null){
   state.milestones.firstConcert=true;
   addHistory(`🎪 첫 단독 공연 · 수익 ${earn.toLocaleString()}원, 새 팬 ${newFans.toLocaleString()}명`,'milestone:concert');
  }
- showDialogue(state.manager.hired?'후라보노':'팬들',`${state.manager.hired?`공연 수익 ${earn.toLocaleString()}원이 정산됐어요. `:''}인지도 +${concertFame}, 새 팬 ${newFans.toLocaleString()}명이 생겼습니다.${bonusText}\n\n팬 반응: “${pickFanComment(true)}”`);
- if(checkStalkerEvent())return;
- advance(1)
+ showDialogue(state.manager.hired?'후라보노':'팬들',`${state.manager.hired?`공연 수익 ${earn.toLocaleString()}원이 정산됐어요. `:''}인지도 +${concertFame}, 새 팬 ${newFans.toLocaleString()}명이 생겼습니다.${vocalGain?` 공연 경험으로 보컬 +${vocalGain}.`:''}${bonusText}\n\n팬 반응: “${pickFanComment(true)}”`);
+ if(checkStalkerEvent()){if(resultBefore)setTimeout(()=>appendStatChangesToDialogue(describeActionResult(resultBefore)),260);return}
+ advance(1);if(resultBefore)setTimeout(()=>appendStatChangesToDialogue(describeActionResult(resultBefore)),260)
 }
 function startConcertDodgeGame(ctx){
  beginMiniGameUi();let finished=false,countdownCancel=null,moveTimer=null,spawnTimer=null,secondTimer=null;let remaining=14,lives=3,playerX=.5,spawnCount=0;const notes=[];const symbols=['♪','♫','♬','♩','𝄞'];
@@ -1730,9 +1763,9 @@ function startConcertDodgeGame(ctx){
 }
 function concert(){
  if(!concertRequirementMet())return toast(concertRequirementText());
- if(!cooldownReady('concert',7,'다음 공연'))return;if(!costHp(28))return;markSkillUse('vocal');markCooldown('concert');state.career.totalConcerts++;
+ if(!cooldownReady('concert',7,'다음 공연'))return;const resultBefore=snapshotActionResult();if(!costHp(28))return;markSkillUse('vocal');markCooldown('concert');state.career.totalConcerts++;
  const stageBoost=state.preparation?.stageReady?1.15:1;const baseEarn=300000+Math.floor(Math.min(state.stats.fans,30000)*120);const earn=Math.min(3900000,Math.floor(baseEarn*stageBoost));const newFans=Math.max(180,Math.floor(Math.sqrt(state.stats.fans)*8*stageBoost));
- const lv=fameLevel();const concertFame=lv>=90?90:lv>=80?80:lv>=70?70:60;const ctx={earn,newFans,concertFame};
+ const lv=fameLevel();const concertFame=lv>=90?90:lv>=80?80:lv>=70?70:60;const ctx={earn,newFans,concertFame,resultBefore};
  startConcertDodgeGame(ctx)
 }
 function broadcast(){
@@ -1773,9 +1806,9 @@ function openGear(){
 function openWardrobe(){
  if(debtBlocked('의상 구매와 스타일 관리'))return;
  const outfits=[['검은 셔츠',0,0],['흰 셔츠',180000,2],['체크 셔츠',240000,3],['가죽 재킷',480000,5],['후드티',320000,4],['무대 의상',1200000,8],['???',0,0]];
- showModal('옷장',`<div class="card-list">${outfits.map(([x,price],i)=>{const owned=state.ownedOutfits.includes(i);if(i===6&&!owned)return '';const special=i===6;return `<div class="info-card ${special?'mystery-outfit-card':''}"><header><b>${x}</b><span>${special?'수상한 상인의 의상':i===0?'기본 의상':price.toLocaleString()+'원'}</span></header>${special?'<p>착용하는 순간 외모가 최대치 100이 됩니다.</p>':''}<button data-outfit="${i}" ${state.outfit===i?'disabled':''}>${state.outfit===i?'착용 중':owned?'갈아입기':'구매하기'}</button></div>`}).join('')}<div class="info-card"><header><b>헤어·스타일 관리</b><span>500,000원</span></header><p>하루에 한 번만 이용할 수 있습니다. 체력 4를 사용하고 외모 +2.</p><button id="styleCare" ${state.stats.looks>=100||state.dailyUse.styleCareDay===state.day?'disabled':''}>${state.stats.looks>=100?'외모 최대':state.dailyUse.styleCareDay===state.day?'오늘 관리 완료':'관리받기'}</button></div></div>`);
- $$('[data-outfit]').forEach(b=>b.onclick=()=>{const i=+b.dataset.outfit,[name,price,bonus]=outfits[i];if(!state.ownedOutfits.includes(i)){if(state.stats.money<price)return toast('옷을 구매할 돈이 부족합니다.');stat('money',-price);state.ownedOutfits.push(i);if(bonus)stat('looks',bonus);toast(`${name}을 구매했습니다. 외모 +${bonus}`)}state.outfit=i;if(i===6){state.stats.looks=100;addHistory('✨ 의상 「???」 착용 · 외모가 최대치 100이 되었다.','outfit:mystery-equipped')}showDialogue('류현상',`${name}으로 갈아입었다. 거울을 보며 “옷이 사람을 만든다는데, 성격까지 부드러워지진 않겠지.”라고 중얼거렸다.`);save(false);closeModal();render()});
- const care=$('#styleCare');if(care)care.onclick=()=>{if(state.dailyUse.styleCareDay===state.day)return toast('헤어 스타일 관리는 하루에 한 번만 이용할 수 있습니다.');if(state.stats.money<500000)return toast('스타일 관리 비용 500,000원이 부족합니다.');if(!costHp(4))return;state.dailyUse.styleCareDay=state.day;stat('money',-500000);stat('looks',2);if(state.stats.looks>=100)addHistory('✨ 외모 100 달성 · 무대 스타일이 완성됐다.','milestone:looks100');closeModal();showDialogue('류현상','50만원을 들여 머리와 의상을 전문적으로 정돈했다. 오늘은 더 이상 헤어 스타일 관리를 받을 수 없다.');advance(1)}
+ showModal('옷장',`<div class="card-list">${outfits.map(([x,price],i)=>{const owned=state.ownedOutfits.includes(i);if(i===6&&!owned)return '';const special=i===6;return `<div class="info-card ${special?'mystery-outfit-card':''}"><header><b>${x}</b><span>${special?'수상한 상인의 의상':i===0?'기본 의상':price.toLocaleString()+'원'}</span></header>${special?'<p>착용하는 순간 외모가 최대치 100이 됩니다.</p>':''}<button data-outfit="${i}" ${state.outfit===i?'disabled':''}>${state.outfit===i?'착용 중':owned?'갈아입기':'구매하기'}</button></div>`}).join('')}<div class="info-card"><header><b>헤어·스타일 관리</b><span>500,000원</span></header><p>하루에 한 번만 이용할 수 있습니다. 체력 4를 사용하고 외모 +2. 관리 후 30일이 지나면 외모가 1씩 감소합니다.</p><button id="styleCare" ${state.stats.looks>=100||state.dailyUse.styleCareDay===state.day?'disabled':''}>${state.stats.looks>=100?'외모 최대':state.dailyUse.styleCareDay===state.day?'오늘 관리 완료':'관리받기'}</button></div></div>`);
+ $$('[data-outfit]').forEach(b=>b.onclick=()=>{const before=snapshotStats();const i=+b.dataset.outfit,[name,price,bonus]=outfits[i];if(!state.ownedOutfits.includes(i)){if(state.stats.money<price)return toast('옷을 구매할 돈이 부족합니다.');stat('money',-price);state.ownedOutfits.push(i);if(bonus)stat('looks',bonus)}state.outfit=i;if(i===6){state.stats.looks=100;addHistory('✨ 의상 「???」 착용 · 외모가 최대치 100이 되었다.','outfit:mystery-equipped')}const changes=describeStatChanges(before);showDialogue('류현상',dialogueWithStatChanges(`${name}으로 갈아입었다. 거울을 보며 “옷이 사람을 만든다는데, 성격까지 부드러워지진 않겠지.”라고 중얼거렸다.`,changes));save(false);closeModal();render()});
+ const care=$('#styleCare');if(care)care.onclick=()=>{if(state.dailyUse.styleCareDay===state.day)return toast('헤어 스타일 관리는 하루에 한 번만 이용할 수 있습니다.');if(state.stats.money<500000)return toast('스타일 관리 비용 500,000원이 부족합니다.');if(!costHp(4))return;state.dailyUse.styleCareDay=state.day;state.dailyUse.styleCareLastDay=state.day;state.dailyUse.styleDecayCount=0;stat('money',-500000);stat('looks',2);if(state.stats.looks>=100)addHistory('✨ 외모 100 달성 · 무대 스타일이 완성됐다.','milestone:looks100');closeModal();showDialogue('류현상','50만원을 들여 머리와 의상을 전문적으로 정돈했다. 오늘은 더 이상 헤어 스타일 관리를 받을 수 없다.');advance(1)}
 }
 
 const specialAlbumExtras={
@@ -1869,10 +1902,13 @@ const endingStories={
 // --- 2026 확장 시스템: 성격, 팬 반응, 스토커, 미니게임 ---
 const statLabels={hp:'체력',vocal:'보컬',compose:'작곡',looks:'외모',fame:'인지도',fans:'팬',money:'돈',stress:'스트레스'};
 const changeFields={
- hp:['체력',()=>state.stats.hp],vocal:['보컬',()=>state.stats.vocal],compose:['작곡',()=>state.stats.compose],looks:['외모',()=>state.stats.looks],fame:['인지도',()=>state.stats.fame],fans:['팬',()=>state.stats.fans],money:['돈',()=>state.stats.money],stress:['스트레스',()=>state.stats.stress],bandBond:['밴드 결속력',()=>state.band.bond],managerBond:['후라보노 관계',()=>state.manager.bond]
+ hp:['체력',()=>state.stats.hp],vocal:['보컬',()=>state.stats.vocal],compose:['작곡',()=>state.stats.compose],looks:['외모',()=>state.stats.looks],fame:['인지도',()=>state.stats.fame],fans:['팬',()=>state.stats.fans],money:['돈',()=>state.stats.money],debt:['채무',()=>state.economy.debt],stress:['스트레스',()=>state.stats.stress],bandBond:['밴드 결속력',()=>state.band.bond],managerBond:['후라보노 관계',()=>state.manager.bond]
 };
 function snapshotStats(){return Object.fromEntries(Object.entries(changeFields).map(([k,[,get]])=>[k,get()]))}
 function describeStatChanges(before){const parts=[];for(const [k,[label,get]] of Object.entries(changeFields)){const d=get()-(before[k]||0);if(d)parts.push(`${label} ${d>0?'+':''}${d.toLocaleString()}`)}return parts.length?`능력치 변화 · ${parts.join(' / ')}`:''}
+function normalizeStatChangeText(message=''){return String(message).replace(/^변경 결과\s*/,'').replace(/^능력치 변화\s*·\s*/,'').replace(/\s*\/\s*/g,' · ').replace(/\n+/g,' · ').trim()}
+function dialogueWithStatChanges(text,changes){const line=normalizeStatChangeText(changes);return line?`${text}\n\n【수치 변화】 ${line}`:text}
+function appendStatChangesToDialogue(changes){const line=normalizeStatChangeText(changes);if(!line)return;const current=state.dialogue||{name:'나레이션',text:''};const marker=`【수치 변화】 ${line}`;if(String(current.text||'').includes(marker))return;state.dialogue={name:current.name||'나레이션',text:`${current.text||''}${current.text?'\n\n':''}${marker}`};save(false);const dialogueText=$('#dialogueText');if(dialogueText)dialogueText.textContent=state.dialogue.text}
 let actionNoticeSequence=0;
 function snapshotActionResult(){
  return {...snapshotStats(),day:state.day,time:state.time,bakcas:Number(state.items?.bakcas||0),meals:Number(state.items?.mealsToday||0),micDurability:Number(state.equipmentDurability?.mic||0),ampDurability:Number(state.equipmentDurability?.amp||0),caseDurability:Number(state.equipmentDurability?.battery||0),housing:Number(state.housing||0),toastSerial}
@@ -1899,12 +1935,10 @@ function scheduleActionResultNotice(before){
  const sequence=++actionNoticeSequence;
  setTimeout(()=>{
   if(sequence!==actionNoticeSequence)return;
-  // 미니게임이 열려 있는 동안에는 결과 알림이 조작 화면을 가리지 않게 생략한다.
   if(memoryGameActive)return;
-  // 실제로 변한 모든 수치를 한 알림에 합친다. 증가뿐 아니라 체력·돈·스트레스 감소도 표시한다.
   const message=describeActionResult(before);
-  if(message)toast(message)
- },360)
+  if(message)appendStatChangesToDialogue(message)
+ },260)
 }
 const fanComments=[
  '현상 씨 목소리 듣고 오늘도 퇴근할 이유를 찾았습니다.','얼굴은 냉정한데 목소리는 왜 이렇게 다정한가요. 고소하겠습니다. 제 심장 훔친 죄로요.','장발이 바람에 날릴 때마다 제 인생 계획도 같이 날아갑니다.','안경 밀어 올리는 동작만으로 앙코르 가능한 사람 처음 봐요.','노래 한 곡 들었는데 제 통장도 팬클럽 가입비 낼 준비를 합니다.','형, 디지몬 얘기할 때만 눈이 반짝이는 거 너무 귀여워요.','오늘 고음에서 제 영혼이 디지털 월드까지 갔다 왔습니다.','무표정인데 팬서비스가 되는 건 반칙 아닌가요.','현상 씨가 까칠하게 “감사합니다” 할 때마다 수명이 늘어납니다.','노래 끝났는데 왜 제 심장은 아직 후렴구인가요.','류현상 존재 자체가 장르입니다.','오늘도 잘생김이 과로 중이네요.','저는 팬이 아니라 현상 씨 음악의 장기 구독자입니다.','마이크보다 제가 더 떨고 있습니다.','가수님이 숨 쉬었어요. 오늘 공연 레전드.'
@@ -1937,7 +1971,7 @@ function trainingAction(type,hpCost){
  markDailyPractice(type);
  if(atCap){markSkillUse(type);state.exp+=4;showDialogue('류현상',`${trainingLabel(type)} 능력치는 일반 성장 한계에 도달했지만 감각을 유지하기 위해 기본 훈련을 진행했다.`);advance(1);return}
  const base=trainingBaseGain(type);
- if(Math.random()<.38){if(Math.random()<.5)startMemoryGame(type,base);else startReactionGame(type,base);return}
+ if(Math.random()<.19){if(Math.random()<.5)startMemoryGame(type,base);else startReactionGame(type,base);return}
  const actual=gainSkill(type,base,'training');if(actual<=0)return toast(`${trainingLabel(type)} 95 이상은 특별 이벤트·앨범·대형 무대로만 성장할 수 있습니다.`);state.exp+=8;showDialogue('류현상',type==='vocal'?pickActionDialogue('vocal'):pickActionDialogue('compose'));advance(1)
 }
 function trainingLabel(type){return type==='vocal'?'보컬':'작곡'}
@@ -2072,7 +2106,28 @@ function render(){
  $('#actionButtons').innerHTML=visibleActions.map(([n,d,k])=>{if(k==='work'||k==='stockWork'){const job=storeJobInfo(k);n=`${n} · ${job.name} ${job.next?`${job.count}/${job.next}`:`${job.count}회`}`;}const cooldownKey=k==='songSurvival'?'songSurvivalLastDay':k==='quizShow'?'quizShowLastDay':null;const cooldownUsed=cooldownKey&&state.day-state.minigames[cooldownKey]<7;const used=(k==='storePromo'&&state.storeDaily.promoDay===state.day)||(k==='customerPractice'&&state.storeDaily.customerDay===state.day)||(k==='flyerPromo'&&state.storeDaily.flyerDay===state.day)||(k==='observe'&&state.storeDaily.observeDay===state.day)||((k==='busking'||k==='bandBusking')&&state.storeDaily.buskingDay===state.day&&state.storeDaily.buskingCount>=2)||cooldownUsed;const label=cooldownUsed?`${n} · ${7-(state.day-state.minigames[cooldownKey])}일 후 재도전`:n;return `<button class="action-card" data-action="${k}" aria-label="${label}${used?' · 이용 제한':''}" ${used?'disabled':''}><b>${label}</b></button>`}).join('');$$('[data-action]').forEach(b=>b.onclick=()=>doAction(b.dataset.action));
 }
 function openFanCommunity(){const total=Object.values(state.fanGroups).reduce((a,b)=>a+b,0);showModal('팬 커뮤니티',`<div class="fan-group-grid"><div class="metric-card"><small>일반 팬</small><b>${state.fanGroups.regular.toLocaleString()}명</b></div><div class="metric-card"><small>열혈 팬</small><b>${state.fanGroups.enthusiast.toLocaleString()}명</b></div><div class="metric-card"><small>게이 팬</small><b>${state.fanGroups.gay.toLocaleString()}명</b></div><div class="metric-card"><small>해외 팬</small><b>${state.fanGroups.overseas.toLocaleString()}명</b></div></div><div class="info-card"><b>팬 유형 안내</b><p>팬 유형은 우열이나 능력치가 아니라 팬덤의 다양성을 보여 주는 분류입니다. 게이 팬은 희화화하지 않고 개별 취향과 전문성을 지닌 팬으로 등장합니다.</p><small>분류된 팬 ${total.toLocaleString()}명 / 전체 팬 ${state.stats.fans.toLocaleString()}명</small></div>`)}
-function openSNS(){const canPost=state.day!==state.sns.lastPostDay;showModal('SNS',`<div class="info-card"><b>팔로워·팬 ${state.stats.fans.toLocaleString()}명</b><p>오늘의 짧은 게시물을 올리면 다양한 반응이 발생합니다. 하루에 한 번만 직접 게시할 수 있습니다.</p><button id="snsPost" ${canPost?'':'disabled'}>${canPost?'게시물 올리기':'오늘 게시 완료'}</button></div><div class="card-list">${snsScenarios.slice(0,6).map(x=>`<div class="info-card"><b>${x.title}</b><p>${x.text}</p></div>`).join('')}</div>`);const b=$('#snsPost');if(b)b.onclick=()=>{if(!canPost)return;const ev=pick(snsScenarios);state.sns.lastPostDay=state.day;state.sns.totalPosts++;const before=snapshotStats();stat('fans',ev.fans);stat('fame',ev.fame);stat('stress',ev.stress);addHistory(`📱 SNS 게시 · ${ev.title}`,`sns-post:${state.day}`);closeModal();showDialogue('SNS 반응',`【${ev.title}】\n\n${ev.text}`);const changes=describeStatChanges(before);if(changes)setTimeout(()=>toast(changes),250);advance(1)}}
+function openSNS(){
+ const canPost=state.day!==state.sns.lastPostDay;
+ const preview=snsPostReward({fans:20,fame:10,stress:0});
+ showModal('SNS',`<div class="info-card"><b>팔로워·팬 ${state.stats.fans.toLocaleString()}명</b><p>팬이 많아질수록 게시물 확산력이 커져 팬·인지도 보상이 조금씩 증가합니다. 하루에 한 번 게시할 수 있습니다.</p><small>현재 팬 보상 배율 약 ${preview.fanMultiplier.toFixed(2)}배 · 인지도 배율 약 ${preview.fameMultiplier.toFixed(2)}배</small><button id="snsPost" ${canPost?'':'disabled'}>${canPost?'게시물 올리기':'오늘 게시 완료'}</button></div><div class="card-list">${snsScenarios.slice(0,6).map(x=>`<div class="info-card"><b>${x.title}</b><p>${x.text}</p></div>`).join('')}</div>`);
+ const b=$('#snsPost');
+ if(b)b.onclick=()=>{
+  if(!canPost)return;
+  const ev=pick(snsScenarios),reward=snsPostReward(ev);
+  state.sns.lastPostDay=state.day;state.sns.totalPosts++;
+  const before=snapshotStats();
+  stat('fans',reward.fans);stat('fame',reward.fame);stat('stress',reward.stress);
+  addHistory(`📱 SNS 게시 · ${ev.title} · 팬 보상 ${reward.fanMultiplier.toFixed(2)}배`,`sns-post:${state.day}`);
+  closeModal();
+  showDialogue('SNS 반응',`【${ev.title}】
+
+${ev.text}
+
+현재 팬 규모에 따른 게시물 확산 보정이 적용됐다.`);
+  advance(1);
+  const changes=describeStatChanges(before);if(changes)appendStatChangesToDialogue(changes)
+ }
+}
 function openItemMenu(){
  const empty=state.items.bakcas<1;
  const dailyLimit=state.items.bakcasUsedToday>=2;
