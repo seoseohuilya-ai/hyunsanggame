@@ -12,8 +12,8 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="assets/icons/icon-192.png" />
   <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
-  <link rel="stylesheet" href="style.css?v=101-busking-item-rewards" />
-  <title>류현상 키우기 v101</title>
+  <link rel="stylesheet" href="style.css?v=103-dialogue-scroll-choice-modal" />
+  <title>류현상 키우기 v103</title>
 </head>
 <body>
   <div id="toast" class="toast" aria-live="polite"></div>
@@ -94,10 +94,11 @@
 
           <div class="dialogue-wrap">
             <div class="nameplate" id="speakerName">류현상</div>
-            <div class="dialogue-box">
+            <div id="dialogueBox" class="dialogue-box">
               <p id="dialogueText">오늘도 한 곡이라도 더 완성해 보자.</p>
               <div id="choiceArea" class="choices hidden"></div>
             </div>
+            <div id="dialogueScrollTrack" class="dialogue-scroll-track hidden" aria-hidden="true"><i id="dialogueScrollThumb"></i></div>
           </div>
         </section>
 
@@ -141,6 +142,15 @@
     <div id="modalToast" class="toast modal-toast" aria-live="assertive" aria-atomic="true"></div>
   </dialog>
 
-  <script src="game.js?v=101-busking-item-rewards"></script>
+  <dialog id="choiceModal" class="choice-modal" aria-labelledby="choiceModalTitle">
+    <div class="choice-modal-head">
+      <small>CHOICE</small>
+      <h2 id="choiceModalTitle">어떻게 할까?</h2>
+      <p id="choiceModalContext">대화를 읽은 뒤 선택해 주세요.</p>
+    </div>
+    <div id="choiceModalButtons" class="choice-modal-buttons"></div>
+  </dialog>
+
+  <script src="game.js?v=103-dialogue-scroll-choice-modal"></script>
 </body>
 </html>
