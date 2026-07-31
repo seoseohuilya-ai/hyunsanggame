@@ -783,6 +783,13 @@ function managerSafeDialogue(name,text){
   .replace(/후라보노/g,'주변 스태프');
  return {name:safeName,text:safeText};
 }
+function resetDialogueScroll(){
+ const box=document.querySelector('.dialogue-box');
+ if(!box)return;
+ box.scrollTop=0;
+ requestAnimationFrame(()=>{if(box.isConnected)box.scrollTop=0});
+ setTimeout(()=>{if(box.isConnected)box.scrollTop=0},0);
+}
 function displayDialogue(name,text,choices=[]){
  const safe=managerSafeDialogue(name,text);name=safe.name;text=safe.text;
  const wrap=$('#characterWrap'),art=$('#characterArt'),box=document.querySelector('.dialogue-box'),plate=$('#speakerName');
@@ -792,6 +799,7 @@ function displayDialogue(name,text,choices=[]){
  wrap.classList.toggle('manager-mode',isManager);art.alt=isManager?'후라보노':'류현상';
  box.classList.remove('dialogue-pop');plate.classList.remove('speaker-pop');void box.offsetWidth;box.classList.add('dialogue-pop');plate.classList.add('speaker-pop');
  const area=$('#choiceArea');area.innerHTML='';area.classList.toggle('hidden',!choices.length);setChoiceLock(choices.length>0);choices.forEach(c=>{const b=document.createElement('button');b.textContent=c[0];b.onclick=()=>{area.classList.add('hidden');setChoiceLock(false);try{const before=snapshotStats();const result=c[1]();const changes=describeStatChanges(before);const resultText=result&&result.text?result.text:(typeof result==='string'?result:'선택을 마쳤다.');showDialogue(result&&result.name?result.name:name,dialogueWithStatChanges(resultText,changes));save(false);render();checkProgress()}catch(err){console.error(err);setChoiceLock(true);toast('이벤트 처리 중 오류가 발생했습니다.')}};area.appendChild(b)});
+ resetDialogueScroll();
 }
 function showDialogue(name,text,choices=[]){state.dialogue={name,text};displayDialogue(name,text,choices)}
 const motionLabels={stockWork:'진열 보조',finance:'가계부',flyerPromo:'전단 홍보',audienceResearch:'관객 조사',stageRehearsal:'리허설',storePromo:'홍보 방송',customerPractice:'응대 연습',rest:'휴식',sleep:'SLEEP',compose:'작곡',vocal:'보컬',work:'ALBA',busking:'BUSKING',bandBusking:'BAND LIVE',rehearse:'합주',recruit:'멤버 영입',arrange:'편곡',audition:'오디션',concert:'LIVE',broadcast:'ON AIR',fanmeeting:'팬미팅',date:'DATE',walk:'산책',observe:'관찰',repair:'CHECK',meal:'식사',snack:'간식',buyBakcas:'박칵스',bakcas:'BOOST',digimonCard:'CARD',lottery:'LOTTO'};

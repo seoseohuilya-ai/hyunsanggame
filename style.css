@@ -1585,3 +1585,6 @@ html.minigame-active .training-countdown{
 .scene.special-background-only .music-notes,
 .scene.special-background-only .audience-lights,
 .scene.special-background-only .action-burst{display:none!important}
+
+/* v99: dialogue body text only, 1pt larger. Dialogue box dimensions remain unchanged. */
+#dialogueText{font-size:calc(1em + 1pt)!important}
