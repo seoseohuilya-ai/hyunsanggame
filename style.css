@@ -701,7 +701,7 @@ html,body,#app{width:100%;height:100%;height:100dvh;min-height:0!important;overf
 }
 
 
-/* === 0.2% 수상한 상인과 ??? 의상 === */
+/* === 0.15% 수상한 상인과 ??? 의상 === */
 .scene.special-mysterious-merchant{
  background-image:linear-gradient(rgba(2,3,6,.10),rgba(2,3,6,.54)),url('assets/images/mysterious-merchant.png')!important;
  background-position:center 38%!important;background-size:contain!important;background-repeat:no-repeat!important;background-color:#050608!important;
