@@ -1,17 +1,21 @@
--- 류현상 키우기 v147 : 2~3인 실시간 고스톱 Supabase 설정
--- 판돈 없는 게임 내 점수전입니다. 기존 커뮤니티/퀴즈/루미큐브/쿵쿵따 DB는 건드리지 않습니다.
+-- 류현상 키우기 v151 : 2~3인 실시간 맞고·고스톱 Supabase 설정
+-- 게임 속 가상 보유금을 사용하는 점당 판돈을 지원합니다. 기존 커뮤니티/퀴즈/루미큐브/쿵쿵따 DB는 건드리지 않습니다.
 
 create table if not exists public.gostop_rooms (
   code text primary key,
   host_id uuid not null references auth.users(id) on delete cascade,
   status text not null default 'waiting' check (status in ('waiting','playing','finished')),
   max_players integer not null default 2 check (max_players between 2 and 3),
+  point_rate bigint not null default 1000 check (point_rate in (1000,5000,10000,50000,100000)),
   turn_user_id uuid references auth.users(id) on delete set null,
   decision_user_id uuid references auth.users(id) on delete set null,
   winner_id uuid references auth.users(id) on delete set null,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table public.gostop_rooms add column if not exists point_rate bigint not null default 1000;
+update public.gostop_rooms set point_rate=1000 where point_rate not in (1000,5000,10000,50000,100000);
 
 create table if not exists public.gostop_players (
   room_code text not null references public.gostop_rooms(code) on delete cascade,
@@ -65,7 +69,7 @@ create or replace function public.gostop_card_kind(p_card integer)
 returns text language sql immutable as $$
  select case
    when p_card in (0,8,28,40,44) then 'gwang'
-   when p_card in (4,12,16,20,24,29,32,36,42,45) then 'animal'
+   when p_card in (4,12,16,20,24,29,32,36,45) then 'animal'
    when p_card in (1,5,9,13,17,21,25,33,37,46) then 'ribbon'
    when p_card in (41,47) then 'doublepi'
    else 'pi'
@@ -123,9 +127,10 @@ revoke all on function public.gostop_next_active_user(text,integer) from public;
 
 create or replace function public.gostop_healthcheck()
 returns jsonb language plpgsql security definer set search_path=public
-as $$ begin if auth.uid() is null then raise exception '로그인이 필요합니다.'; end if; return jsonb_build_object('ok',true,'version',147); end; $$;
+as $$ begin if auth.uid() is null then raise exception '로그인이 필요합니다.'; end if; return jsonb_build_object('ok',true,'version',151,'point_rate',true,'png_board',true); end; $$;
 
-create or replace function public.gostop_create_room(p_nickname text,p_max_players integer)
+drop function if exists public.gostop_create_room(text,integer);
+create or replace function public.gostop_create_room(p_nickname text,p_max_players integer,p_point_rate bigint)
 returns text language plpgsql security definer set search_path=public
 as $$
 declare v_uid uuid:=auth.uid();v_code text;i integer;
@@ -133,23 +138,25 @@ begin
   if v_uid is null then raise exception '로그인이 필요합니다.'; end if;
   if nullif(trim(p_nickname),'') is null then raise exception '닉네임이 필요합니다.'; end if;
   if p_max_players not between 2 and 3 then raise exception '고스톱은 2~3인으로 플레이합니다.'; end if;
+  if p_point_rate not in (1000,5000,10000,50000,100000) then raise exception '지원하지 않는 점당 판돈입니다.'; end if;
   delete from public.gostop_rooms where created_at<now()-interval '2 hours';
   for i in 1..20 loop v_code:=upper(substr(md5(random()::text||clock_timestamp()::text||v_uid::text),1,8)); exit when not exists(select 1 from public.gostop_rooms where code=v_code); end loop;
   if exists(select 1 from public.gostop_rooms where code=v_code) then raise exception '방을 만들지 못했습니다.'; end if;
-  insert into public.gostop_rooms(code,host_id,max_players) values(v_code,v_uid,p_max_players);
+  insert into public.gostop_rooms(code,host_id,max_players,point_rate) values(v_code,v_uid,p_max_players,p_point_rate);
   insert into public.gostop_players(room_code,user_id,nickname,seat) values(v_code,v_uid,left(trim(p_nickname),16),1);
   return v_code;
 end;
 $$;
 
+drop function if exists public.gostop_list_open_rooms();
 create or replace function public.gostop_list_open_rooms()
-returns table(room_code text,host_nickname text,player_count integer,max_players integer,is_mine boolean)
+returns table(room_code text,host_nickname text,player_count integer,max_players integer,point_rate bigint,is_mine boolean)
 language sql security definer set search_path=public
 as $$
   select r.code,
     coalesce((select p.nickname from public.gostop_players p where p.room_code=r.code and p.user_id=r.host_id limit 1),'익명'),
     (select count(*)::integer from public.gostop_players p where p.room_code=r.code and p.left_at is null),
-    r.max_players,r.host_id=auth.uid()
+    r.max_players,r.point_rate,r.host_id=auth.uid()
   from public.gostop_rooms r
   where r.status='waiting' and r.created_at>now()-interval '2 hours'
     and (select count(*) from public.gostop_players p where p.room_code=r.code and p.left_at is null)<r.max_players
@@ -226,9 +233,9 @@ begin
   select hand,captured into v_hand,v_captured from public.gostop_players where room_code=v_code and user_id=v_uid;
   select coalesce(jsonb_agg(jsonb_build_object(
     'user_id',p.user_id,'nickname',p.nickname,'seat',p.seat,'ready',p.ready,'hand_count',cardinality(p.hand),'captured_count',cardinality(p.captured),
-    'score',public.gostop_score_cards(p.captured,p.go_count),'go_count',p.go_count,'left_at',p.left_at) order by p.seat),'[]'::jsonb)
+    'captured',coalesce(to_jsonb(p.captured),'[]'::jsonb),'score',public.gostop_score_cards(p.captured,p.go_count),'go_count',p.go_count,'left_at',p.left_at) order by p.seat),'[]'::jsonb)
   into v_players from public.gostop_players p where p.room_code=v_code;
-  return jsonb_build_object('code',v_room.code,'status',v_room.status,'host_id',v_room.host_id,'max_players',v_room.max_players,'turn_user_id',v_room.turn_user_id,
+  return jsonb_build_object('code',v_room.code,'status',v_room.status,'host_id',v_room.host_id,'max_players',v_room.max_players,'point_rate',v_room.point_rate,'turn_user_id',v_room.turn_user_id,
     'decision_user_id',v_room.decision_user_id,'winner_id',v_room.winner_id,'players',v_players,'my_hand',coalesce(to_jsonb(v_hand),'[]'::jsonb),
     'my_captured',coalesce(to_jsonb(v_captured),'[]'::jsonb),'table_cards',coalesce(to_jsonb(v_state.table_cards),'[]'::jsonb),'deck_count',coalesce(cardinality(v_state.deck),0),
     'turn_no',coalesce(v_state.turn_no,0),'last_action',v_state.last_action,'last_played',v_state.last_played,'last_drawn',v_state.last_drawn);
@@ -343,7 +350,7 @@ end;
 $$;
 
 revoke all on function public.gostop_healthcheck() from public;
-revoke all on function public.gostop_create_room(text,integer) from public;
+revoke all on function public.gostop_create_room(text,integer,bigint) from public;
 revoke all on function public.gostop_list_open_rooms() from public;
 revoke all on function public.gostop_join_room(text,text) from public;
 revoke all on function public.gostop_set_ready(text,boolean) from public;
@@ -354,7 +361,7 @@ revoke all on function public.gostop_choose_go(text,boolean) from public;
 revoke all on function public.gostop_leave_room(text) from public;
 
 grant execute on function public.gostop_healthcheck() to authenticated;
-grant execute on function public.gostop_create_room(text,integer) to authenticated;
+grant execute on function public.gostop_create_room(text,integer,bigint) to authenticated;
 grant execute on function public.gostop_list_open_rooms() to authenticated;
 grant execute on function public.gostop_join_room(text,text) to authenticated;
 grant execute on function public.gostop_set_ready(text,boolean) to authenticated;
@@ -370,4 +377,4 @@ BEGIN
 END $$;
 alter table public.gostop_rooms replica identity full;
 
-select '류현상 키우기 v147 고스톱 DB 설정 완료!' as result;
+select '류현상 키우기 v151 고스톱 DB 설정 완료!' as result;
