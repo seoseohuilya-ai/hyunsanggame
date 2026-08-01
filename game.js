@@ -2862,7 +2862,7 @@ function showBlockingNotice(title,html,onConfirm){
  const closeButton=$('#closeModal');if(closeButton)closeButton.hidden=true;
  const confirm=$('#blockingNoticeConfirm');if(confirm)confirm.onclick=()=>{blockingNoticeActive=false;if(closeButton)closeButton.hidden=false;closeModal(true);if(typeof onConfirm==='function')onConfirm()};
 }
-function closeModal(force=false){const modal=$('#modal');if(instagramLiveActive&&!force)return;if(blockingNoticeActive&&!force)return;if(memoryGameActive&&!force){if(typeof activeTrainingAbort==='function'){activeTrainingAbort();return}endMiniGameUi()}if(force&&instagramLiveActive){instagramLiveActive=false;modal.classList.remove('instagram-live-dialog');const closeButton=$('#closeModal');if(closeButton)closeButton.hidden=false}if(force&&blockingNoticeActive){blockingNoticeActive=false;const closeButton=$('#closeModal');if(closeButton)closeButton.hidden=false}if(!memoryGameActive)document.documentElement.classList.remove('minigame-active');modal.classList.remove('drawer-dialog');modal.classList.remove('ending-focus-modal');if(modal.open)modal.close();syncToastLayer();if(endingMusicMode||customEndingBgm)exitEndingMusic();if(deferredPostAdvance&&!cardRevealPending)finishDeferredPostAdvance()}
+function closeModal(force=false){const modal=$('#modal');if(!force&&modal?.classList.contains('theme-online')&&onlineQuizRoomCode){leaveOnlineQuizRoom(true,false);return}if(instagramLiveActive&&!force)return;if(blockingNoticeActive&&!force)return;if(memoryGameActive&&!force){if(typeof activeTrainingAbort==='function'){activeTrainingAbort();return}endMiniGameUi()}if(force&&instagramLiveActive){instagramLiveActive=false;modal.classList.remove('instagram-live-dialog');const closeButton=$('#closeModal');if(closeButton)closeButton.hidden=false}if(force&&blockingNoticeActive){blockingNoticeActive=false;const closeButton=$('#closeModal');if(closeButton)closeButton.hidden=false}if(!memoryGameActive)document.documentElement.classList.remove('minigame-active');modal.classList.remove('drawer-dialog');modal.classList.remove('ending-focus-modal');if(modal.open)modal.close();syncToastLayer();if(endingMusicMode||customEndingBgm)exitEndingMusic();if(deferredPostAdvance&&!cardRevealPending)finishDeferredPostAdvance()}
 function getLocationDialoguePool(loc){
  const contextual=pool=>(pool||[]).filter(line=>{if(!state.manager.hired&&/후라보노/.test(line))return false;const m=state.band.members;if(!m.guitar&&/B군/.test(line))return false;if(!m.bass&&/L군/.test(line))return false;if(!m.piano&&/J군/.test(line))return false;if(!m.drums&&/R군/.test(line))return false;return true});
  if(loc!=='practice')return contextual(dialogues[loc]);
@@ -3486,14 +3486,201 @@ function renderCommunityPostDetail(post,comments,likes){
  $('#communitySubmitComment').onclick=async()=>{const btn=$('#communitySubmitComment'),content=$('#communityCommentContent').value.trim(),nick=communityNickname();if(!nick)return toast('먼저 닉네임을 설정해 주세요.');if(!content)return toast('댓글 내용을 입력해 주세요.');btn.disabled=true;try{const {error}=await communityDb.from('comments').insert({post_id:post.id,user_id:communityUserId,nickname:nick,content});if(error)throw error;playSfx('success');await openCommunityPost(post.id)}catch(error){toast(communityErrorMessage(error));btn.disabled=false}};
  $$('[data-comment-delete]').forEach(btn=>btn.onclick=async()=>{if(!confirm('댓글을 삭제하시겠습니까?'))return;btn.disabled=true;try{const {error}=await communityDb.from('comments').delete().eq('id',Number(btn.dataset.commentDelete)).eq('user_id',communityUserId);if(error)throw error;await openCommunityPost(post.id)}catch(error){toast(communityErrorMessage(error));btn.disabled=false}})
 }
+
+
+// v143: 2-player realtime Ryu Hyunsang quiz battle
+let onlineQuizRoomCode='';
+let onlineQuizChannel=null;
+let onlineQuizPollTimer=null;
+let onlineQuizClockTimer=null;
+let onlineQuizRefreshTimer=null;
+let onlineQuizAdvanceLock=false;
+let onlineQuizSubmitLock=false;
+let onlineQuizFeedback=null;
+
+function onlineQuizErrorMessage(error){
+ const raw=String(error?.message||error||'알 수 없는 오류');
+ if(/quiz_rooms|quiz_players|quiz_answers|quiz_questions|quiz_create_room|quiz_join_room|quiz_get_current_question|quiz_submit_answer|quiz_start_room|quiz_advance_room|PGRST202|does not exist|schema cache/i.test(raw))return '실시간 퀴즈 DB 설정이 아직 없습니다. ZIP의 SUPABASE_QUIZ_SETUP.sql을 Supabase SQL Editor에서 한 번 실행해 주세요.';
+ if(/anonymous|sign-?ins?.*disabled/i.test(raw))return 'Supabase의 Anonymous Sign-In을 켜 주세요.';
+ if(/Failed to fetch|NetworkError|fetch/i.test(raw))return '인터넷 연결 또는 Supabase 접속 상태를 확인해 주세요.';
+ return raw;
+}
+function onlineQuizStoredRoom(){try{return localStorage.getItem('ryuOnlineQuizRoom')||''}catch{return ''}}
+function saveOnlineQuizStoredRoom(code){try{if(code)localStorage.setItem('ryuOnlineQuizRoom',code);else localStorage.removeItem('ryuOnlineQuizRoom')}catch{}}
+function onlineQuizClearTimers(){
+ if(onlineQuizPollTimer){clearInterval(onlineQuizPollTimer);onlineQuizPollTimer=null}
+ if(onlineQuizClockTimer){clearInterval(onlineQuizClockTimer);onlineQuizClockTimer=null}
+ if(onlineQuizRefreshTimer){clearTimeout(onlineQuizRefreshTimer);onlineQuizRefreshTimer=null}
+}
+async function onlineQuizUnsubscribe(){
+ if(onlineQuizChannel&&communityDb){try{await communityDb.removeChannel(onlineQuizChannel)}catch{}}
+ onlineQuizChannel=null;
+ onlineQuizClearTimers();
+}
+function onlineQuizScheduleRefresh(){
+ if(!onlineQuizRoomCode||!$('#modal')?.open||!$('#modal')?.classList.contains('theme-online'))return;
+ if(onlineQuizRefreshTimer)return;
+ onlineQuizRefreshTimer=setTimeout(()=>{onlineQuizRefreshTimer=null;refreshOnlineQuizRoom()},90);
+}
+async function onlineQuizSubscribe(code){
+ await onlineQuizUnsubscribe();
+ if(!communityDb)return;
+ onlineQuizChannel=communityDb.channel(`ryu-quiz-${code}-${communityUserId.slice(0,8)}`)
+  .on('postgres_changes',{event:'*',schema:'public',table:'quiz_rooms',filter:`code=eq.${code}`},onlineQuizScheduleRefresh)
+  .on('postgres_changes',{event:'*',schema:'public',table:'quiz_players',filter:`room_code=eq.${code}`},onlineQuizScheduleRefresh)
+  .on('postgres_changes',{event:'*',schema:'public',table:'quiz_answers',filter:`room_code=eq.${code}`},onlineQuizScheduleRefresh)
+  .subscribe();
+ onlineQuizPollTimer=setInterval(()=>onlineQuizScheduleRefresh(),1500);
+}
+function onlineQuizLobbyHtml(message=''){
+ const nick=communityNickname();const resume=onlineQuizStoredRoom();
+ return `<div class="online-quiz-shell">
+  <section class="online-quiz-hero"><div><small>REALTIME 1 VS 1</small><h3>류현상 퀴즈 대전</h3><p>두 플레이어가 같은 문제 10개를 실시간으로 풉니다. 문제당 12초, 먼저 맞히면 100점 · 두 번째 정답은 70점.</p></div><span class="online-live-badge">● LIVE</span></section>
+  ${message?`<div class="online-quiz-notice">${communityEsc(message)}</div>`:''}
+  <section class="online-quiz-profile"><span>대전 닉네임</span><strong>${communityEsc(nick||'미설정')}</strong><button id="onlineQuizNicknameBtn">닉네임 변경</button></section>
+  ${resume?`<button id="onlineQuizResumeBtn" class="online-resume wide">진행 중인 방 ${communityEsc(resume)} 이어가기</button>`:''}
+  <div class="online-quiz-lobby-grid">
+    <section class="online-quiz-lobby-card"><b>새 방 만들기</b><p>방을 만들고 친구에게 6자리 방 코드를 알려주세요.</p><button id="onlineQuizCreateBtn" class="primary wide" ${nick?'':'disabled'}>방 만들기</button></section>
+    <section class="online-quiz-lobby-card"><b>방 코드로 참가</b><p>상대방에게 받은 6자리 코드를 입력하세요.</p><input id="onlineQuizJoinCode" maxlength="6" inputmode="text" autocomplete="off" placeholder="예: A1B2C3"><button id="onlineQuizJoinBtn" class="wide" ${nick?'':'disabled'}>참가하기</button></section>
+  </div>
+  <section class="online-quiz-rules"><b>대전 규칙</b><span>10문제</span><span>문제당 12초</span><span>첫 정답 100점</span><span>두 번째 정답 70점</span><span>오답 0점</span><span>본편 시간·능력치 소모 없음</span></section>
+ </div>`
+}
+async function openOnlineQuiz(message=''){
+ try{
+  await ensureCommunityReady();
+  onlineQuizRoomCode='';onlineQuizFeedback=null;await onlineQuizUnsubscribe();
+  showModal('온라인 대전',onlineQuizLobbyHtml(message),'online');
+  bindOnlineQuizLobby();
+ }catch(error){
+  showModal('온라인 대전',`<div class="online-quiz-error"><b>온라인 대전을 연결하지 못했습니다.</b><p>${communityEsc(onlineQuizErrorMessage(error))}</p><button id="onlineQuizRetry" class="primary">다시 시도</button></div>`,'online');
+  const retry=$('#onlineQuizRetry');if(retry)retry.onclick=()=>openOnlineQuiz();
+ }
+}
+function openOnlineQuizNickname(){
+ const nick=communityNickname();
+ showModal('대전 닉네임',`<div class="community-form"><p>커뮤니티와 온라인 대전에서 함께 사용하는 닉네임입니다.</p><input id="onlineQuizNicknameInput" maxlength="16" placeholder="닉네임 입력" value="${communityEsc(nick)}"><div class="community-form-actions"><button id="onlineQuizNicknameBack">취소</button><button id="onlineQuizNicknameSave" class="primary">저장</button></div></div>`,'online');
+ $('#onlineQuizNicknameBack').onclick=()=>openOnlineQuiz();
+ $('#onlineQuizNicknameSave').onclick=()=>{const value=$('#onlineQuizNicknameInput').value.trim();if(!value)return toast('닉네임을 입력해 주세요.');saveCommunityNickname(value);toast('대전 닉네임을 저장했습니다.');openOnlineQuiz()};
+}
+function bindOnlineQuizLobby(){
+ const nickBtn=$('#onlineQuizNicknameBtn');if(nickBtn)nickBtn.onclick=openOnlineQuizNickname;
+ const create=$('#onlineQuizCreateBtn');if(create)create.onclick=createOnlineQuizRoom;
+ const join=$('#onlineQuizJoinBtn');if(join)join.onclick=joinOnlineQuizRoom;
+ const code=$('#onlineQuizJoinCode');if(code){code.oninput=()=>{code.value=code.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6)};code.onkeydown=e=>{if(e.key==='Enter')joinOnlineQuizRoom()}}
+ const resume=$('#onlineQuizResumeBtn');if(resume)resume.onclick=()=>enterOnlineQuizRoom(onlineQuizStoredRoom(),true);
+}
+async function createOnlineQuizRoom(){
+ const btn=$('#onlineQuizCreateBtn');if(btn){btn.disabled=true;btn.textContent='방 만드는 중...'}
+ try{await ensureCommunityReady();const {data,error}=await communityDb.rpc('quiz_create_room',{p_nickname:communityNickname()});if(error)throw error;playSfx('success');await enterOnlineQuizRoom(String(data||'').toUpperCase())}catch(error){toast(onlineQuizErrorMessage(error));if(btn){btn.disabled=false;btn.textContent='방 만들기'}}
+}
+async function joinOnlineQuizRoom(){
+ const input=$('#onlineQuizJoinCode');const code=String(input?.value||'').trim().toUpperCase();if(code.length!==6)return toast('6자리 방 코드를 입력해 주세요.');
+ const btn=$('#onlineQuizJoinBtn');if(btn){btn.disabled=true;btn.textContent='입장 중...'}
+ try{await ensureCommunityReady();const {data,error}=await communityDb.rpc('quiz_join_room',{p_code:code,p_nickname:communityNickname()});if(error)throw error;playSfx('success');await enterOnlineQuizRoom(String(data||code).toUpperCase())}catch(error){toast(onlineQuizErrorMessage(error));if(btn){btn.disabled=false;btn.textContent='참가하기'}}
+}
+async function enterOnlineQuizRoom(code,resume=false){
+ if(!code)return openOnlineQuiz();
+ try{
+  await ensureCommunityReady();onlineQuizRoomCode=String(code).toUpperCase();saveOnlineQuizStoredRoom(onlineQuizRoomCode);onlineQuizFeedback=null;
+  showModal('2인 퀴즈 대전',`<div class="online-quiz-loading">방 정보를 불러오는 중...</div>`,'online');
+  await onlineQuizSubscribe(onlineQuizRoomCode);await refreshOnlineQuizRoom();
+ }catch(error){onlineQuizRoomCode='';if(resume)saveOnlineQuizStoredRoom('');await openOnlineQuiz(onlineQuizErrorMessage(error))}
+}
+async function fetchOnlineQuizSnapshot(){
+ const code=onlineQuizRoomCode;
+ const [{data:room,error:roomError},{data:players,error:playersError}]=await Promise.all([
+  communityDb.from('quiz_rooms').select('code,host_id,status,current_question,question_started_at,winner_id,created_at').eq('code',code).maybeSingle(),
+  communityDb.from('quiz_players').select('user_id,nickname,ready,score,correct_count,joined_at,left_at').eq('room_code',code).order('joined_at',{ascending:true})
+ ]);
+ if(roomError)throw roomError;if(playersError)throw playersError;if(!room)throw new Error('방이 사라졌습니다.');
+ let answers=[];if(room.status==='playing'){
+  const result=await communityDb.from('quiz_answers').select('user_id,question_index,is_correct,points,answered_at').eq('room_code',code).eq('question_index',room.current_question);
+  if(result.error)throw result.error;answers=result.data||[];
+ }
+ return {room,players:players||[],answers}
+}
+async function refreshOnlineQuizRoom(){
+ if(!onlineQuizRoomCode||!$('#modal')?.open||!$('#modal')?.classList.contains('theme-online'))return;
+ try{
+  const snap=await fetchOnlineQuizSnapshot();
+  if(snap.room.status==='waiting')renderOnlineQuizWaiting(snap);
+  else if(snap.room.status==='playing')await renderOnlineQuizPlaying(snap);
+  else renderOnlineQuizFinished(snap);
+ }catch(error){
+  if(/방이 사라졌습니다/.test(String(error?.message||error))){saveOnlineQuizStoredRoom('');onlineQuizRoomCode='';await onlineQuizUnsubscribe();return openOnlineQuiz('방이 종료되었습니다.')}
+  const body=$('#modalBody');if(body)body.innerHTML=`<div class="online-quiz-error"><b>대전 정보를 불러오지 못했습니다.</b><p>${communityEsc(onlineQuizErrorMessage(error))}</p><button id="onlineQuizBackLobby">로비로</button></div>`;
+  const back=$('#onlineQuizBackLobby');if(back)back.onclick=()=>leaveOnlineQuizRoom(false,true);
+ }
+}
+function onlineQuizPlayerCard(player,room){
+ const isMe=player.user_id===communityUserId,isHost=player.user_id===room.host_id;
+ return `<div class="online-player-card ${isMe?'me':''} ${player.left_at?'left':''}"><div><b>${communityEsc(player.nickname)}</b>${isHost?'<span>방장</span>':''}${isMe?'<em>나</em>':''}</div><strong>${player.score||0}점</strong><small>${player.left_at?'나감':player.ready?'준비 완료':'대기 중'}</small></div>`
+}
+function renderOnlineQuizWaiting({room,players}){
+ if(onlineQuizClockTimer){clearInterval(onlineQuizClockTimer);onlineQuizClockTimer=null}
+ const me=players.find(p=>p.user_id===communityUserId);const active=players.filter(p=>!p.left_at);const host=room.host_id===communityUserId;const canStart=host&&active.length===2&&active.every(p=>p.ready);
+ $('#modalTitle').textContent='2인 퀴즈 대전 · 대기실';
+ $('#modalBody').innerHTML=`<div class="online-quiz-shell"><section class="online-room-code"><div><small>ROOM CODE</small><strong>${communityEsc(room.code)}</strong></div><button id="onlineQuizCopyCode">코드 복사</button></section><div class="online-player-grid">${players.map(p=>onlineQuizPlayerCard(p,room)).join('')}${active.length<2?'<div class="online-player-card empty"><b>상대방을 기다리는 중...</b><small>방 코드를 친구에게 알려주세요.</small></div>':''}</div><div class="online-waiting-actions"><button id="onlineQuizReadyBtn" class="${me?.ready?'ready':''}">${me?.ready?'준비 취소':'준비'}</button>${host?`<button id="onlineQuizStartBtn" class="primary" ${canStart?'':'disabled'}>대전 시작</button>`:'<span>방장이 시작하면 자동으로 대전이 시작됩니다.</span>'}<button id="onlineQuizLeaveBtn">방 나가기</button></div><p class="online-waiting-tip">두 명 모두 <b>준비 완료</b>가 되면 방장이 시작할 수 있습니다.</p></div>`;
+ $('#onlineQuizCopyCode').onclick=async()=>{try{await navigator.clipboard.writeText(room.code);toast('방 코드를 복사했습니다.')}catch{toast(`방 코드: ${room.code}`)}};
+ $('#onlineQuizReadyBtn').onclick=async()=>{const b=$('#onlineQuizReadyBtn');b.disabled=true;try{const {error}=await communityDb.rpc('quiz_set_ready',{p_code:room.code,p_ready:!me?.ready});if(error)throw error;playSfx('click');onlineQuizScheduleRefresh()}catch(error){toast(onlineQuizErrorMessage(error));b.disabled=false}};
+ const start=$('#onlineQuizStartBtn');if(start)start.onclick=async()=>{start.disabled=true;start.textContent='시작 중...';try{const {error}=await communityDb.rpc('quiz_start_room',{p_code:room.code});if(error)throw error;playSfx('success');onlineQuizFeedback=null;onlineQuizScheduleRefresh()}catch(error){toast(onlineQuizErrorMessage(error));start.disabled=false;start.textContent='대전 시작'}};
+ $('#onlineQuizLeaveBtn').onclick=()=>leaveOnlineQuizRoom(true,true);
+}
+function onlineQuizScoreboard(players,room){
+ return `<div class="online-scoreboard">${players.map(p=>`<div class="${p.user_id===communityUserId?'me':''}"><span>${communityEsc(p.nickname)}${p.user_id===room.host_id?' 👑':''}</span><strong>${p.score||0}</strong><small>정답 ${p.correct_count||0}</small></div>`).join('')}</div>`
+}
+async function renderOnlineQuizPlaying(snap){
+ const {room,players,answers}=snap;const qres=await communityDb.rpc('quiz_get_current_question',{p_room_code:room.code});if(qres.error)throw qres.error;const q=Array.isArray(qres.data)?qres.data[0]:qres.data;if(!q)return;
+ const options=Array.isArray(q.options)?q.options:[];const mine=answers.find(a=>a.user_id===communityUserId);const opponent=answers.find(a=>a.user_id!==communityUserId);const feedback=onlineQuizFeedback&&onlineQuizFeedback.question===room.current_question?onlineQuizFeedback:null;
+ $('#modalTitle').textContent=`류현상 퀴즈 · ${room.current_question+1}/10`;
+ $('#modalBody').innerHTML=`<div class="online-quiz-shell">${onlineQuizScoreboard(players,room)}<section class="online-question-card"><div class="online-question-top"><span>QUESTION ${room.current_question+1}</span><strong id="onlineQuizTime">12.0</strong></div><div class="online-timebar"><i id="onlineQuizTimeBar" style="width:100%"></i></div><h3>${communityEsc(q.question_text)}</h3><div class="online-answer-grid">${options.map((opt,i)=>`<button data-online-answer="${i}" ${mine?'disabled':''}>${i+1}. ${communityEsc(opt)}</button>`).join('')}</div>${feedback?`<div class="online-answer-feedback ${feedback.correct?'correct':'wrong'}"><b>${feedback.correct?`정답! +${feedback.points}점`:'오답!'}</b><span>정답: ${feedback.correctIndex+1}. ${communityEsc(options[feedback.correctIndex]||'')}</span></div>`:mine?`<div class="online-answer-feedback ${mine.is_correct?'correct':'wrong'}"><b>${mine.is_correct?`정답 +${mine.points}점`:'답변 완료'}</b><span>다음 문제를 기다리는 중...</span></div>`:''}<div class="online-opponent-state">상대방: ${opponent?'답변 완료':'답변 중...'}</div></section><button id="onlineQuizForfeitBtn" class="online-forfeit">대전 포기</button></div>`;
+ $$('[data-online-answer]').forEach(btn=>btn.onclick=()=>submitOnlineQuizAnswer(room.current_question,Number(btn.dataset.onlineAnswer),options));
+ $('#onlineQuizForfeitBtn').onclick=()=>{if(confirm('대전을 포기할까요? 상대방의 승리로 종료됩니다.'))leaveOnlineQuizRoom(true,true)};
+ startOnlineQuizClock(room,answers.length,players.filter(p=>!p.left_at).length);
+}
+function startOnlineQuizClock(room,answeredCount,playerCount){
+ if(onlineQuizClockTimer)clearInterval(onlineQuizClockTimer);
+ const tick=()=>{
+  const started=new Date(room.question_started_at).getTime();const remain=Math.max(0,12-(Date.now()-started)/1000);const text=$('#onlineQuizTime'),bar=$('#onlineQuizTimeBar');if(text)text.textContent=remain.toFixed(1);if(bar)bar.style.width=`${Math.max(0,Math.min(100,remain/12*100))}%`;
+  if((answeredCount>=playerCount||remain<=0)&&!onlineQuizAdvanceLock){onlineQuizAdvanceLock=true;setTimeout(()=>advanceOnlineQuizRoom(),answeredCount>=playerCount?900:40)}
+ };
+ tick();onlineQuizClockTimer=setInterval(tick,160);
+}
+async function submitOnlineQuizAnswer(questionIndex,answerIndex,options){
+ if(onlineQuizSubmitLock)return;onlineQuizSubmitLock=true;$$('[data-online-answer]').forEach(b=>b.disabled=true);playSfx('click');
+ try{
+  const {data,error}=await communityDb.rpc('quiz_submit_answer',{p_room_code:onlineQuizRoomCode,p_question_index:questionIndex,p_answer_index:answerIndex});if(error)throw error;const result=Array.isArray(data)?data[0]:data;
+  onlineQuizFeedback={question:questionIndex,correct:!!result?.result_correct,points:Number(result?.result_points)||0,correctIndex:Number(result?.result_correct_index)||0};playSfx(onlineQuizFeedback.correct?'success':'fail');onlineQuizScheduleRefresh();
+ }catch(error){toast(onlineQuizErrorMessage(error));onlineQuizScheduleRefresh()}finally{onlineQuizSubmitLock=false}
+}
+async function advanceOnlineQuizRoom(){
+ try{if(!onlineQuizRoomCode)return;const {error}=await communityDb.rpc('quiz_advance_room',{p_room_code:onlineQuizRoomCode});if(error)throw error;onlineQuizFeedback=null;onlineQuizScheduleRefresh()}catch(error){if(!/이미|진행/.test(String(error?.message||'')))toast(onlineQuizErrorMessage(error))}finally{onlineQuizAdvanceLock=false}
+}
+function renderOnlineQuizFinished({room,players}){
+ if(onlineQuizClockTimer){clearInterval(onlineQuizClockTimer);onlineQuizClockTimer=null}
+ const sorted=[...players].sort((a,b)=>(b.score||0)-(a.score||0));const winner=room.winner_id?players.find(p=>p.user_id===room.winner_id):null;const me=players.find(p=>p.user_id===communityUserId);const result=!winner?'무승부':winner.user_id===communityUserId?'승리!':'패배';
+ $('#modalTitle').textContent='퀴즈 대전 결과';
+ $('#modalBody').innerHTML=`<div class="online-quiz-shell"><section class="online-result ${result==='승리!'?'win':result==='패배'?'lose':'draw'}"><small>FINAL RESULT</small><h2>${result}</h2>${winner?`<p>승자 <b>${communityEsc(winner.nickname)}</b></p>`:'<p>두 플레이어의 점수가 같습니다.</p>'}</section><div class="online-final-scores">${sorted.map((p,i)=>`<div class="${p.user_id===communityUserId?'me':''}"><span>${i+1}위 · ${communityEsc(p.nickname)}</span><strong>${p.score||0}점</strong><small>${p.correct_count||0}/10 정답${p.left_at?' · 대전 이탈':''}</small></div>`).join('')}</div><div class="online-result-actions"><button id="onlineQuizResultLobby" class="primary">새 대전</button><button id="onlineQuizResultClose">닫기</button></div></div>`;
+ if(result==='승리!')playSfx('success');else if(result==='패배')playSfx('fail');
+ $('#onlineQuizResultLobby').onclick=()=>leaveOnlineQuizRoom(false,true,true);
+ $('#onlineQuizResultClose').onclick=()=>leaveOnlineQuizRoom(false,false,true);
+}
+async function leaveOnlineQuizRoom(callServer=true,goLobby=false,finished=false){
+ const code=onlineQuizRoomCode;onlineQuizRoomCode='';saveOnlineQuizStoredRoom('');onlineQuizFeedback=null;await onlineQuizUnsubscribe();
+ if(callServer&&code&&communityDb){try{await communityDb.rpc('quiz_leave_room',{p_room_code:code})}catch{}}
+ if(goLobby)return openOnlineQuiz();
+ closeModal(true);
+}
 $('#newGameBtn').onclick=()=>{forceAudioOn();setAudioScreenMode('title');const collected=loadMetaEndings();state=structuredClone(baseState);state.endings=collected;startPrologue()};
 $('#continueBtn').onclick=()=>{forceAudioOn();migrateLegacySave();const hasAny=!!readSave(AUTO_SAVE_KEY)||MANUAL_SAVE_KEYS.some(k=>!!readSave(k));if(!hasAny)return toast('저장된 게임이 없습니다.');openSaveManager('load')};
 $('#howBtn').onclick=()=>{forceAudioOn();openGameGuide()};
 $('#titleCommunityBtn').onclick=()=>{forceAudioOn();openCommunity()};
+$('#titleOnlineQuizBtn').onclick=()=>{forceAudioOn();openOnlineQuiz()};
 $('#closeModal').onclick=()=>closeModal();$('#modal').addEventListener('cancel',e=>{if(memoryGameActive||blockingNoticeActive||instagramLiveActive){e.preventDefault();if(memoryGameActive)closeModal()}});$('#audioBtn').onclick=openAudioSettings;$('#menuBtn').onclick=()=>showModal('메뉴','<div class="card-list"><button id="gameGuideBtn" class="primary">게임 설명 · 진행 가이드</button><button id="manualSave">저장 / 불러오기</button><button id="backTitle">타이틀로 돌아가기</button></div>');
 $('#modal').addEventListener('click',e=>{if(e.target===$('#modal'))closeModal()});
 $$('[data-phone]').forEach(b=>b.onclick=()=>openPhone(b.dataset.phone));
-$$('[data-tab]').forEach(b=>b.onclick=()=>{if(state.specialScene?.active)return toast('진행 중인 특별 이벤트를 먼저 마쳐 주세요.');const t=b.dataset.tab;$$('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));if(t==='band')showBand();if(t==='album')openSpecialAlbum();if(t==='shop')openShopHub();if(t==='ending'){showModal('엔딩 컬렉션',state.endings.length?`<div class="ending-collection-grid">${state.endings.map(x=>{const art=endingVisualFor(x);return `<button class="info-card ending-replay ending-collection-card" data-ending-replay="${x}">${art?`<img src="${art}" alt="${x} 미리보기">`:''}<span><b>${x}</b><small>엔딩 이미지와 이야기 다시 보기</small></span></button>`}).join('')}</div>`:'아직 해금된 엔딩이 없습니다.','ending');$$('[data-ending-replay]').forEach(x=>x.onclick=()=>runEndingStory(x.dataset.endingReplay));}if(t==='community')openCommunity();if(t==='story')showModal('스토리 기록',state.history.length?`<div class="card-list story-history-list">${[...state.history].reverse().map(x=>`<div class="info-card story-history-item">${x}</div>`).join('')}</div>`:'류현상의 이야기는 이제 시작입니다.','story')});
+$$('[data-tab]').forEach(b=>b.onclick=()=>{if(state.specialScene?.active)return toast('진행 중인 특별 이벤트를 먼저 마쳐 주세요.');const t=b.dataset.tab;$$('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));if(t==='band')showBand();if(t==='album')openSpecialAlbum();if(t==='shop')openShopHub();if(t==='ending'){showModal('엔딩 컬렉션',state.endings.length?`<div class="ending-collection-grid">${state.endings.map(x=>{const art=endingVisualFor(x);return `<button class="info-card ending-replay ending-collection-card" data-ending-replay="${x}">${art?`<img src="${art}" alt="${x} 미리보기">`:''}<span><b>${x}</b><small>엔딩 이미지와 이야기 다시 보기</small></span></button>`}).join('')}</div>`:'아직 해금된 엔딩이 없습니다.','ending');$$('[data-ending-replay]').forEach(x=>x.onclick=()=>runEndingStory(x.dataset.endingReplay));}if(t==='community')openCommunity();if(t==='online')openOnlineQuiz();if(t==='story')showModal('스토리 기록',state.history.length?`<div class="card-list story-history-list">${[...state.history].reverse().map(x=>`<div class="info-card story-history-item">${x}</div>`).join('')}</div>`:'류현상의 이야기는 이제 시작입니다.','story')});
 document.addEventListener('click',e=>{if(e.target&&e.target.id==='gameGuideBtn'){openGameGuide()}if(e.target&&e.target.id==='manualSave'){openSaveManager('all')}if(e.target&&e.target.id==='backTitle'){save(false);setChoiceLock(false);stopSpecialEventBgm(false);exitEndingMusic();$('#gameScreen').classList.remove('active');$('#titleScreen').classList.add('active');setAudioScreenMode('title',true);closeModal()}});
 
 document.addEventListener('click',e=>{
