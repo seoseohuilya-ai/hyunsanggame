@@ -1810,13 +1810,11 @@ dialog.drawer-dialog .modal-body{max-height:78vh;padding:16px}
 #modal.theme-ending .info-card{background:rgba(73,28,45,.84);border-color:#8d4960}
 
 /* Bottom navigation text accents */
-.bottom-nav button[data-tab="main"]{color:#cbb3ff}
 .bottom-nav button[data-tab="story"]{color:#8fc8ff}
 .bottom-nav button[data-tab="band"]{color:#91dfd5}
 .bottom-nav button[data-tab="album"]{color:#f4cc78}
 .bottom-nav button[data-tab="shop"]{color:#f2a777}
 .bottom-nav button[data-tab="ending"]{color:#f59ab2}
-.bottom-nav button[data-tab="main"].active{background:rgba(117,83,166,.25);color:#e4d6ff}
 .bottom-nav button[data-tab="story"].active{background:rgba(55,113,166,.25);color:#cce8ff}
 .bottom-nav button[data-tab="band"].active{background:rgba(45,126,118,.25);color:#c9fff7}
 .bottom-nav button[data-tab="album"].active{background:rgba(154,114,41,.24);color:#ffeab5}
