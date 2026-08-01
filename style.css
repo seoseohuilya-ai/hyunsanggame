@@ -1966,3 +1966,12 @@ dialog.drawer-dialog .modal-body{max-height:78vh;padding:16px}
   .ending-nav{grid-template-columns:1fr}
   .ending-nav button{min-height:48px}
 }
+
+/* v129: ending collection artwork previews */
+.ending-collection-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.ending-collection-card{display:grid!important;grid-template-columns:118px minmax(0,1fr);gap:14px;align-items:center;width:100%;padding:10px!important;text-align:left!important;overflow:hidden}
+.ending-collection-card img{width:118px;height:88px;object-fit:cover;border-radius:11px;border:1px solid rgba(255,255,255,.13);box-shadow:0 8px 20px rgba(0,0,0,.32)}
+.ending-collection-card span{display:grid;gap:5px;min-width:0}
+.ending-collection-card b{color:#ffe0ea;font-size:.96rem}
+.ending-collection-card small{color:#c5a7b4;line-height:1.35}
+@media(max-width:720px){.ending-collection-grid{grid-template-columns:1fr}.ending-collection-card{grid-template-columns:96px minmax(0,1fr)}.ending-collection-card img{width:96px;height:72px}}
