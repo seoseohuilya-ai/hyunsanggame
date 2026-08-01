@@ -1,6 +1,6 @@
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const locations={home:{name:'자취방',cls:'home'},store:{name:'편의점',cls:'store'},practice:{name:'연습실',cls:'practice'},park:{name:'공원',cls:'park'},stage:{name:'공연장',cls:'stage'}};
-const baseState={day:1,slot:0,time:0,location:'home',level:1,exp:0,rank:'무명 가수',weather:'sun',housing:0,endingPrompted:{},pendingEnding:null,stats:{hp:80,vocal:22,compose:16,looks:35,fame:0,fans:0,money:800000,stress:10},equipment:{mic:false,amp:false,battery:false},equipmentModel:{mic:null,amp:null},equipmentDamage:{mic:false,amp:false},equipmentDurability:{mic:0,amp:0,battery:0},forcedRest:{count:0,lastTriggeredDay:-99},restStreak:0,restNightmares:{totalRests:0,lastTriggeredRest:0,seen:[]},dailyPractice:{vocalDay:0,composeDay:0,vocalPenaltyCount:0,composePenaltyCount:0,penaltyInterval:7},instruments:{acousticGuitar:false,keyboard:false,audioInterface:false,studioMic:false,monitorHeadphones:false},fanGroups:{regular:0,enthusiast:0,gay:0,overseas:0},sns:{lastPostDay:-99,totalPosts:0,lastLiveDay:-99,totalLives:0,lastLiveScenario:null,nextVocalBonus:0,nextComposeBonus:0,controversy:0,lastEventDay:-99},drawer:{photos:Array.from({length:5},()=>Array(9).fill(false)),photoMissStreak:0,diaries:[],diaryFoundDays:{},diaryCheckedDay:-99,diaryMissStreak:0,todayDiaryId:null,todayMessage:'',newPhotos:false,newDiary:false,lastTab:'photos'},rival:{met:false,stage:0,respect:0,lastEventDay:-99},items:{bakcas:1,energizer:0,dietPill:0,strongDietPill:0,bakcasUsedToday:0,mealsToday:0,bakcasBoughtToday:0,snacksBoughtToday:0},storeDaily:{promoDay:-99,customerDay:-99,flyerDay:-99,observeDay:-99,buskingDay:-99,buskingCount:0},storeJobs:{workCount:0,stockWorkCount:0},dailyUse:{styleCareDay:-99,styleCareLastDay:1,styleDecayCount:0,meditationDay:-99,meditationCount:0,walkDay:-99,walkCount:0},effects:{energizerUntilDay:0,energizerConsecutiveCount:0,energizerOverdose:false},fleaMarket:{cycleDay:0,soldOut:false,offers:[],purchased:[]},specialProgress:{cardCollectorOfferSeen:false,cardCollectorEligibleDay:0,cardCollectorVisitDone:false,cardCollectorDeclinedDay:0,cardTheftDone:false,weddingSongSeen:false,weddingInviteSeen:false,hurabonoWeddingDone:false},economy:{workStreak:0,lastWorkDay:-99,debt:0,totalDebtRepaid:0,lastDebtNoticeDay:-99,debtStartDay:0,debtCriticalDay:0},equippedInstruments:[],career:{peakFame:0,totalWork:0,totalConcerts:0,totalBroadcasts:0,totalBusking:0,soloBusking:0,bandBusking:0},skillMaintenance:{lastVocalUseDay:1,lastComposeUseDay:1,vocalDecayCount:0,composeDecayCount:0},manager:{hired:false,bond:0,wedding:false},band:{formed:false,bond:60,members:{guitar:null,bass:null,piano:null,drums:null}},albums:[],endings:[],history:[],dialogue:null,seenEvents:[],soloStreak:0,outfit:0,ownedOutfits:[0],performanceCount:0,stalker:{active:false,resolved:false,encounters:0,safety:0,motherEvacuated:false},narrative:{lastMajorEventDay:-99,twentyDaySeen:[]},gambling:{cards:{C:0,U:0,R:0,SR:0,SEC:0,SP:0},totalCardDraws:0,spDraws:0,lotteryTickets:[],lotteryResults:[]},minigames:{songSurvivalLastDay:-99,quizShowLastDay:-99,songBestStage:0,quizBest:0,quizBag:[],cookingPlayed:0,cookingBest:0,cookingPerfect:0},arrogance:{lastDay:-99,count:0,lesson:0},specialEvents:{iziViral:false,waitedMoreViral:false,day30Hair:false,day60Workout:false,day90Live:false,day120Chat:false,day150Birthday:false,day180Archive:false,day210Demo:false,day240Meme:false,day300Promise:false,day330Mother:false,day360Reflection:false,hiddenGameOst:false,hiddenRadioDj:false,hiddenDingo:false,careerLv70:false,careerLv80:false,careerLv90:false,mysteriousMerchantPurchased:false,cardCollectorVisit:false,cardTheft:false,hurabonoWeddingDay:false},specialScene:{active:false,key:null},preparation:{stageReady:false,stageReadyDay:-99,buskingInsight:false,buskingInsightDay:-99},cooldowns:{managerTalk:-99,recruit:-99,audition:-99,concert:-99,broadcast:-99,fanmeeting:-99,album:-99,fanEvent:-99,snsPost:-99},milestones:{firstAudition:false,firstConcert:false,firstBroadcast:false,firstFanmeeting:false,firstAlbum:false,managerHired:false,bandFormed:false,stalkerResolved:false,randomSeen:[]},historyKeys:[],lastAction:null,prologueSeen:false};
+const baseState={day:1,slot:0,time:0,location:'home',level:1,exp:0,rank:'무명 가수',weather:'sun',housing:0,endingPrompted:{},pendingEnding:null,stats:{hp:80,vocal:22,compose:16,looks:35,fame:0,fans:0,money:800000,stress:10},equipment:{mic:false,amp:false,battery:false},equipmentModel:{mic:null,amp:null},equipmentDamage:{mic:false,amp:false},equipmentDurability:{mic:0,amp:0,battery:0},forcedRest:{count:0,lastTriggeredDay:-99},restStreak:0,restNightmares:{totalRests:0,lastTriggeredRest:0,seen:[]},dailyPractice:{vocalDay:0,composeDay:0,vocalPenaltyCount:0,composePenaltyCount:0,penaltyInterval:7},instruments:{acousticGuitar:false,keyboard:false,audioInterface:false,studioMic:false,monitorHeadphones:false},fanGroups:{regular:0,enthusiast:0,gay:0,overseas:0},sns:{lastPostDay:-99,totalPosts:0,lastLiveDay:-99,totalLives:0,lastLiveScenario:null,nextVocalBonus:0,nextComposeBonus:0,controversy:0,lastEventDay:-99},drawer:{photos:Array.from({length:5},()=>Array(9).fill(false)),photoMissStreak:0,diaries:[],diaryFoundDays:{},diaryCheckedDay:-99,diaryMissStreak:0,todayDiaryId:null,todayMessage:'',newPhotos:false,newDiary:false,lastTab:'photos'},rival:{met:false,stage:0,respect:0,lastEventDay:-99},items:{bakcas:1,energizer:0,dietPill:0,strongDietPill:0,bakcasUsedToday:0,mealsToday:0,bakcasBoughtToday:0,snacksBoughtToday:0},storeDaily:{promoDay:-99,customerDay:-99,flyerDay:-99,observeDay:-99,buskingDay:-99,buskingCount:0},storeJobs:{workCount:0,stockWorkCount:0},dailyUse:{styleCareDay:-99,styleCareLastDay:1,styleDecayCount:0,meditationDay:-99,meditationCount:0,walkDay:-99,walkCount:0},effects:{energizerUntilDay:0,energizerConsecutiveCount:0,energizerOverdose:false},fleaMarket:{cycleDay:0,soldOut:false,offers:[],purchased:[]},specialProgress:{cardCollectorOfferSeen:false,cardCollectorEligibleDay:0,cardCollectorVisitDone:false,cardCollectorDeclinedDay:0,cardTheftDone:false,weddingSongSeen:false,weddingInviteSeen:false,hurabonoWeddingDone:false},economy:{workStreak:0,lastWorkDay:-99,debt:0,totalDebtRepaid:0,lastDebtNoticeDay:-99,debtStartDay:0,debtCriticalDay:0},equippedInstruments:[],career:{peakFame:0,totalWork:0,totalConcerts:0,totalBroadcasts:0,totalBusking:0,soloBusking:0,bandBusking:0},skillMaintenance:{lastVocalUseDay:1,lastComposeUseDay:1,vocalDecayCount:0,composeDecayCount:0},manager:{hired:false,bond:0,wedding:false},band:{formed:false,bond:60,members:{guitar:null,bass:null,piano:null,drums:null}},bandTalk:{lastDay:{guitar:-99,bass:-99,piano:-99,drums:-99},lastTopic:{guitar:-1,bass:-1,piano:-1,drums:-1}},albums:[],endings:[],history:[],dialogue:null,seenEvents:[],soloStreak:0,outfit:0,ownedOutfits:[0],performanceCount:0,stalker:{active:false,resolved:false,encounters:0,safety:0,motherEvacuated:false},narrative:{lastMajorEventDay:-99,twentyDaySeen:[]},gambling:{cards:{C:0,U:0,R:0,SR:0,SEC:0,SP:0},totalCardDraws:0,spDraws:0,lotteryTickets:[],lotteryResults:[]},minigames:{songSurvivalLastDay:-99,quizShowLastDay:-99,songBestStage:0,quizBest:0,quizBag:[],cookingPlayed:0,cookingBest:0,cookingPerfect:0},arrogance:{lastDay:-99,count:0,lesson:0},specialEvents:{iziViral:false,waitedMoreViral:false,day30Hair:false,day60Workout:false,day90Live:false,day120Chat:false,day150Birthday:false,day180Archive:false,day210Demo:false,day240Meme:false,day300Promise:false,day330Mother:false,day360Reflection:false,hiddenGameOst:false,hiddenRadioDj:false,hiddenDingo:false,careerLv70:false,careerLv80:false,careerLv90:false,mysteriousMerchantPurchased:false,cardCollectorVisit:false,cardTheft:false,hurabonoWeddingDay:false},specialScene:{active:false,key:null},preparation:{stageReady:false,stageReadyDay:-99,buskingInsight:false,buskingInsightDay:-99},cooldowns:{managerTalk:-99,recruit:-99,audition:-99,concert:-99,broadcast:-99,fanmeeting:-99,album:-99,fanEvent:-99,snsPost:-99},milestones:{firstAudition:false,firstConcert:false,firstBroadcast:false,firstFanmeeting:false,firstAlbum:false,managerHired:false,bandFormed:false,stalkerResolved:false,randomSeen:[]},historyKeys:[],lastAction:null,prologueSeen:false};
 let state=structuredClone(baseState);let deferredPrompt=null;let audioCtx=null;let motionTimer=null;let burstTimer=null;let memoryGameActive=false;let activeTrainingAbort=null;
 let audioMaster=null,bgmGain=null,sfxGain=null,bgmTimer=null,bgmStep=0;
 let specialEventBgm=null,specialEventBgmKey=null;
@@ -14,7 +14,7 @@ let deferredPostAdvance=null;
 let cardRevealPending=false;
 let pendingTrainingActionBefore=null;
 let audioSettings={bgm:true,sfx:true};
-const FIXED_MASTER_VOLUME=.72,REGULAR_BGM_VOLUME=.042,SPECIAL_EVENT_BGM_VOLUME=.036,ENDING_BGM_VOLUME=.0216,SFX_GAIN_VOLUME=.78;
+const FIXED_MASTER_VOLUME=.72,REGULAR_BGM_VOLUME=.025,SPECIAL_EVENT_BGM_VOLUME=.020,ENDING_BGM_VOLUME=.012,SFX_GAIN_VOLUME=1.8;
 const BANKRUPTCY_CRITICAL_DEBT=500000,BANKRUPTCY_CRITICAL_DAYS=15,BANKRUPTCY_MAX_DAYS=30;
 const specialEventBgmMap={iziViral:'emergencyRoomEventBgm',waitedMoreViral:'waitedMoreEventBgm'};
 const customEndingBgmMap={'파산 엔딩':'fatalEndingBgm','스토커 살해 엔딩':'fatalEndingBgm'};
@@ -116,12 +116,12 @@ const dialogues={
   '진상 손님이 봉투값 100원을 두고 십 분째 항의했다. 류현상은 무대보다 계산대가 더 강한 멘탈을 요구한다는 사실을 배웠다.'
  ],
  practice:[
-  'P군은 기타 줄을 닦는 데 합주 시간의 절반을 썼고, L군은 그 모습을 말없이 바라봤다. J군은 이미 다른 키로 편곡을 시작했고, R군은 스틱으로 의자를 두드렸다. 아직 한 음도 맞추지 않았는데 밴드다웠다.',
+  'B군은 합주 시작 전부터 기타 톤과 코러스 수정안을 동시에 정리하고 있었다. L군은 ‘형, 저 사람은 쉬는 날에도 출근할 상인데요?’라고 웃었고, J군은 고개만 한 번 끄덕였다. R군은 스틱으로 의자를 두드렸다. 아직 한 음도 맞추지 않았는데 이미 성격은 다 드러났다.',
   '“다시.” 류현상이 짧게 말하자 네 명이 동시에 한숨을 쉬었다. 그래도 누구도 악기를 내려놓지 않았다. 그 작은 사실이 오늘 연습의 가장 좋은 부분이었다.',
-  'P군이 기타 볼륨을 올리자 L군이 조용히 베이스 볼륨을 더 올렸다. R군은 경쟁에 참가했고 J군은 귀마개를 찾았다. 류현상은 마이크를 내려놓고 말했다. “이건 합주가 아니라 음량 경매야.”',
-  'J군이 새 편곡을 들려줬다. 원곡은 잔잔한 발라드였는데 결과물은 우주선 출발 음악처럼 들렸다. 모두가 침묵하자 J군은 진지하게 말했다. “미래지향적이죠?”',
+  'B군이 기타 볼륨을 올리며 ‘현상아, 후렴 묻힌다. 이 정도는 나와야 된다 아이가’라고 말했다. L군은 웃으며 ‘둘 다 조금씩만 내리면 평화롭지 않을까요?’라고 중재했고, J군은 말없이 귀마개를 꺼냈다. R군만 아쉬운 표정이었다.',
+  '합주가 끝나고 저녁 메뉴를 정하는데 누군가 해물탕을 말하자 J군의 손이 건반 위에서 멈췄다. 한참 침묵하던 J군이 아주 작게 말했다. ‘그건… 좀 무섭습니다.’ L군이 웃음을 참느라 고개를 숙였다.',
   'R군은 필인 한 번을 멋지게 성공한 뒤 같은 필인을 모든 마디에 넣기 시작했다. 류현상이 세 번째 반복에서 멈추자 R군은 아쉬운 표정으로 스틱을 내려놨다.',
-  'L군은 말이 거의 없었지만 틀린 음이 나오면 정확히 그 사람을 바라봤다. 오늘은 류현상과 눈이 세 번 마주쳤다. 말보다 효과적인 피드백이었다.',
+  'L군은 틀린 음이 나올 때마다 부드럽게 농담을 던졌다. ‘형, 방금 음 하나가 집에 먼저 갔는데요?’ 류현상이 인상을 쓰자 곧바로 웃으며 ‘괜찮아요. 다시 잡으면 되죠.’라고 덧붙였다.',
   '합주가 끝난 뒤 멤버들은 아무도 먼저 나가지 않았다. 음악 이야기를 하다가 배달 메뉴 이야기로 넘어갔고, 결국 가장 오래 논의한 것은 탕수육 소스를 붓느냐 찍느냐였다.',
   '후라보노가 문을 열고 들어오더니 연습실을 한 바퀴 둘러봤다. “형, 음악은 좋은데 전기세가 무대급이에요.” 모두가 조용히 앰프 볼륨을 한 칸 내렸다.'
  ],
@@ -139,7 +139,7 @@ const dialogues={
   '무대 뒤에서는 모든 사람이 평소보다 조용했다. 케이블을 정리하는 스태프의 발소리까지 크게 들렸다. 류현상은 손바닥의 땀을 셔츠에 닦고 첫 음을 머릿속으로 반복했다.',
   '관객석은 어두워 얼굴이 보이지 않았다. 이상하게도 그 편이 편했다. 수백 명의 낯선 사람은 한 명의 냉정한 심사위원보다 덜 무서울 때가 있었다.',
   '후라보노가 큐시트를 들고 다가왔다. “형, 긴장돼요?” 류현상이 대답하지 않자 후라보노는 고개를 끄덕였다. “네. 평소랑 똑같다는 뜻이군요.”',
-  'P군은 기타 튜닝을 확인했고 L군은 말없이 손가락을 풀었다. J군은 마지막 순간까지 코드를 바꾸려 했고 R군은 스틱을 한 번 떨어뜨렸다. 완벽하지 않아서 오히려 익숙한 팀이었다.',
+  'B군은 무대 직전까지 기타 톤과 세트리스트를 확인하며 ‘마, 준비는 해도 해도 끝이 없다’고 중얼거렸다. L군은 긴장을 풀려고 가벼운 농담을 던졌고, J군은 말없이 건반 앞에 앉았다. R군은 스틱을 한 번 떨어뜨렸다. 완벽하지 않아서 오히려 익숙한 팀이었다.',
   '조명이 켜지는 순간, 생활비와 악성 댓글과 월세가 잠시 머릿속에서 사라졌다. 무대 위에서는 노래 하나만 제대로 끝내면 됐다.',
   '대기실 거울에는 출연자들의 이름표가 줄지어 붙어 있었다. 가장 아래에 적힌 류현상의 이름이 낯설게 보였다. 언젠가는 가장 큰 글씨로 적힐 수 있을까.',
   '관객이 류현상의 이름을 외쳤다. 처음에는 몇 명뿐이었지만 곧 더 많은 목소리가 섞였다. 그는 안경을 고쳐 쓰며 그 소리를 오래 기억하려 했다.',
@@ -160,14 +160,14 @@ const actionDialogue={
  ],
  compose:[
   '첫 줄은 쉽게 나왔지만 두 번째 줄에서 한 시간이 멈췄다. 류현상은 “영원”을 썼다가 너무 흔해 지우고, “내일”을 썼다가 너무 밝아 다시 지웠다.',
-  '후렴구를 녹음해 밴드 채팅방에 올리자 P군은 불꽃 이모티콘, J군은 코드 진행표, R군은 드럼 이모티콘 18개를 보냈다. L군은 “괜찮음”이라고 썼다. 최고의 칭찬이었다.',
+  '후렴구를 녹음해 밴드 채팅방에 올리자 B군은 ‘현상아, 2절 코드 내가 조금 손봐도 되나. 좋다.’라고 답했고, L군은 ‘형 이거 꽤 좋은데요? 제 친구한테 자랑 좀 해도 되겠네요 ㅋㅋ’라고 보냈다. J군은 엄지 이모티콘 하나, R군은 드럼 이모티콘 18개를 보냈다.',
   '멜로디는 좋았지만 가사가 문제였다. 솔직하게 쓰면 부끄럽고, 숨기면 아무 감정도 남지 않았다. 결국 가장 지우고 싶었던 문장을 첫 소절에 넣었다.',
   '전자레인지 완료음에서 시작한 멜로디가 생각보다 근사하게 이어졌다. 명곡의 탄생 배경을 나중에 인터뷰에서 솔직히 말할지는 고민해 보기로 했다.'
  ],
  vocal:[
   '고음에서 힘이 들어가자 류현상은 다시 처음부터 불렀다. 더 크게가 아니라 더 편하게. 열 번째 시도에서야 목소리가 억지로 밀어 올리지 않아도 떠올랐다.',
   '녹음된 자신의 목소리는 언제나 낯설었다. 잘한 부분보다 부족한 부분이 먼저 들렸지만, 오늘은 어제보다 숨소리가 안정적이었다.',
-  'P군이 문밖에서 “형, 그 부분만 스물일곱 번째예요”라고 말했다. 류현상은 잠시 멈췄다가 “세고 있었냐”고 물었다. P군은 대답하지 않았다.',
+  'B군이 문밖에서 ‘현상아, 그 부분만 스물일곱 번째다. 목부터 좀 쉬어라.’라고 말했다. 류현상이 ‘형은 작업 좀 쉬고?’라고 받아치자 B군은 잠시 침묵했다. 둘 다 상대에게 할 말은 아니었다.',
   '음정은 맞았지만 감정이 비어 있었다. 그는 눈을 감고 가장 듣고 싶었던 말을 떠올린 뒤 다시 노래했다. 이번에는 기계의 숫자보다 본인의 귀가 먼저 반응했다.'
  ],
  busking:[
@@ -177,15 +177,15 @@ const actionDialogue={
   '바람 때문에 악보가 날아갔다. 류현상은 가사를 기억하는 척 계속 노래했지만 2절 대부분은 즉흥이었다. 이상하게도 관객 반응은 평소보다 좋았다.'
  ],
  bandBusking:[
-  'R군의 첫 드럼이 울리자 지나가던 사람들이 동시에 고개를 돌렸다. P군이 웃으며 기타를 들어 올렸고, L군의 베이스가 바닥을 울렸다. 혼자서는 만들 수 없는 시작이었다.',
-  'J군이 예정에 없던 간주를 시작했다. 모두가 당황했지만 P군이 바로 따라붙었고 R군이 박자를 받쳤다. 끝나고 보니 오늘 가장 좋은 부분이었다.',
+  'R군의 첫 드럼이 울리자 지나가던 사람들이 동시에 고개를 돌렸다. B군이 ‘가보자, 현상아’ 하고 기타를 들어 올렸고, L군은 여유롭게 웃으며 베이스를 얹었다. J군은 말없이 첫 코드를 눌렀다. 혼자서는 만들 수 없는 시작이었다.',
+  'J군이 예정에 없던 짧은 간주를 시작했다. 평소 말도 적은 사람이 갑자기 방향을 틀자 모두가 놀랐지만, B군이 바로 ‘좋다, 간다’ 하고 따라붙었고 R군이 박자를 받쳤다. 끝나고 보니 오늘 가장 좋은 부분이었다.',
   '마지막 곡에서 멤버들이 서로 눈을 마주쳤다. 누구도 말하지 않았지만 엔딩을 한 번 더 늘렸다. 관객은 그것을 계획된 연출이라고 믿어 줬다.',
-  '공연 후 모금함을 열자 돈보다 밴드 이름을 적은 쪽지가 더 많았다. R군은 쪽지를 하나씩 읽었고 L군은 조용히 사진을 찍어 단체방에 올렸다.'
+  '공연 후 모금함을 열자 돈보다 밴드 이름을 적은 쪽지가 더 많았다. R군은 쪽지를 하나씩 읽었고 L군은 사진을 찍어 단체방에 올리며 ‘오늘 우리 좀 인기 밴드 같지 않아요?’라고 웃었다.'
  ],
  rehearse:[
-  '첫 합주는 엉망이었다. P군은 빨랐고 R군은 더 빨랐으며 J군은 다른 곡처럼 연주했다. L군만 정확했지만 그래서 더 눈에 띄게 혼자였다.',
+  '첫 합주는 엉망이었다. B군은 ‘한 번 더 하자’며 쉬지 않고 수정안을 냈고 R군은 자꾸 빨라졌다. J군은 필요한 말만 짧게 하고 다시 건반을 쳤다. L군은 틀릴 때마다 농담으로 분위기를 풀었다. 이상하게도 그래서 계속할 수 있었다.',
   '세 번째 반복에서 드디어 네 악기가 같은 곳을 향했다. 곡이 끝나자 아무도 말하지 않았다. 잘됐다는 걸 모두 알고 있을 때 나오는 침묵이었다.',
-  'R군이 “이번엔 완벽했죠?”라고 묻자 L군이 조용히 “두 번째 마디 틀림”이라고 답했다. R군은 억울해했지만 녹음 파일은 L군의 편이었다.',
+  'R군이 ‘이번엔 완벽했죠?’라고 묻자 L군이 웃으며 ‘거의요. 두 번째 마디는 못 들은 걸로 해드릴까요?’라고 답했다. R군은 억울해했지만 녹음 파일은 L군의 편이었다.',
   '후라보노가 합주를 듣고 박수를 쳤다. “좋네요. 그런데 곡이 7분이면 방송에서는 1절 시작 전에 잘려요.” 감동은 정확히 3초 만에 현실로 돌아왔다.'
  ],
  audition:['대기 번호가 불리자 입안이 바짝 말랐다. 류현상은 안경을 고쳐 쓰고 무대 중앙으로 걸었다. 심사위원의 표정보다 마이크의 높이를 맞추는 데 집중했다.','첫 소절에서 목소리가 조금 떨렸지만 두 번째 문장부터는 관객석이 보이지 않았다. 노래가 끝난 뒤 찾아온 정적이 실패인지 집중인지 알 수 없었다.'],
@@ -212,7 +212,7 @@ const actionFollowups={
  snack:['짧은 휴식과 작은 간식이 생각보다 집중력을 되돌려 줬다. 그는 포장지를 접어 쓰레기통에 정확히 던졌다.','배는 완전히 차지 않았지만 당장 쓰러질 것 같은 느낌은 사라졌다. 다시 움직이기에는 그 정도면 충분했다.'],
  bakcas:['빈 병을 내려놓고 심호흡을 했다. 회복된 체력을 어디에 쓸지 생각하자 하루가 조금 더 길어진 기분이었다.','쓴맛이 입안에 남았지만 눈앞은 선명해졌다. 류현상은 가방 지퍼를 닫고 다음 일정을 확인했다.'],
  busking:['공연이 끝난 뒤에도 몇몇 관객은 자리를 떠나지 않고 다음 일정과 자작곡 제목을 물었다. 류현상은 무심한 표정으로 하나씩 답했다.','장비를 정리하는 동안 멀리서 방금 부른 후렴을 흥얼거리는 소리가 들렸다. 오늘의 노래가 누군가에게 남았다는 증거였다.'],
- bandBusking:['멤버들은 공연이 끝난 뒤 서로의 손을 가볍게 맞부딪쳤다. 완벽하지 않았지만 함께 수습한 순간들이 밴드를 더 단단하게 만들었다.','관객이 빠져나간 뒤에도 R군은 마지막 박자를 두드렸고 P군은 다음 공연에서 바꿀 간주를 이야기했다. 팀의 밤은 아직 끝나지 않았다.']
+ bandBusking:['멤버들은 공연이 끝난 뒤 서로의 손을 가볍게 맞부딪쳤다. 완벽하지 않았지만 함께 수습한 순간들이 밴드를 더 단단하게 만들었다.','관객이 빠져나간 뒤에도 R군은 마지막 박자를 두드렸고 B군은 벌써 다음 공연의 간주와 새 곡 코드 이야기를 꺼냈다. L군이 ‘형, 저 사람 퇴근이라는 걸 아예 모르죠?’라고 웃었다. 팀의 밤은 아직 끝나지 않았다.']
 };
 function pickActionDialogue(key){const arr=actionDialogue[key]||[];if(!arr.length)return '';const first=pickContextual(arr);const pool=arr.filter(x=>x!==first);const second=pool.length?pickContextual(pool):'';const follow=pickContextual(actionFollowups[key]||[]);return [first,second||follow].filter(Boolean).join('\n\n')}
 function actionStory(key,base){const follow=pickContextual(actionFollowups[key]||[]);return follow?`${base}\n\n${follow}`:base}
@@ -240,9 +240,9 @@ const storyEvents=[
  {id:'fan-letter',place:'home',title:'한 통의 긴 편지',text:'노래 덕분에 힘든 시기를 버텼다는 팬의 편지가 도착했다.',condition:()=>state.stats.fans>=300,choices:[['직접 답장을 쓴다',()=>{stat('fans',8);stat('stress',-10);return '답장을 쓰며 내가 노래하는 이유를 다시 생각했다.'}],['새 노래로 답한다',()=>{gainSkill('compose',3,'event');return '편지를 책상 위에 두고 곡을 쓰기 시작했다.'}]]},
  {id:'band-dinner',place:'store',title:'편의점 회식',text:'돈이 부족한 밴드는 편의점 테이블에 둘러앉아 컵라면으로 첫 회식을 열었다.',condition:()=>state.band.formed,choices:[['내가 계산한다',()=>{stat('money',-25000);state.band.bond=clamp(state.band.bond+14);return '값싼 식사였지만 누구도 먼저 자리를 뜨지 않았다.'}],['각자 계산한다',()=>{state.band.bond=clamp(state.band.bond+4);return '소박하지만 편안한 밤이었다.'}]]},
  {id:'wedding-song',place:'practice',title:'후라보노의 축가 부탁',text:'후라보노가 결혼식 축가로 어떤 노래가 좋을지 조심스럽게 물었다. 평소 계약 이야기만 하던 얼굴이 오늘따라 유난히 어색해 보였다.',condition:()=>state.manager.wedding,choices:[['새 곡을 써준다',()=>{markWeddingStorySeen('song');gainSkill('compose',5,'event');state.manager.bond=clamp(state.manager.bond+15);return '류현상은 며칠 동안 잠을 줄여 축가를 완성했다. 후라보노는 첫 소절을 듣고 웃으려다 눈시울을 붉혔다. “형, 결혼식에서 저 울면 책임지세요.”'}],['대표곡을 부른다',()=>{markWeddingStorySeen('song');state.manager.bond=clamp(state.manager.bond+8);return '후라보노는 고개를 끄덕였다. “형 노래면 뭐든 좋아요. 단, 결혼식에서 애드리브 5분은 안 됩니다.”'}]]},
- {id:'p-string',place:'practice',title:'P군의 기타 줄 장례식',text:'P군이 끊어진 기타 줄을 휴지 위에 가지런히 올려두고 있었다. R군이 왜 버리지 않느냐고 묻자 P군은 “세 번의 공연을 함께한 줄”이라고 진지하게 답했다.',condition:()=>!!state.band.members.guitar,choices:[['조용히 묵념한다',()=>{state.band.bond=clamp(state.band.bond+7);return '밴드 전원이 10초 동안 침묵했다. L군은 마지막에 “새 줄 필요함”이라고 말했다. 감동은 짧고 현실은 정확했다.'}],['당장 버리라고 한다',()=>{state.band.bond=clamp(state.band.bond-4);return 'P군은 말없이 줄을 케이스 안쪽에 넣었다. 그날 기타 솔로는 평소보다 20초 길었다.'}]]},
- {id:'l-one-word',place:'practice',title:'L군의 긴 연설',text:'합주가 끝난 뒤 L군이 “할 말 있음”이라고 말했다. 모두가 긴장해 둘러앉았다. L군은 잠시 생각하더니 입을 열었다.',condition:()=>!!state.band.members.bass,choices:[['끝까지 기다린다',()=>{state.band.bond=clamp(state.band.bond+6);return 'L군은 30초 침묵한 뒤 말했다. “오늘 좋았음.” 다섯 글자에 멤버들은 이상할 정도로 기뻐했다.'}],['먼저 무슨 일이냐고 재촉한다',()=>{state.band.bond=clamp(state.band.bond-2);return 'L군은 “됐음”이라고 답하고 베이스를 챙겼다. 방금 전보다 대화가 더 짧아졌다.'}]]},
- {id:'j-space-remix',place:'practice',title:'J군의 우주 편곡',text:'J군이 새 편곡 파일을 재생했다. 잔잔한 발라드는 신시사이저와 효과음이 가득한 우주 탐사 음악으로 변해 있었다. 파일명은 final_진짜최종_우주버전이었다.',condition:()=>!!state.band.members.piano,choices:[['한 번 공연해 본다',()=>{gainSkill('compose',3,'event');state.band.bond=clamp(state.band.bond+5);return '관객 반응은 반으로 갈렸지만 영상 댓글은 폭발했다. “이별했는데 화성까지 간 노래”라는 댓글이 가장 많은 추천을 받았다.'}],['원래 편곡으로 돌린다',()=>{state.band.bond=clamp(state.band.bond-2);return 'J군은 아쉬워했지만 파일을 닫았다. 다만 final_진짜최종_우주버전2가 새로 생긴 것을 아무도 눈치채지 못했다.'}]]},
+ {id:'p-string',place:'practice',title:'B군의 퇴근 없는 기타 점검',text:'합주가 끝났는데도 B군은 기타를 내려놓지 않고 코드와 톤을 다시 확인하고 있었다. 류현상이 이제 그만 가자고 하자 B군은 “현상아, 이거 한 번만 더 보면 된다. 진짜다.”라고 말했다. 이미 세 번째 ‘한 번만 더’였다.',condition:()=>!!state.band.members.guitar,choices:[['옆에 앉아 같이 확인한다',()=>{state.band.bond=clamp(state.band.bond+7);return 'B군은 투덜거리면서도 류현상 목에 좋다며 따뜻한 물부터 건넸다. 둘은 코드 두 군데를 고치고 나서야 연습실을 나왔다.'}],['강제로 불을 끈다',()=>{state.band.bond=clamp(state.band.bond-2);return 'B군은 “마, 사람 일하는데 불을 끄나”라고 했지만 결국 기타를 챙겼다. 나가는 길에도 휴대전화로 데모를 듣고 있었다.'}]]},
+ {id:'l-one-word',place:'practice',title:'L군의 친동생 폭로전',text:'쉬는 시간에 L군이 류현상의 친동생과 학창 시절 얘기를 꺼냈다. “형, 동생한테 들은 얘기 하나 있는데 말해도 돼요?” 웃는 얼굴이 너무 수상했다.',condition:()=>!!state.band.members.bass,choices:[['들어 본다',()=>{state.band.bond=clamp(state.band.bond+6);return 'L군은 류현상의 흑역사를 하나 풀어놓고는 “그래도 지금이 훨씬 멋있어요. 진짜로요.”라고 부드럽게 수습했다. 멤버들은 한참 웃었다.'}],['입막음한다',()=>{state.band.bond=clamp(state.band.bond+1);return '류현상이 급하게 막자 L군은 “알겠어요. 이건 다음 회식 때 풀게요.”라며 웃었다. 전혀 안심되는 말은 아니었다.'}]]},
+ {id:'j-space-remix',place:'practice',title:'J군과 해산물 회식',text:'합주가 끝난 뒤 회식 메뉴로 해산물 모둠이 거론되자 J군의 얼굴이 굳었다. 평소보다도 더 조용해진 그는 한참 뒤 “형… 그거 움직이는 거 있습니까?”라고 물었다.',condition:()=>!!state.band.members.piano,choices:[['고기집으로 바꾼다',()=>{state.band.bond=clamp(state.band.bond+5);return 'J군은 짧게 “감사합니다.”라고 말했다. 술이 몇 잔 들어가자 그 조용하던 사람이 갑자기 R군의 드럼 솔로를 몸으로 흉내 내기 시작했다. 모두가 처음 보는 광경이었다.'}],['해산물집으로 간다',()=>{state.band.bond=clamp(state.band.bond-3);return 'J군은 테이블 가장 먼 곳에 앉아 접시를 경계했다. “저거… 눈 마주친 것 같은데예.” 아주 약한 부산 억양이 평소보다 진하게 튀어나왔다.'}]]},
  {id:'r-noise',place:'practice',title:'R군과 소음 측정기',text:'연습실 관리자가 소음 측정기를 들고 찾아왔다. R군이 연주할 때마다 기계 숫자가 위험 구간까지 치솟았다. R군은 기계가 예민하다고 주장했다.',condition:()=>!!state.band.members.drums,choices:[['전자드럼을 빌린다',()=>{stat('money',-60000);state.band.bond=clamp(state.band.bond+4);return 'R군은 타격감이 부족하다며 투덜댔지만, 이웃 연습실에서 처음으로 박수가 들렸다. 아마 감사의 박수였을 것이다.'}],['R군에게 살살 치라고 한다',()=>{state.band.bond=clamp(state.band.bond-3);return 'R군은 정말 살살 쳤다. 문제는 곡 전체가 자장가처럼 변했다는 것이었다.'}]]},
  {id:'manager-hair',place:'home',title:'후라보노의 머리 관리 제안',text:'후라보노가 긴 머리를 한참 보더니 작은 빗과 헤어 오일을 내밀었다. “형, 콘셉트는 좋은데 바람 불면 얼굴이 안 보여요. 가수인지 커튼인지 구분이 안 됩니다.”',condition:()=>state.manager.hired,choices:[['관리를 맡긴다',()=>{stat('looks',3);state.manager.bond=clamp(state.manager.bond+5);return '후라보노는 능숙하게 머리를 정리했다. 류현상이 어디서 배웠냐고 묻자 그는 관리 영상 백 개를 봤다고 짧게 답했다.'}],['내버려 두라고 한다',()=>{state.manager.bond=clamp(state.manager.bond-2);return '후라보노는 오일을 책상 위에 두고 갔다. 다음 버스킹에서 바람이 불자 류현상은 조용히 그 오일을 떠올렸다.'}]]},
  {id:'wrong-delivery',place:'home',title:'잘못 배달된 마이크',text:'문 앞에 주문하지 않은 고급 마이크가 놓여 있었다. 송장에는 옆 동 이름과 비슷한 이름이 적혀 있었다. 지금 장비보다 몇 배는 비싸 보였다.',choices:[['바로 돌려준다',()=>{stat('fame',5);stat('stress',-3);return '주인은 근처 녹음실 엔지니어였다. 그는 고마움의 표시로 다음 녹음 때 한 번 도와주겠다고 약속했다.'}],['하루만 테스트한다',()=>{gainSkill('vocal',2,'event');stat('stress',7);return '소리는 놀라울 만큼 좋았다. 그러나 초인종이 울릴 때마다 심장이 더 크게 뛰었다. 결국 밤이 되기 전에 돌려줬다.'}]]},
@@ -252,7 +252,7 @@ const storyEvents=[
  {id:'park-grandma',place:'park',condition:()=>['busking','bandBusking'].includes(state.lastAction)&&state.equipment.mic&&state.equipment.amp,title:'할머니의 평가',text:'노래가 끝나자 산책하던 할머니가 다가왔다. “얼굴은 잘생겼는데 노래가 너무 슬퍼. 젊은 사람이 왜 맨날 헤어져?” 매우 정확한 질문이었다.',choices:[['밝은 노래를 즉석에서 부른다',()=>{gainSkill('compose',2,'event');stat('fans',5);return '류현상은 급하게 밝은 코드를 만들었다. 가사는 여전히 조금 슬펐지만 할머니는 박수를 쳤다.'}],['원래 감성이라고 설명한다',()=>{stat('looks',1);return '할머니는 고개를 저으며 귤 두 개를 건넸다. “그래도 밥은 먹고 다녀.” 오늘의 출연료였다.'}]]},
  {id:'stage-makeup',place:'stage',condition:()=>['audition','concert','broadcast'].includes(state.lastAction)&&state.manager.hired&&state.stats.fame>=150,title:'처음 받는 무대 화장',text:'메이크업 아티스트가 류현상의 얼굴을 가까이 들여다보며 말했다. “피부는 좋은데 표정이 너무 어두워요.” 후라보노가 옆에서 “원래 저 표정입니다”라고 설명했다.',choices:[['웃는 연습을 한다',()=>{stat('looks',2);return '거울 앞에서 여러 번 웃어 봤지만 대부분 수상해 보였다. 마지막에 아주 조금 올라간 입꼬리만 남기기로 했다.'}],['평소 표정대로 간다',()=>{stat('fame',5);return '방송 후 팬들은 무표정이 콘셉트라며 좋아했다. 류현상은 콘셉트가 아니라는 말을 굳이 하지 않았다.'}]]},
  {id:'stage-name',place:'stage',condition:()=>['audition','concert','broadcast'].includes(state.lastAction)&&state.manager.hired&&state.stats.fame>=200,title:'예명 제안',text:'방송 작가가 류현상이라는 이름이 조금 무겁다며 짧은 예명을 제안했다. 후보는 “류”, “현”, 그리고 “블랙롱”이었다. 마지막 후보를 누가 적었는지는 모두 모른 척했다.',choices:[['본명을 지킨다',()=>{stat('fame',8);return '류현상은 이름을 바꾸지 않겠다고 말했다. 후라보노는 고개를 끄덕이며 블랙롱이라고 적힌 종이를 조용히 찢었다.'}],['류로 활동해 본다',()=>{stat('looks',2);stat('fame',4);return '하루 동안 류라고 불렸지만 스태프 절반이 누굴 부르는지 몰랐다. 다음 날 다시 류현상으로 돌아왔다.'}]]},
- {id:'band-group-photo',place:'stage',title:'밴드 단체 사진',text:'공연 후 단체 사진을 찍으려는데 누구도 자연스럽게 포즈를 취하지 못했다. P군은 기타만 보고, L군은 카메라를 피하고, J군은 손가락 하트를 만들었고, R군은 점프하려 했다.',condition:()=>state.lastAction==='concert'&&state.band.formed&&state.milestones.firstConcert,choices:[['각자 하고 싶은 대로 찍는다',()=>{state.band.bond=clamp(state.band.bond+8);stat('fans',10);return '사진은 통일감이 전혀 없었지만 이상하게 밴드의 성격이 그대로 담겼다. 팬들은 역대 최고의 단체 사진이라고 불렀다.'}],['정돈된 포즈를 시킨다',()=>{stat('looks',2);return '깔끔한 사진이 완성됐다. 다만 촬영이 끝나자 R군이 혼자 점프한 사진을 따로 올렸고 그 사진이 더 많이 공유됐다.'}]]},
+ {id:'band-group-photo',place:'stage',title:'밴드 단체 사진',text:'공연 후 단체 사진을 찍으려는데 누구도 같은 포즈를 하지 않았다. B군은 팔짱을 낀 채 ‘마, 빨리 찍자’고 했고, 훤칠한 L군은 장난스럽게 모델 포즈를 잡았다. J군은 거의 미동도 없었고, R군은 점프하려 했다.',condition:()=>state.lastAction==='concert'&&state.band.formed&&state.milestones.firstConcert,choices:[['각자 하고 싶은 대로 찍는다',()=>{state.band.bond=clamp(state.band.bond+8);stat('fans',10);return '사진은 통일감이 전혀 없었지만 이상하게 밴드의 성격이 그대로 담겼다. 팬들은 역대 최고의 단체 사진이라고 불렀다.'}],['정돈된 포즈를 시킨다',()=>{stat('looks',2);return '깔끔한 사진이 완성됐다. 다만 촬영이 끝나자 R군이 혼자 점프한 사진을 따로 올렸고 그 사진이 더 많이 공유됐다.'}]]},
  {id:'manager-first-pay',place:'home',title:'첫 정산표',text:'후라보노가 두꺼운 파일을 책상 위에 내려놓았다. 공연 수익보다 교통비와 장비비가 더 길게 적혀 있었다. “형, 매출과 수익은 다른 말입니다. 오늘부터는 제가 둘을 구분해서 보여드릴게요.”',condition:()=>state.manager.hired&&state.manager.bond<40,choices:[['차근차근 설명을 듣는다',()=>{state.manager.bond=clamp(state.manager.bond+8);stat('stress',-3);return '류현상은 숫자를 피하지 않고 끝까지 들었다. 후라보노는 마지막 장을 덮으며 말했다. “좋아요. 망하지 않는 가수의 첫 수업이었습니다.”'}],['음악만 알면 된다고 한다',()=>{state.manager.bond=clamp(state.manager.bond-5);return '후라보노는 한동안 말이 없었다. 그러다 정산표 첫 장에 굵은 글씨로 적었다. “그래서 지난번에 망함.” 류현상은 반박하지 못했다.'}]]},
  {id:'manager-midnight-call',place:'home',title:'새벽 두 시의 전화',text:'새벽 두 시, 후라보노에게 전화가 왔다. 급한 공연 연락인 줄 알았지만 그는 한참 침묵하다가 말했다. “형, 오늘 무대 좋았어요. 그 말 안 하면 잠이 안 올 것 같아서요.”',condition:()=>state.manager.hired&&state.manager.bond>=35&&state.time===3,choices:[['고맙다고 솔직히 말한다',()=>{state.manager.bond=clamp(state.manager.bond+10);stat('stress',-6);return '전화기 너머가 잠시 조용해졌다. 후라보노는 헛기침한 뒤 “이런 말 자주 하시면 제가 적응 못 합니다”라고 말했다.'}],['내일 말해도 됐다고 한다',()=>{state.manager.bond=clamp(state.manager.bond+2);return '후라보노는 역시 형답다며 전화를 끊었다. 다음 날 일정표 맨 아래에는 작은 글씨로 “칭찬 유효기간: 당일”이라고 적혀 있었다.'}]]},
  {id:'manager-old-office',place:'practice',title:'사라진 기획사 앞에서',text:'연습실로 가던 길, 두 사람은 우연히 류현상이 예전에 운영하던 기획사 건물 앞을 지나게 됐다. 한때 여자 아이돌 연습생들이 드나들던 곳은 이제 전혀 다른 회사의 사무실이 되어 있었다.',condition:()=>state.manager.hired&&state.manager.bond>=55,choices:[['그때 이야기를 들려준다',()=>{state.manager.bond=clamp(state.manager.bond+12);stat('stress',-8);return '류현상은 잠깐 아이돌 활동으로 모은 돈으로 회사를 차렸던 일, 여자 연습생들을 데뷔시키고 싶었던 일, 그리고 폐업 뒤 모두가 흩어졌던 날을 처음으로 꺼냈다. 후라보노는 조언하지 않고 끝까지 들었다. “이번에는 형 혼자 문 닫게 두지 않을게요.”'}],['그냥 지나간다',()=>{state.manager.bond=clamp(state.manager.bond+3);return '후라보노는 아무것도 묻지 않고 보폭을 맞췄다. 건물이 보이지 않을 때쯤 그는 일부러 다음 공연의 우스운 실수담을 꺼냈다.'}]]},
@@ -387,10 +387,14 @@ function normalizeState(){
  state.drawer={photos:Array.from({length:5},(_,photoIndex)=>Array.from({length:9},(_,pieceIndex)=>!!rawPhotos?.[photoIndex]?.[pieceIndex])),photoMissStreak:Math.max(0,Math.floor(Number(drawer.photoMissStreak)||0)),diaries:[...new Set((Array.isArray(drawer.diaries)?drawer.diaries:[]).map(String).filter(id=>/^d\d{2}$/.test(id)))].slice(0,50),diaryFoundDays:drawer.diaryFoundDays&&typeof drawer.diaryFoundDays==='object'?Object.fromEntries(Object.entries(drawer.diaryFoundDays).filter(([id])=>/^d\d{2}$/.test(id)).map(([id,day])=>[id,Math.max(1,Math.floor(Number(day)||state.day))])):{},diaryCheckedDay:Number(drawer.diaryCheckedDay??-99),diaryMissStreak:Math.max(0,Math.floor(Number(drawer.diaryMissStreak)||0)),todayDiaryId:typeof drawer.todayDiaryId==='string'?drawer.todayDiaryId:null,todayMessage:typeof drawer.todayMessage==='string'?drawer.todayMessage:'',newPhotos:!!drawer.newPhotos,newDiary:!!drawer.newDiary,lastTab:drawer.lastTab==='diary'?'diary':'photos'};
  state.rival={met:!!state.rival?.met,stage:Math.max(0,Math.min(5,Number(state.rival?.stage)||0)),respect:Number(state.rival?.respect)||0,lastEventDay:Number(state.rival?.lastEventDay??-99)};
  state.band.members={guitar:state.band.members?.guitar||null,bass:state.band.members?.bass||null,piano:state.band.members?.piano||null,drums:state.band.members?.drums||null};
+ if(state.band.members.guitar&&/P\uAD70/.test(String(state.band.members.guitar)))state.band.members.guitar=String(state.band.members.guitar).replace(/P\uAD70/g,'B군');
+ if(Array.isArray(state.history))state.history=state.history.map(line=>String(line).replace(/P\uAD70/g,'B군'));
  state.band.formed=Object.values(state.band.members).every(Boolean);
+ const bt=state.bandTalk||{},btDay=bt.lastDay||{},btTopic=bt.lastTopic||{};
+ state.bandTalk={lastDay:{guitar:Number(btDay.guitar??-99),bass:Number(btDay.bass??-99),piano:Number(btDay.piano??-99),drums:Number(btDay.drums??-99)},lastTopic:{guitar:Number.isFinite(Number(btTopic.guitar))?Number(btTopic.guitar):-1,bass:Number.isFinite(Number(btTopic.bass))?Number(btTopic.bass):-1,piano:Number.isFinite(Number(btTopic.piano))?Number(btTopic.piano):-1,drums:Number.isFinite(Number(btTopic.drums))?Number(btTopic.drums):-1}};
  if(!state.endingPrompted)state.endingPrompted={};
  if(state.pendingEnding===undefined)state.pendingEnding=null;
- state.outfit=Math.max(0,Math.min(6,Number(state.outfit)||0));
+ state.outfit=Math.max(0,Math.min(OUTFIT_FILES.length-1,Number(state.outfit)||0));
  state.ownedOutfits=[...new Set([0,...((Array.isArray(state.ownedOutfits)?state.ownedOutfits:[]).map(Number).filter(x=>x>=0&&x<OUTFIT_FILES.length))])];
  if(!state.ownedOutfits.includes(state.outfit))state.outfit=0;
  const fm=state.fleaMarket||{};state.fleaMarket={cycleDay:Math.max(0,Math.floor(Number(fm.cycleDay)||0)),soldOut:!!fm.soldOut,offers:Array.isArray(fm.offers)?fm.offers.filter(id=>FLEA_MARKET_ITEMS.some(x=>x.id===id)):[],purchased:Array.isArray(fm.purchased)?fm.purchased.filter(id=>FLEA_MARKET_ITEMS.some(x=>x.id===id)):[]};
@@ -583,7 +587,7 @@ function exitEndingMusic(){
 }
 
 function startBgm(){if(!audioCtx||bgmTimer||!audioSettings.bgm||specialEventBgm||!endingMusicMode)return;scheduleBgmBar();bgmTimer=setInterval(scheduleBgmBar,6000)}
-function playSfx(type='tap'){if(!audioSettings.sfx||!ensureAudio()||!sfxGain)return;const now=audioCtx.currentTime+.01;const note=(n,d=.12,g=.12,w='sine',delay=0)=>softNote(midiHz(n),now+delay,d,g,w,sfxGain);switch(type){case'move':note(60,.12,.09,'triangle');note(67,.18,.08,'triangle',.1);break;case'coin':note(76,.1,.12,'square');note(83,.16,.09,'triangle',.08);break;case'save':note(64,.12,.08,'sine');note(69,.15,.08,'sine',.09);note(76,.22,.07,'sine',.18);break;case'success':note(60,.12,.09,'triangle');note(64,.15,.09,'triangle',.1);note(67,.2,.09,'triangle',.2);note(72,.3,.08,'sine',.3);break;case'fail':note(55,.2,.08,'sawtooth');note(50,.3,.07,'triangle',.15);break;case'busking':note(57,.11,.08,'triangle');note(64,.11,.08,'triangle',.09);note(69,.2,.08,'triangle',.18);break;case'drink':note(72,.08,.07,'sine');note(79,.12,.06,'sine',.08);break;case'event':note(48,.18,.07,'sine');note(60,.24,.08,'triangle',.13);break;case'click':case'tap':default:note(69,.07,.035,'sine');}}
+function playSfx(type='tap'){if(!audioSettings.sfx||!ensureAudio()||!sfxGain)return;const now=audioCtx.currentTime+.01;const note=(n,d=.12,g=.12,w='sine',delay=0)=>softNote(midiHz(n),now+delay,d,g,w,sfxGain);switch(type){case'move':note(60,.12,.09,'triangle');note(67,.18,.08,'triangle',.1);break;case'coin':note(76,.1,.12,'square');note(83,.16,.09,'triangle',.08);break;case'save':note(64,.12,.08,'sine');note(69,.15,.08,'sine',.09);note(76,.22,.07,'sine',.18);break;case'success':note(60,.12,.09,'triangle');note(64,.15,.09,'triangle',.1);note(67,.2,.09,'triangle',.2);note(72,.3,.08,'sine',.3);break;case'fail':note(55,.2,.08,'sawtooth');note(50,.3,.07,'triangle',.15);break;case'busking':note(57,.11,.08,'triangle');note(64,.11,.08,'triangle',.09);note(69,.2,.08,'triangle',.18);break;case'drink':note(72,.08,.07,'sine');note(79,.12,.06,'sine',.08);break;case'event':note(48,.18,.07,'sine');note(60,.24,.08,'triangle',.13);break;case'click':case'tap':default:note(69,.08,.06,'sine');}}
 function toggleBgm(){audioSettings.bgm=!audioSettings.bgm;saveAudioSettings();ensureAudio();syncAudioGains();playSfx('tap');renderAudioSettingsIfOpen()}
 function toggleSfx(){audioSettings.sfx=!audioSettings.sfx;saveAudioSettings();ensureAudio();syncAudioGains();if(audioSettings.sfx)playSfx('success');renderAudioSettingsIfOpen()}
 
@@ -610,7 +614,7 @@ function gameGuideHtml(){return `<div class="game-guide">
       <article><b>체력</b><p>대부분의 행동에 소모됩니다. 체력이 10 이하로 떨어지는 순간 보컬과 작곡이 각각 2 감소하므로 여유 있게 관리하세요. 깊은 휴식은 시간 2칸을 사용하고, 식사는 시간을 소모하지 않습니다.</p></article><article><b>스트레스</b><p>높으면 일부 사건과 행동 결과가 불리해질 수 있습니다. 휴식과 관계 관리가 필요합니다.</p></article>
       <article><b>보컬</b><p>버스킹과 무대 결과에 가장 크게 반영되는 핵심 능력치입니다. 14일 이상 보컬 연습이나 공연 활동을 하지 않으면 이후 7일마다 3씩 감소합니다.</p></article><article><b>작곡</b><p>앨범 완성도와 자작곡 활동에 영향을 줍니다. 14일 이상 작곡·편곡·앨범 활동을 하지 않으면 이후 7일마다 3씩 감소합니다.</p></article>
       <article><b>외모</b><p>버스킹 반응과 일부 방송·이벤트에 보조적으로 반영됩니다.</p></article><article><b>팬</b><p>공연·방송·SNS·앨범으로 늘고 논란이나 잘못된 선택으로 줄 수 있습니다.</p></article>
-      <article><b>인지도</b><p>100점마다 레벨이 1 상승하며 최대 Lv.100입니다. 높은 레벨에서 대형 커리어 이벤트가 열립니다.</p></article><article><b>밴드 결속력</b><p>밴드 활동의 안정성과 일부 사건 결과에 영향을 줍니다.</p></article>
+      <article><b>인지도</b><p>100점마다 레벨이 1 상승하며 최대 Lv.100입니다. 높은 레벨에서 대형 커리어 이벤트가 열립니다.</p></article><article><b>밴드 결속력</b><p>밴드 활동의 안정성과 일부 사건 결과에 영향을 줍니다. 멤버창에서 각 멤버와 하루 한 번 대화하면 결속력이 소폭 증가합니다.</p></article>
     </div></section>
     <section class="guide-page" data-guide-page="career">
       <div class="guide-callout"><b>최근 밸런스 규칙</b><p>보컬은 보컬 훈련을, 작곡은 작곡 훈련 또는 편곡을 7일 연속 하지 않았을 때 각각 1 감소합니다. 장소 이동은 시간과 능력치를 소모하지 않지만 도착 장소의 돌발 스토리는 발생할 수 있습니다. 강제 휴식은 스트레스 50 이상·체력 15 이하에서 판정됩니다. 편의점 알바와 야간 진열 보조는 각각 누적 10·30·80회에 승급해 급여가 증가합니다. 편의점 알바 급여는 수습 45,000원→1단계 55,000원→2단계 70,000원→3단계 90,000원, 야간 진열 보조는 25,000원→32,000원→42,000원→55,000원입니다. 복권은 주 100장 제한이며 1장과 10장 자동 구매 모두 시간 미소모입니다. SNS 게시물은 팬 규모가 커질수록 보상이 조금씩 증가합니다. 깊은 휴식 악몽은 누적 휴식 5회부터, 최근 악몽 이후 휴식 3회가 지난 경우 20% 확률로 발생합니다. 보컬·작곡 훈련 미니게임은 19%, 버스킹 리듬게임은 17.5% 확률로 등장합니다. 집 등급이 오를 때마다 식사비는 2배가 되고, 지하 단칸방보다 높은 집은 기존보다 체력 회복량이 3 높습니다. 자취방 식사는 15% 확률로 요리 타이쿤이 열리며, 토마토 달걀볶음·김치볶음밥·닭 날개 구이·계란죽·순두부찌개의 재료를 주문서 순서대로 조합하면 추가 회복과 스트레스 감소를 얻습니다. 디지몬 카드는 1장 구매 시 체력 1, 10장 구매 시 체력 5가 소모되며, 복권도 1장 체력 1·10장 체력 5가 소모됩니다. 배경 이미지가 있는 특별 이벤트에서는 캐릭터가 숨겨집니다. 산책 시 1% 확률로 박칵스를, 솔로·밴드 버스킹 시 1% 확률로 에너자이저를 획득하며 확인 버튼을 눌러야 획득창이 닫힙니다. 수상한 상인은 행동·이동 판정마다 0.9% 확률로 등장합니다. 산책은 하루 2회로 제한되며, 헤어·스타일 관리는 15일마다 외모가 1 증가합니다. 조건이나 일일 횟수가 부족한 행동 버튼은 비활성화되고 부족한 조건이 버튼에 표시됩니다. 수상한 가게에서 산 에너자이저와 다이어트 알약은 즉시 사용되지 않고 아이템창에 보관됩니다. 에너자이저는 복용 후 7일 동안 체력 소모를 20% 줄이며, 다이어트 알약은 1알 또는 10알 연속 복용할 수 있습니다. 10알 연속 복용 시 각 알약의 외모 감소 부작용 확률이 1%에서 1.5%로 소폭 증가합니다. 공원 플리마켓은 7일마다 열리고 80% 확률로 랜덤 상품 1~2개가 나오며 20% 확률로 전부 판매된 날이 됩니다. 플리마켓에는 상품 미리보기 이미지가 표시되지 않으며, 의상은 구매 후 옷장에 추가됩니다. 선택형 일반 엔딩은 365일차에 처음 확인하며, 계속 성장하면 465·565·665일차처럼 100일마다 다시 선택할 수 있습니다.</p></div><div class="guide-callout"><b>서랍 수집 콘텐츠</b><p>자취방의 서랍에서는 사진 5장×9조각과 류현상의 일기 50편을 수집합니다. 사진 조각은 편의점 알바·야간 진열·산책·보컬·작곡·편곡 중 5% 확률로 발견하며 12회 연속 실패부터 10%, 18회 연속 실패 후 다음 대상 행동에서 확정됩니다. 일기는 하루 첫 서랍 확인 때 20% 확률로 발견하고 5회 연속 미발견 후 다음 확인에서 확정됩니다. 서랍 확인은 시간과 능력치를 소모하지 않습니다.</p></div><div class="guide-table"><div><b>훈련</b><span>보컬·작곡 성장의 기본입니다.</span></div><div><b>버스킹</b><span>초반 팬과 현금을 동시에 얻는 활동입니다.</span></div><div><b>오디션</b><span>첫 합격 보상이 크며 충분한 능력치가 필요합니다.</span></div><div><b>앨범 제작</b><span>연습실에서 진행합니다. 싱글·미니·정규 순으로 비용과 보상이 커집니다.</span></div><div><b>공연</b><span>팬, 인지도, 수익을 함께 얻습니다.</span></div><div><b>방송 출연</b><span>인지도 성장에 효과적이며 재도전 간격이 있습니다.</span></div><div><b>366일 방송 미니게임</b><span>공연장의 노래 서바이벌과 O/X 퀴즈쇼는 각각 7일 간격으로 참가합니다.</span></div><div><b>특별 이벤트</b><span>특정 날짜·레벨·조건에서 열리고 엔딩에도 영향을 줍니다.</span></div></div>
@@ -1221,7 +1225,7 @@ function maybeTwentyDayEpisode(){
 const arroganceScenes=[
  {title:'시청률은 내가 올리는 거지',text:'생방송 대기실. 제작진이 오늘 시청률이 걱정된다고 말하자 류현상이 안경을 고쳐 쓰며 말했다. “내가 나가면 알아서 오르겠지. 요즘 내 이름 검색량 봤어?”\n\n방 안이 잠시 조용해졌다. 후라보노가 큐시트를 접으며 끼어들었다. “형, 시청률은 방송국이 올리고 형은 음정이나 올리세요. 리허설에서 두 번째 후렴 반음 낮았습니다.”',choices:[['농담이었다고 수습한다',()=>{state.manager.bond=clamp(state.manager.bond+5);state.arrogance.lesson++;stat('stress',-2);return '류현상은 헛기침을 했다. “알아. 분위기 풀려고 한 말이야.” 후라보노는 무표정으로 대답했다. “분위기가 더 얼었습니다. 그래도 수습하려는 노력은 인정할게요.”'}],['틀린 말은 아니라고 버틴다',()=>{state.manager.bond=clamp(state.manager.bond-7);state.arrogance.lesson--;stat('stress',5);return '류현상은 팔짱을 끼고 끝까지 고개를 들었다. 후라보노는 큐시트에 크게 적었다. “오늘의 금지어: 내가 나가면.” 방송 직전까지 둘 사이에는 싸늘한 침묵이 흘렀다.'}]]},
  {title:'팬들이 나 보러 온 거잖아',text:'공연장 입구에 긴 줄이 생기자 류현상이 창밖을 보며 중얼거렸다. “저 사람들 전부 나 보러 온 거잖아. 이 정도면 입장할 때 내 사진에 절이라도 해야 하는 거 아니야?”\n\n후라보노가 물병을 건넸다. “형, 절은커녕 입장 지연 때문에 화나서 매표소를 찾는 중이에요. 그리고 팬은 형을 높이려고 오는 사람이 아니라 음악을 같이 들으려고 오는 사람입니다.”',choices:[['팬들에게 직접 사과한다',()=>{state.manager.bond=clamp(state.manager.bond+6);state.arrogance.lesson++;stat('fans',120);stat('fame',6);return '류현상은 예정 시간보다 늦어진 이유를 직접 설명하고 기다려 준 팬들에게 고개를 숙였다. 팬들은 그의 어색하지만 진심 어린 사과에 더 큰 박수를 보냈다.'}],['스타는 기다리게 하는 법이라고 말한다',()=>{state.manager.bond=clamp(state.manager.bond-9);state.arrogance.lesson--;stat('fans',-180);stat('fame',-5);return '후라보노는 즉시 마이크를 빼앗았다. “그 말 한 번 더 하면 오늘 공연 제목을 ‘초심 찾기’로 바꿀 겁니다.” 온라인에는 지각보다 류현상의 태도를 지적하는 글이 더 많이 올라왔다.'}]]},
- {title:'멤버들이 나를 따라와야지',text:'합주가 끝난 뒤 류현상은 녹음 파일을 들으며 말했다. “이제 내 인지도가 이 정도인데 멤버들이 내 수준을 따라오려면 좀 더 연습해야겠어.”\n\nP군이 기타 줄을 닦던 손을 멈췄고, L군은 말없이 류현상을 바라봤다. 후라보노가 재생 버튼을 다시 눌렀다. “형, 방금 두 번째 마디 박자 놓친 사람이 누구인지 같이 들어볼까요?”',choices:[['내 실수부터 인정한다',()=>{state.manager.bond=clamp(state.manager.bond+5);state.band.bond=clamp(state.band.bond+8);state.arrogance.lesson++;gainSkill('vocal',1,'event');return '류현상은 문제의 마디를 세 번 다시 들은 뒤 짧게 사과했다. “내가 틀렸네. 다시 맞춰 보자.” 멤버들의 굳었던 표정이 풀렸고, 합주는 한 시간 더 이어졌다.'}],['가수의 감각은 다르다고 우긴다',()=>{state.manager.bond=clamp(state.manager.bond-6);state.band.bond=clamp(state.band.bond-12);state.arrogance.lesson--;stat('stress',7);return 'L군이 아주 짧게 말했다. “박자는 감각 아님.” 후라보노는 고개를 끄덕였다. 그날 합주는 평소보다 일찍 끝났고, 단체 채팅방은 밤까지 조용했다.'}]]},
+ {title:'멤버들이 나를 따라와야지',text:'합주가 끝난 뒤 류현상은 녹음 파일을 들으며 말했다. “이제 내 인지도가 이 정도인데 멤버들이 내 수준을 따라오려면 좀 더 연습해야겠어.”\n\nB군이 기타 줄을 닦던 손을 멈추고 ‘현상아, 그 말은 좀 아니다’라고 단호하게 말했다. L군도 웃음기를 거두고 류현상을 바라봤다. 후라보노가 재생 버튼을 다시 눌렀다. “형, 방금 두 번째 마디 박자 놓친 사람이 누구인지 같이 들어볼까요?”',choices:[['내 실수부터 인정한다',()=>{state.manager.bond=clamp(state.manager.bond+5);state.band.bond=clamp(state.band.bond+8);state.arrogance.lesson++;gainSkill('vocal',1,'event');return '류현상은 문제의 마디를 세 번 다시 들은 뒤 짧게 사과했다. “내가 틀렸네. 다시 맞춰 보자.” 멤버들의 굳었던 표정이 풀렸고, 합주는 한 시간 더 이어졌다.'}],['가수의 감각은 다르다고 우긴다',()=>{state.manager.bond=clamp(state.manager.bond-6);state.band.bond=clamp(state.band.bond-12);state.arrogance.lesson--;stat('stress',7);return 'L군이 조심스럽게 웃으며 말했다. “형, 그건 가수의 감각보다 그냥 박자 문제 같은데요?” 후라보노는 고개를 끄덕였다. 그날 합주는 평소보다 일찍 끝났고, 단체 채팅방은 밤까지 조용했다.'}]]},
  {title:'편의점도 이제 날 알아봐야지',text:'오랜만에 편의점에 들른 류현상은 계산대 직원이 자신을 알아보지 못하자 작게 투덜거렸다. “인지도 레벨이 몇인데 아직도 멤버십 있으세요부터 묻네.”\n\n뒤에서 듣던 후라보노가 바로 말했다. “형, 인지도 레벨은 주민등록증이 아닙니다. 그리고 멤버십은 있으시잖아요. 포인트 4,820점.”',choices:[['조용히 멤버십 바코드를 낸다',()=>{state.manager.bond=clamp(state.manager.bond+4);state.arrogance.lesson++;stat('stress',-3);return '류현상은 말없이 휴대전화를 내밀었다. 직원이 뒤늦게 그를 알아보고 놀라자 오히려 먼저 말했다. “편하게 계산해 주세요. 저도 그냥 손님입니다.” 후라보노는 작게 엄지를 들었다.'}],['사인을 먼저 해주겠다고 한다',()=>{state.manager.bond=clamp(state.manager.bond-5);state.arrogance.lesson--;stat('looks',-1);return '직원은 당황해서 영수증만 내밀었다. 후라보노가 류현상의 팔을 끌고 나오며 말했다. “요청받지 않은 사인은 낙서예요, 형.” 류현상은 집에 돌아갈 때까지 아무 말도 하지 않았다.'}]]},
  {title:'대기실은 더 큰 곳으로',text:'공연장 대기실이 좁고 소파가 낡아 있자 류현상이 미간을 찌푸렸다. “이제 내 급이면 최소한 단독 대기실에 소파도 가죽이어야 하는 거 아닌가?”\n\n후라보노는 방 안을 둘러본 뒤 침착하게 말했다. “형이 26살에 기획사 차렸을 때 첫 소속 가수에게 해 주고 싶었던 말이 그거였어요? 아니면 좋은 무대만 만들어 주면 된다고 했어요?” 류현상은 바로 대답하지 못했다.',choices:[['초심을 떠올리고 스태프를 돕는다',()=>{state.manager.bond=clamp(state.manager.bond+8);state.arrogance.lesson+=2;stat('fame',10);stat('stress',-5);return '류현상은 말없이 소매를 걷고 케이블 정리를 도왔다. 공연이 끝난 뒤 현장 스태프가 “요즘 보기 드문 가수”라며 고마워했고, 후라보노는 그제야 웃었다.'}],['성공했으니 대우도 달라야 한다고 한다',()=>{state.manager.bond=clamp(state.manager.bond-10);state.arrogance.lesson-=2;stat('fame',-12);stat('stress',8);return '후라보노는 요구 사항을 전달하는 대신 류현상을 복도로 불러냈다. “정당한 대우와 사람 무시하는 태도는 다릅니다.” 현장 분위기는 끝까지 불편했고, 공연 후 관계자 평가에도 태도 문제가 남았다.'}]]}
 ];
@@ -1242,7 +1246,7 @@ function pickContextual(pool){
  const safePool=source.filter(line=>{
   if(!state.manager.hired&&/후라보노/.test(line))return false;
   const members=state.band?.members||{};
-  if(!members.guitar&&/P군/.test(line))return false;
+  if(!members.guitar&&/B군/.test(line))return false;
   if(!members.bass&&/L군/.test(line))return false;
   if(!members.piano&&/J군/.test(line))return false;
   if(!members.drums&&/R군/.test(line))return false;
@@ -2360,7 +2364,7 @@ function busking(band){
 }
 function safe(n){return Math.max(1,n)}
 function recruit(){
- const names={guitar:'기타 P군',bass:'베이스 L군',piano:'피아노 J군',drums:'드럼 R군'};
+ const names={guitar:'기타 B군',bass:'베이스 L군',piano:'피아노 J군',drums:'드럼 R군'};
  const requirements={
   guitar:{cost:120000,label:'인지도 Lv.5 · 보컬 28',ok:()=>fameLevel()>=5&&state.stats.vocal>=28},
   bass:{cost:180000,label:'인지도 Lv.10 · 버스킹 3회',ok:()=>fameLevel()>=10&&state.career.totalBusking>=3},
@@ -2518,7 +2522,7 @@ function openWardrobe(){
  if(debtBlocked('의상 구매와 스타일 관리'))return;
  const outfits=[['검은 셔츠',0,0],['흰 셔츠',180000,2],['체크 셔츠',240000,3],['가죽 재킷',480000,5],['후드티',320000,4],['무대 의상',1200000,8],['???',0,0],['군복',0,0],['수건',0,0],['운동복',0,0],['화려한 옷',0,0],['제복',0,0]];
  const styleRemain=styleCareCooldownRemaining();const styleHpNeed=effectiveHpCost(4);const styleReason=state.stats.looks>=100?'외모 최대':styleRemain>0?`${styleRemain}일 후 관리 가능`:state.stats.money<500000?'관리 비용 부족':state.stats.hp<styleHpNeed?`체력 부족 · ${styleHpNeed} 필요`:'';
- showModal('옷장',`<div class="card-list">${outfits.map(([x,price],i)=>{const owned=state.ownedOutfits.includes(i);if((i===6||i>=7)&&!owned)return '';const special=i===6;const flea=i>=7;return `<div class="info-card ${special?'mystery-outfit-card':''} wardrobe-outfit-card">${owned?`<img src="${outfitImage(i)}" alt="${x}">`:''}<div><header><b>${x}</b><span>${special?'수상한 상인의 의상':flea?'플리마켓 의상':i===0?'기본 의상':price.toLocaleString()+'원'}</span></header>${special?'<p>착용하는 순간 외모가 최대치 100이 됩니다.</p>':''}<button data-outfit="${i}" ${state.outfit===i?'disabled':''}>${state.outfit===i?'착용 중':owned?'갈아입기':'구매하기'}</button></div></div>`}).join('')}<div class="info-card"><header><b>헤어·스타일 관리</b><span>500,000원</span></header><p>15일마다 한 번 이용할 수 있습니다. 체력 4를 사용하고 외모 +1. 관리 후 30일이 지나면 외모가 1씩 감소합니다.</p><button id="styleCare" ${styleReason?'disabled':''}>${styleReason||'관리받기'}</button></div></div>`);
+ showModal('옷장',`<div class="card-list">${outfits.map(([x,price],i)=>{const owned=state.ownedOutfits.includes(i);if((i===6||i>=7)&&!owned)return '';const special=i===6;const flea=i>=7;return `<div class="info-card ${special?'mystery-outfit-card':''} wardrobe-outfit-card ${owned?'has-preview':'no-preview'}">${owned?`<img src="${outfitImage(i)}" alt="${x}">`:''}<div class="wardrobe-copy"><header><b>${x}</b><span>${special?'수상한 상인의 의상':flea?'플리마켓 의상':i===0?'기본 의상':price.toLocaleString()+'원'}</span></header>${special?'<p>착용하는 순간 외모가 최대치 100이 됩니다.</p>':''}<button data-outfit="${i}" ${state.outfit===i?'disabled':''}>${state.outfit===i?'착용 중':owned?'갈아입기':'구매하기'}</button></div></div>`}).join('')}<div class="info-card"><header><b>헤어·스타일 관리</b><span>500,000원</span></header><p>15일마다 한 번 이용할 수 있습니다. 체력 4를 사용하고 외모 +1. 관리 후 30일이 지나면 외모가 1씩 감소합니다.</p><button id="styleCare" ${styleReason?'disabled':''}>${styleReason||'관리받기'}</button></div></div>`);
  $$('[data-outfit]').forEach(b=>b.onclick=()=>{const before=snapshotStats();const i=+b.dataset.outfit,[name,price,bonus]=outfits[i];if(!state.ownedOutfits.includes(i)){if(i>=7)return toast('이 의상은 공원 플리마켓에서 구입해야 합니다.');if(state.stats.money<price)return toast('옷을 구매할 돈이 부족합니다.');stat('money',-price);state.ownedOutfits.push(i);if(bonus)stat('looks',bonus)}state.outfit=i;if(i===6){state.stats.looks=100;addHistory('✨ 의상 「???」 착용 · 외모가 최대치 100이 되었다.','outfit:mystery-equipped')}const changes=describeStatChanges(before);showDialogue('류현상',dialogueWithStatChanges(`${name}으로 갈아입었다. 거울을 보며 “옷이 사람을 만든다는데, 성격까지 부드러워지진 않겠지.”라고 중얼거렸다.`,changes));save(false);closeModal();render()});
  const care=$('#styleCare');if(care)care.onclick=()=>{const remain=styleCareCooldownRemaining();if(remain>0)return toast(`헤어 스타일 관리는 ${remain}일 후 다시 이용할 수 있습니다.`);if(state.stats.money<500000)return toast('스타일 관리 비용 500,000원이 부족합니다.');if(!costHp(4))return;state.dailyUse.styleCareDay=state.day;state.dailyUse.styleCareLastDay=state.day;state.dailyUse.styleDecayCount=0;stat('money',-500000);stat('looks',1);if(state.stats.looks>=100)addHistory('✨ 외모 100 달성 · 무대 스타일이 완성됐다.','milestone:looks100');closeModal();showDialogue('류현상','50만원을 들여 머리와 의상을 전문적으로 정돈해 외모가 1 올랐다. 다음 헤어 스타일 관리는 15일 뒤에 받을 수 있다.');advance(1)}
 }
@@ -2632,7 +2636,7 @@ const endingStories={
   ['카드샵 사장 류현상','손님들은 노래보다 카드 이야기를 하러 그를 찾았다. 류현상은 가끔 매장 대회 우승자에게 자작곡을 들려주는 이상한 상품을 걸었다. 음악가의 꿈은 달라졌지만, 좋아하는 것을 사람들과 나누는 삶은 계속됐다.']
  ],
  '밴드가수 엔딩':[
-  ['네 사람의 카운트','P군의 기타, L군의 베이스, J군의 건반, R군의 드럼이 류현상의 목소리와 맞물렸다. 열두 번이 넘는 밴드 버스킹과 반복된 합주는 서로의 실수를 말없이 메울 정도의 호흡을 만들었다.'],
+  ['네 사람의 카운트','B군의 단단한 기타, L군의 여유로운 베이스, 말없이 정확한 J군의 건반, R군의 드럼이 류현상의 목소리와 맞물렸다. 열두 번이 넘는 밴드 버스킹과 반복된 합주는 서로의 실수를 말없이 메울 정도의 호흡을 만들었다.'],
   ['팀의 이름','단독 공연에서 관객은 류현상뿐 아니라 멤버들의 이름도 함께 불렀다. 의견 충돌과 이탈 위기를 넘긴 결속력은 음악의 일부가 되었고, 누구도 이 무대를 한 사람의 성공이라고 말하지 않았다.'],
   ['밴드가수 류현상','밴드는 전국 공연과 앨범 활동을 이어 갔다. 류현상은 중심 보컬이었지만 모든 곡의 마지막 인사는 늘 같은 말이었다. “우리 밴드였습니다.” 그는 혼자보다 더 큰 소리를 만드는 밴드가수가 되었다.']
  ]
@@ -2864,7 +2868,7 @@ function showBlockingNotice(title,html,onConfirm){
 }
 function closeModal(force=false){const modal=$('#modal');if(instagramLiveActive&&!force)return;if(blockingNoticeActive&&!force)return;if(memoryGameActive&&!force){if(typeof activeTrainingAbort==='function'){activeTrainingAbort();return}endMiniGameUi()}if(force&&instagramLiveActive){instagramLiveActive=false;modal.classList.remove('instagram-live-dialog');const closeButton=$('#closeModal');if(closeButton)closeButton.hidden=false}if(force&&blockingNoticeActive){blockingNoticeActive=false;const closeButton=$('#closeModal');if(closeButton)closeButton.hidden=false}if(!memoryGameActive)document.documentElement.classList.remove('minigame-active');modal.classList.remove('drawer-dialog');modal.classList.remove('ending-focus-modal');if(modal.open)modal.close();syncToastLayer();if(endingMusicMode||customEndingBgm)exitEndingMusic();if(deferredPostAdvance&&!cardRevealPending)finishDeferredPostAdvance()}
 function getLocationDialoguePool(loc){
- const contextual=pool=>(pool||[]).filter(line=>{if(!state.manager.hired&&/후라보노/.test(line))return false;const m=state.band.members;if(!m.guitar&&/P군/.test(line))return false;if(!m.bass&&/L군/.test(line))return false;if(!m.piano&&/J군/.test(line))return false;if(!m.drums&&/R군/.test(line))return false;return true});
+ const contextual=pool=>(pool||[]).filter(line=>{if(!state.manager.hired&&/후라보노/.test(line))return false;const m=state.band.members;if(!m.guitar&&/B군/.test(line))return false;if(!m.bass&&/L군/.test(line))return false;if(!m.piano&&/J군/.test(line))return false;if(!m.drums&&/R군/.test(line))return false;return true});
  if(loc!=='practice')return contextual(dialogues[loc]);
  const members=Object.values(state.band.members).filter(Boolean);
  if(!members.length)return ['멤버가 없으니 오늘은 혼자 메트로놈과 싸워야 한다. 기계는 말대꾸를 안 해서 그나마 낫다.','빈 연습실은 조용했다. 류현상은 의자를 하나만 꺼내 놓고 혼자 보컬 루틴을 시작했다.','합주 이야기를 하기엔 아직 멤버가 없다. 오늘은 혼자서 곡의 빈칸을 채워 보기로 했다.'];
@@ -3311,7 +3315,75 @@ function openItemMenu(){
  const dietTen=$('#useDietPillTen');if(dietTen)dietTen.onclick=()=>useDietPill(10);const strongDiet=$('#useStrongDietPill');if(strongDiet)strongDiet.onclick=useStrongDietPill
 }
 function openPhone(type){if(state.specialScene?.active)return toast('진행 중인 특별 이벤트를 먼저 마쳐 주세요.');if(type==='manager')managerEvent();if(type==='band')showBand();if(type==='fan')openFanCommunity();if(type==='sns')openSNS();if(type==='items')openItemMenu()}
-function showBand(){showModal('밴드 멤버',Object.entries(state.band.members).map(([k,v])=>`<div class="info-card"><b>${k.toUpperCase()}</b><p>${v||'공석'}</p></div>`).join('')+`<p>결속력: ${state.band.bond}</p>`,'band')}
+const BAND_MEMBER_META={
+ guitar:{short:'B군',role:'기타',icon:'🎸',desc:'류현상보다 한 살 위 · 부산 사투리 · 강직하고 세심한 워커홀릭 작곡가 · 술을 좋아함'},
+ bass:{short:'L군',role:'베이스',icon:'🎵',desc:'류현상 친동생의 절친 · 유머러스하고 부드러운 성격 · 평범한 말투 · 훤칠한 외모'},
+ piano:{short:'J군',role:'피아노',icon:'🎹',desc:'말수가 극도로 적음 · 아주 약한 부산 억양 · 해산물을 무서워함 · 술이 들어가면 완전히 달라짐'},
+ drums:{short:'R군',role:'드럼',icon:'🥁',desc:'에너지 넘치고 큰 소리와 리듬을 사랑하는 드러머'}
+};
+const BAND_MEMBER_TALKS={
+ guitar:[
+  {title:'후렴 기타 톤',lines:[['류현상','형, 오늘 후렴 기타 톤 좀 바뀌었지?'],['B군','맞나. 니 목소리 안 묻히게 중역 조금 깎아놨다.'],['류현상','내가 말도 안 했는데?'],['B군','같이 하는데 그 정도는 봐야지. 니는 노래나 똑바로 해라.']]},
+  {title:'퇴근이 없는 사람',lines:[['류현상','형, 지금 새벽 두 시야. 아직도 작업해?'],['B군','이거 코드 한 군데만 잡고 잔다.'],['류현상','어제도 그 말 했잖아.'],['B군','어제는 어제고 오늘은 오늘이지. 마, 거의 다 됐다.'],['류현상','워커홀릭이라는 말이 괜히 붙은 게 아니네.']]},
+  {title:'B군의 자작곡',lines:[['B군','현상아, 내가 멜로디 하나 적어놨는데 들어볼래?'],['류현상','형도 작곡 계속 하고 있었어?'],['B군','기타만 치면 손이 심심하다 아이가. 가사는 니가 좀 봐라.'],['류현상','이거 생각보다 되게 섬세한데?'],['B군','생각보다가 뭐고. 원래 섬세하다.']]},
+  {title:'술 한잔',lines:[['B군','오늘 합주 끝나고 한잔할래?'],['류현상','형 내일 오전부터 작업 있다며.'],['B군','한잔이 두잔 되고 두잔이 세잔 되는 거지 뭐.'],['류현상','그게 문제잖아.'],['B군','그래도 술 마시고 작업은 안 한다. 그 선은 지킨다.']]},
+  {title:'한 살 형',lines:[['류현상','형은 딱 한 살 위면서 가끔 열 살 위처럼 말해.'],['B군','한 살도 형은 형이다, 현상아.'],['류현상','그래서 잔소리하는 거야?'],['B군','잔소리 아이다. 니 목 아낄라고 하는 말이지. 따뜻한 물 좀 마셔라.']]},
+  {title:'공연 전 체크리스트',lines:[['류현상','형 체크리스트 또 만들었어?'],['B군','기타, 케이블, 예비 줄, 니 목캔디, R군 스틱까지 적어놨다.'],['류현상','왜 내 것까지 챙겨?'],['B군','누가 빠뜨리면 결국 다 같이 고생한다 아이가. 미리 챙기는 게 편하다.']]},
+  {title:'직설적인 피드백',lines:[['류현상','오늘 내 보컬 어땠어? 솔직하게.'],['B군','1절 좋고, 두 번째 후렴은 힘 너무 줬다. 그건 아니다.'],['류현상','진짜 바로 말하네.'],['B군','좋은 건 좋다 하고 아닌 건 아니라 해야 빨리 고치지. 대신 마지막 고음은 좋았다.']]},
+  {title:'진짜 쉬는 날',lines:[['류현상','형 쉬는 날에는 진짜 쉬어?'],['B군','곡 쓰고 기타 정리하고 공연 영상 본다.'],['류현상','그게 일이잖아.'],['B군','돈 안 받으면 취미다.'],['류현상','그 논리는 처음 듣네.']]}
+ ],
+ bass:[
+  {title:'친동생의 절친',lines:[['류현상','너 볼 때마다 내 동생 친구라는 게 좀 신기하다.'],['L군','저도요. 친구 형이랑 같은 밴드를 하게 될 줄 누가 알았겠어요.'],['류현상','내 얘기 많이 들었지?'],['L군','좋은 얘기만 들었습니다. 안 좋은 건 회식 때 풀게요.'],['류현상','그게 제일 불안한데.']]},
+  {title:'훤칠한 베이시스트',lines:[['L군','형, 오늘 팬 한 분이 저한테 모델이냐고 물어봤어요.'],['류현상','뭐라고 했어?'],['L군','베이스 모델은 맞다고 했죠.'],['류현상','그 얼굴로 그런 아재개그 하지 마.'],['L군','얼굴이 아까우니까 말이라도 편하게 해야죠.']]},
+  {title:'좋은 베이스',lines:[['류현상','좋은 베이스 연주는 뭐라고 생각해?'],['L군','없으면 허전하고, 있어도 너무 튀진 않는 거요.'],['류현상','좀 억울하지 않아?'],['L군','전 괜찮아요. 필요한 순간에 딱 들리면 그게 제일 멋있잖아요.']]},
+  {title:'단체 채팅방',lines:[['류현상','단체방에서 네 답장이 제일 빠르더라.'],['L군','읽고 웃긴 게 생각나면 바로 보내는 편이라서요.'],['류현상','음악 얘기보다 짤이 더 많던데.'],['L군','분위기도 관리해야죠. 밴드의 복지는 제가 담당합니다.']]},
+  {title:'오늘 합주 평가',lines:[['류현상','오늘 합주 어땠어?'],['L군','좋았어요. R군이 조금 빨랐고 B군 형 솔로가 조금 길었고, 형은 후렴 한 음이 살짝 낮았고요.'],['류현상','웃으면서 다 말하네.'],['L군','부드럽게 말하면 덜 아프잖아요.']]},
+  {title:'밥 메뉴',lines:[['류현상','뭐 먹을래? 오늘은 내가 살게.'],['L군','형이 사면 아무거나 좋죠.'],['류현상','그게 제일 고르기 어렵다니까.'],['L군','그러면 제가 고를게요. 국밥. 실패 확률 0퍼센트입니다.']]},
+  {title:'무대에서의 역할',lines:[['L군','형, 무대에서 제가 뒤에 있어도 잘 보이긴 하나 봐요.'],['류현상','키가 크니까 숨을 수가 없지.'],['L군','그럼 앞으로 베이스도 얼굴로 치겠습니다.'],['류현상','손으로 쳐. 제발.']]},
+  {title:'밴드의 분위기',lines:[['류현상','우리 멤버들 성격 진짜 다 다르지.'],['L군','그래서 재밌죠. B군 형은 일하고, J군은 말 안 하고, R군은 시끄럽고.'],['류현상','너는?'],['L군','저는 그 사이에서 웃고 있습니다. 형도 좀 웃으세요.']]}
+ ],
+ piano:[
+  {title:'말이 없는 이유',lines:[['류현상','J야, 넌 하루 종일 말 안 해도 안 답답해?'],['J군','안 답답합니다.'],['류현상','끝이야?'],['J군','예.'],['류현상','정말 끝이네.']]},
+  {title:'해산물 공포',lines:[['류현상','회식 메뉴로 회 어때?'],['J군','안 됩니다.'],['류현상','알레르기 있어?'],['J군','아뇨. 무섭습니다. 특히 눈 있는 거.'],['류현상','먹는 게 아니라 보는 것도 싫어?'],['J군','예. 많이요.']]},
+  {title:'새우의 시선',lines:[['J군','형.'],['류현상','왜?'],['J군','저기 새우 과자 봉지 그림… 치워주면 안 됩니까.'],['류현상','그림도 무서워?'],['J군','좀 그렇네예.'],['류현상','부산 말투 나올 정도로 무섭구나.']]},
+  {title:'술 마신 다음 날',lines:[['류현상','어제 네가 탁자 위에서 R군 드럼 솔로 따라 한 거 기억나?'],['J군','…제가요?'],['류현상','그리고 B군한테 사랑한다고 세 번 했어.'],['J군','그만 말씀하이소.'],['류현상','평소 말 좀 해. 술 먹고 몰아서 하지 말고.']]},
+  {title:'한 잔 들어가면',lines:[['류현상','너 술 마시면 왜 그렇게 사람이 바뀌냐?'],['J군','저도 모릅니다.'],['류현상','평소 열 마디 할 걸 한 시간에 다 하더라.'],['J군','다음엔 안 마시겠습니다.'],['류현상','지난번에도 그랬어.'],['J군','…예.']]},
+  {title:'건반 소리',lines:[['류현상','오늘 피아노 소리 좋더라. 뭘 바꿨어?'],['J군','벨로시티 조금요.'],['류현상','설명 끝?'],['J군','패드도 아주 조금.'],['류현상','오늘 많이 말했네.'],['J군','그러네요.']]},
+  {title:'공연 전 긴장',lines:[['류현상','긴장돼?'],['J군','조금요.'],['류현상','표정은 똑같은데.'],['J군','속은 아닙니다.'],['류현상','끝나고 뭐 먹을까?'],['J군','고기면 됩니다. 해산물만 아니면.']]},
+  {title:'멤버들에 대한 평가',lines:[['류현상','멤버들 한마디씩 평가해봐.'],['J군','B군 형은 일 너무 많이 합니다.'],['류현상','L군은?'],['J군','잘생겼고… 편합니다.'],['류현상','R군은?'],['J군','시끄럽습니다.'],['류현상','나는?'],['J군','…노래 잘합니다.'],['류현상','마지막에 제일 오래 고민했네.']]}
+ ],
+ drums:[
+  {title:'소음 측정기',lines:[['류현상','오늘은 좀 살살 쳐주면 안 될까?'],['R군','저 진짜 살살 치고 있는데요?'],['류현상','벽이 같이 떨리고 있어.'],['R군','벽도 리듬을 타는 거죠.']]},
+  {title:'스틱 이야기',lines:[['류현상','스틱은 왜 이렇게 많이 들고 다녀?'],['R군','두 개는 연주용, 두 개는 예비, 두 개는 예비의 예비입니다.'],['류현상','나머지 여섯 개는?'],['R군','기분 전환용이요.']]},
+  {title:'공연의 순간',lines:[['류현상','공연에서 제일 좋아하는 순간이 언제야?'],['R군','첫 카운트요. 제가 네 번 세면 다 같이 시작하잖아요.'],['류현상','의외로 멋있는 답인데.'],['R군','그리고 앙코르에서 템포 올릴 때요.'],['류현상','역시 뒤가 있었네.']]},
+  {title:'체력 비결',lines:[['류현상','그렇게 두드리고도 왜 안 지쳐?'],['R군','공연 전에 밥 두 공기 먹습니다.'],['류현상','그게 비결이야?'],['R군','세 공기 먹으면 너무 졸려서 두 공기가 최적입니다.']]},
+  {title:'메트로놈',lines:[['R군','메트로놈이 저를 자꾸 쫓아와요.'],['류현상','네가 빨라지는 거야.'],['R군','아뇨, 분명 기계가 느려지는 겁니다.'],['류현상','오늘도 메트로놈 편을 들어야겠네.']]},
+  {title:'조용한 취미',lines:[['류현상','드럼 말고 조용한 취미는 없어?'],['R군','퍼즐 맞추기요.'],['류현상','진짜 의외다.'],['R군','근데 안 맞으면 책상을 두드립니다.'],['류현상','결국 조용하지 않네.']]},
+  {title:'관객 반응',lines:[['R군','관객들이 손뼉 치는 박자 들으면 기분 좋지 않아요?'],['류현상','응. 무대 위에서만 들리는 느낌이 있지.'],['R군','그래서 가끔 제가 일부러 박자를 비워요. 관객 소리 들으려고.'],['류현상','그런 건 미리 말해 줘. 나 혼자 당황하잖아.']]},
+  {title:'밴드의 미래',lines:[['류현상','우리 오래 할 수 있을까?'],['R군','형이 그만두자고 해도 저는 드럼 들고 따라갈 건데요.'],['류현상','드럼 세트를 들고?'],['R군','그래서 밴에 싣고 따라가겠습니다.'],['류현상','그건 좀 든든하네.']]}
+ ]
+};
+function bandTalkUsedToday(key){return Number(state.bandTalk?.lastDay?.[key])===state.day}
+function talkToBandMember(key){
+ const member=state.band.members?.[key],meta=BAND_MEMBER_META[key],pool=BAND_MEMBER_TALKS[key];
+ if(!member||!meta||!pool?.length)return toast('아직 합류하지 않은 멤버입니다.');
+ if(bandTalkUsedToday(key))return toast(`${meta.short}과는 오늘 이미 충분히 이야기했습니다.`);
+ const previous=Number(state.bandTalk?.lastTopic?.[key]??-1);
+ const choices=pool.map((_,i)=>i).filter(i=>i!==previous);const topicIndex=pick(choices.length?choices:pool.map((_,i)=>i));const topic=pool[topicIndex];
+ const before=state.band.bond;const gain=Math.random()<.3?2:1;state.band.bond=clamp(state.band.bond+gain);
+ state.bandTalk.lastDay[key]=state.day;state.bandTalk.lastTopic[key]=topicIndex;
+ addHistory(`💬 ${meta.short}과 대화 · ${topic.title} · 밴드 결속력 +${state.band.bond-before}`);
+ save(false);playSfx('event');
+ const lines=topic.lines.map(([speaker,text])=>`<div class="member-chat-line ${speaker==='류현상'?'ryu':'member'}"><b>${speaker}</b><p>${text}</p></div>`).join('');
+ showModal(`${meta.short}과 대화 · ${topic.title}`,`<div class="member-chat-thread">${lines}</div><div class="member-chat-result">밴드 결속력 <b>+${state.band.bond-before}</b> · 현재 ${state.band.bond}</div><button id="backToBandMembers" class="primary wide">멤버창으로 돌아가기</button>`,'band');
+ const back=$('#backToBandMembers');if(back)back.onclick=showBand;
+}
+function showBand(){
+ const order=['guitar','bass','piano','drums'];
+ const cards=order.map(k=>{const member=state.band.members[k],meta=BAND_MEMBER_META[k],used=bandTalkUsedToday(k);return `<div class="info-card band-member-card ${member?'joined':'empty'}"><div class="band-member-head"><span class="band-member-icon">${meta.icon}</span><div><b>${meta.short}</b><small>${meta.role}</small></div><strong>${member?'합류':'공석'}</strong></div>${member?`<p>${member}</p><small class="band-member-personality">${meta.desc||''}</small><button class="band-talk-btn" data-band-talk="${k}" ${used?'disabled':''}>${used?'오늘 대화 완료':'대화'}</button>`:'<p>아직 합류하지 않은 멤버입니다.</p>'}</div>`}).join('');
+ showModal('밴드 멤버',`<div class="band-bond-summary"><span>현재 밴드 결속력</span><strong>${state.band.bond}</strong><small>멤버와 대화하면 하루에 멤버별 1회, 결속력이 소폭 증가합니다.</small></div><div class="card-list band-member-list">${cards}</div>`,'band');
+ $$('[data-band-talk]').forEach(button=>button.onclick=()=>talkToBandMember(button.dataset.bandTalk));
+}
 $('#newGameBtn').onclick=()=>{forceAudioOn();setAudioScreenMode('title');const collected=loadMetaEndings();state=structuredClone(baseState);state.endings=collected;startPrologue()};
 $('#continueBtn').onclick=()=>{forceAudioOn();migrateLegacySave();const hasAny=!!readSave(AUTO_SAVE_KEY)||MANUAL_SAVE_KEYS.some(k=>!!readSave(k));if(!hasAny)return toast('저장된 게임이 없습니다.');openSaveManager('load')};
 $('#howBtn').onclick=()=>{forceAudioOn();openGameGuide()};

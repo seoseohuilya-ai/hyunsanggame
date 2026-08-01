@@ -1985,3 +1985,46 @@ dialog.drawer-dialog .modal-body{max-height:78vh;padding:16px}
 .action-card.flea-market-action:disabled{background:linear-gradient(145deg,#3a294e,#241d31)!important;border-color:#62487d!important}
 .flea-market-list{gap:12px}.flea-market-card{display:grid;grid-template-columns:110px minmax(0,1fr);gap:14px;align-items:center;background:linear-gradient(145deg,rgba(59,37,76,.92),rgba(35,29,49,.92));border-color:#765493}.flea-market-card img{width:100%;height:145px;object-fit:contain;background:rgba(255,255,255,.04);border-radius:12px}.flea-market-copy header{display:flex;justify-content:space-between;gap:12px}.flea-market-copy p{color:#eadff2;line-height:1.55}.flea-market-empty{text-align:center;padding:34px 18px;border:1px dashed #79589d;border-radius:18px;background:rgba(64,39,83,.4)}.flea-market-empty b{font-size:1.3rem;color:#ead6ff}.wardrobe-outfit-card{display:grid;grid-template-columns:82px minmax(0,1fr);gap:12px;align-items:center}.wardrobe-outfit-card>img{width:82px;height:116px;object-fit:contain;border-radius:10px;background:rgba(255,255,255,.035)}
 @media(max-width:520px){.flea-market-card{grid-template-columns:82px minmax(0,1fr);gap:10px}.flea-market-card img{height:118px}.flea-market-copy header{display:grid;gap:2px}.flea-market-copy p{font-size:.76rem}.wardrobe-outfit-card{grid-template-columns:68px minmax(0,1fr)}.wardrobe-outfit-card>img{width:68px;height:100px}}
+
+
+/* v136: flea market + wardrobe mobile text fix */
+.flea-market-card.no-preview{grid-template-columns:minmax(0,1fr)!important}
+.flea-market-copy{min-width:0;display:grid;gap:10px}
+.flea-market-copy header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.flea-market-copy header b,.flea-market-copy header span{min-width:0;white-space:normal;word-break:keep-all;overflow-wrap:anywhere;line-height:1.35}
+.flea-market-copy header span{margin-left:auto;text-align:right}
+.flea-market-copy p{margin:0;word-break:keep-all;overflow-wrap:anywhere}
+.flea-market-copy button{width:auto;min-width:100px}
+.wardrobe-outfit-card{align-items:center}
+.wardrobe-outfit-card.no-preview{grid-template-columns:minmax(0,1fr)!important}
+.wardrobe-copy{min-width:0;display:grid;gap:10px}
+.wardrobe-copy header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.wardrobe-copy header b,.wardrobe-copy header span{min-width:0;white-space:normal;word-break:keep-all;overflow-wrap:anywhere;line-height:1.35}
+.wardrobe-copy header span{margin-left:auto;text-align:right}
+.wardrobe-copy p{margin:0;word-break:keep-all;overflow-wrap:anywhere}
+.wardrobe-copy button{width:auto;min-width:100px}
+@media(max-width:520px){
+  .flea-market-copy{gap:8px}
+  .flea-market-copy header{display:grid;gap:4px}
+  .flea-market-copy header span{margin-left:0;text-align:left}
+  .flea-market-copy button{min-width:92px}
+  .wardrobe-outfit-card{grid-template-columns:68px minmax(0,1fr)!important}
+  .wardrobe-outfit-card.no-preview{grid-template-columns:minmax(0,1fr)!important}
+  .wardrobe-copy{gap:8px}
+  .wardrobe-copy header{display:grid;gap:4px}
+  .wardrobe-copy header span{margin-left:0;text-align:left}
+  .wardrobe-copy button{min-width:92px}
+}
+
+
+/* v137: band member conversations */
+.band-bond-summary{display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:center;padding:14px 16px;margin-bottom:12px;border-radius:16px;background:linear-gradient(145deg,rgba(48,56,112,.76),rgba(24,38,72,.72));border:1px solid #5d72aa}
+.band-bond-summary span{color:#cbd6ff;font-size:.84rem}.band-bond-summary strong{font-size:1.5rem;color:#fff}.band-bond-summary small{grid-column:1/-1;color:#aebde8;line-height:1.45}
+.band-member-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+.band-member-card{display:grid;gap:10px;min-width:0}.band-member-card.empty{opacity:.68}.band-member-head{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;min-width:0}.band-member-icon{font-size:1.5rem}.band-member-head>div{display:grid;min-width:0}.band-member-head b{font-size:1.08rem}.band-member-head small{color:#aebde8}.band-member-head strong{font-size:.75rem;color:#b7c8ff;border:1px solid #566ea7;border-radius:999px;padding:4px 8px;white-space:nowrap}.band-member-card p{margin:0;color:#dce5ff;word-break:keep-all}.band-talk-btn{justify-self:start;min-width:108px;background:linear-gradient(135deg,#4259a5,#6349aa);border-color:#7f8fd0;font-weight:800}.band-talk-btn:disabled{background:#242d49;border-color:#485575}
+.member-chat-thread{display:grid;gap:10px}.member-chat-line{max-width:88%;padding:12px 14px;border-radius:16px;border:1px solid #485e8e}.member-chat-line b{display:block;font-size:.77rem;margin-bottom:5px;color:#cbd7ff}.member-chat-line p{margin:0;line-height:1.6;word-break:keep-all}.member-chat-line.ryu{justify-self:end;background:rgba(71,61,113,.76);border-bottom-right-radius:5px}.member-chat-line.member{justify-self:start;background:rgba(27,43,73,.88);border-bottom-left-radius:5px}.member-chat-result{margin:14px 0;padding:12px 14px;text-align:center;border-radius:14px;background:rgba(39,54,91,.78);border:1px solid #5d73ac;color:#dce6ff}.member-chat-result b{color:#a8ffc5;font-size:1.1rem}
+@media(max-width:620px){.band-member-list{grid-template-columns:1fr}.band-bond-summary{padding:12px}.band-member-card{gap:8px}.member-chat-line{max-width:94%;font-size:.88rem}.band-talk-btn{min-width:96px}}
+
+
+/* v138: band personality descriptions */
+.band-member-personality{display:block;margin:6px 0 10px;color:#bfc6d7;line-height:1.55;word-break:keep-all}
