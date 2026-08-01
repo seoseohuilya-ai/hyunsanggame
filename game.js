@@ -4,6 +4,7 @@ const baseState={day:1,slot:0,time:0,location:'home',level:1,exp:0,rank:'무명 
 let state=structuredClone(baseState);let deferredPrompt=null;let audioCtx=null;let motionTimer=null;let burstTimer=null;let memoryGameActive=false;let activeTrainingAbort=null;
 let audioMaster=null,bgmGain=null,sfxGain=null,bgmTimer=null,bgmStep=0;
 let specialEventBgm=null,specialEventBgmKey=null;
+let audioScreenMode='title';
 let choiceLock=false,endingMusicMode=false,endingMusicName='';
 let blockingNoticeActive=false;
 let instagramLiveActive=false;
@@ -11,7 +12,8 @@ let pendingLocationActionStress=false;
 let deferredPostAdvance=null;
 let cardRevealPending=false;
 let pendingTrainingActionBefore=null;
-let audioSettings={bgm:true,sfx:true,volume:.72};
+let audioSettings={bgm:true,sfx:true};
+const FIXED_MASTER_VOLUME=.72,REGULAR_BGM_VOLUME=.58,SPECIAL_EVENT_BGM_VOLUME=.50;
 const specialEventBgmMap={iziViral:'emergencyRoomEventBgm',waitedMoreViral:'waitedMoreEventBgm'};
 const actions={
  home:[
@@ -296,6 +298,7 @@ function beginGameAfterPrologue(){
  save(false);
  $('#titleScreen').classList.remove('active');
  $('#gameScreen').classList.add('active');
+ setAudioScreenMode('game');
  render();
 }
 
@@ -447,17 +450,40 @@ function openSaveManager(mode='all'){
  showModal(mode==='load'?'저장 데이터 불러오기':'저장 / 불러오기',html);
  $$('[data-save-slot]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.saveSlot),key=MANUAL_SAVE_KEYS[i-1],existing=readSave(key);if(existing&&!confirm(`현재 진행 상황으로 저장 슬롯 ${i}을 덮어쓰시겠습니까?`))return;if(writeSave(key,true))openSaveManager(mode)});
  $$('[data-delete-slot]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.deleteSlot);if(!confirm(`저장 슬롯 ${i}을 삭제하시겠습니까?\n삭제 후 복구할 수 없습니다.`))return;const storage=getStorage();if(storage)storage.removeItem(MANUAL_SAVE_KEYS[i-1]);toast(`저장 슬롯 ${i}을 삭제했습니다.`);openSaveManager(mode)});
- $$('[data-load-key]').forEach(b=>b.onclick=()=>{const key=b.dataset.loadKey;if($('#gameScreen').classList.contains('active')&&!confirm('현재 진행 내용은 자동 저장되지만, 마지막 행동 이후 변경 내용이 있을 수 있습니다. 불러오시겠습니까?'))return;stopSpecialEventBgm(false);forceAudioOn();if(!load(key))return toast('저장 데이터를 불러오지 못했습니다.');setChoiceLock(false);exitEndingMusic();$('#titleScreen').classList.remove('active');$('#gameScreen').classList.add('active');closeModal();render();toast('저장 데이터를 불러왔습니다.')});
+ $$('[data-load-key]').forEach(b=>b.onclick=()=>{const key=b.dataset.loadKey;if($('#gameScreen').classList.contains('active')&&!confirm('현재 진행 내용은 자동 저장되지만, 마지막 행동 이후 변경 내용이 있을 수 있습니다. 불러오시겠습니까?'))return;stopSpecialEventBgm(false);forceAudioOn();if(!load(key))return toast('저장 데이터를 불러오지 못했습니다.');setChoiceLock(false);exitEndingMusic();$('#titleScreen').classList.remove('active');$('#gameScreen').classList.add('active');setAudioScreenMode('game',true);closeModal();render();toast('저장 데이터를 불러왔습니다.')});
 }
-function loadAudioSettings(){try{const raw=localStorage.getItem('ryuAudioSettings'),saved=raw?JSON.parse(raw):{};const savedVolume=Number(saved.volume);audioSettings={bgm:true,sfx:true,volume:Number.isFinite(savedVolume)&&savedVolume>=.12?Math.min(1,savedVolume):.42}}catch{audioSettings={bgm:true,sfx:true,volume:.42}}updateAudioButton()}
-function saveAudioSettings(){audioSettings.bgm=true;audioSettings.sfx=true;audioSettings.volume=Math.max(.12,Math.min(1,Number(audioSettings.volume)||.72));try{localStorage.setItem('ryuAudioSettings',JSON.stringify(audioSettings))}catch{}updateAudioButton()}
-function updateAudioButton(){const b=$('#audioBtn');if(!b)return;const on=audioSettings.bgm||audioSettings.sfx;b.textContent=on?'♪':'♩';b.classList.toggle('audio-on',on);b.classList.toggle('audio-off',!on);b.setAttribute('aria-label',on?'음악 및 효과음 켜짐':'음악 및 효과음 꺼짐')}
-function ensureAudio(){if(!audioCtx){const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return false;audioCtx=new Ctx();audioMaster=audioCtx.createGain();bgmGain=audioCtx.createGain();sfxGain=audioCtx.createGain();audioMaster.gain.value=audioSettings.volume;bgmGain.gain.value=audioSettings.bgm ? .38 : 0;sfxGain.gain.value=audioSettings.sfx ? .55 : 0;bgmGain.connect(audioMaster);sfxGain.connect(audioMaster);audioMaster.connect(audioCtx.destination)}if(audioCtx.state==='suspended')audioCtx.resume();syncAudioGains();if(audioSettings.bgm&&!bgmTimer&&!specialEventBgm)startBgm();return true}
-function forceAudioOn(){audioSettings.bgm=true;audioSettings.sfx=true;if(audioSettings.volume<.12)audioSettings.volume=.72;saveAudioSettings();const ok=ensureAudio();if(ok&&audioCtx?.state==='running'){syncAudioGains();if(!bgmTimer&&!specialEventBgm)startBgm()}return ok}
-function specialEventBgmVolume(){return audioSettings.bgm?Math.max(0,Math.min(1,(Number(audioSettings.volume)||.72)*.70)):0}
-function syncAudioGains(){if(specialEventBgm){specialEventBgm.volume=specialEventBgmVolume();if(audioSettings.bgm&&specialEventBgm.paused)specialEventBgm.play().catch(()=>{});if(!audioSettings.bgm&&!specialEventBgm.paused)specialEventBgm.pause()}if(!audioCtx)return;const t=audioCtx.currentTime;audioMaster.gain.setTargetAtTime(audioSettings.volume,t,.04);bgmGain.gain.setTargetAtTime(audioSettings.bgm&&!specialEventBgm ? (endingMusicMode?.30:.38) : 0,t,.08);sfxGain.gain.setTargetAtTime(audioSettings.sfx ? .55 : 0,t,.04);if(audioSettings.bgm&&!bgmTimer&&!specialEventBgm)startBgm();if((!audioSettings.bgm||specialEventBgm)&&bgmTimer){clearInterval(bgmTimer);bgmTimer=null}}
-function startSpecialEventBgm(key){const elementId=specialEventBgmMap[key];if(!elementId)return;stopSpecialEventBgm(false);specialEventBgmKey=key;specialEventBgm=document.getElementById(elementId);if(!specialEventBgm){specialEventBgmKey=null;return}if(bgmTimer){clearInterval(bgmTimer);bgmTimer=null}if(audioCtx&&bgmGain){const t=audioCtx.currentTime;bgmGain.gain.cancelScheduledValues(t);bgmGain.gain.setTargetAtTime(0,t,.04)}specialEventBgm.loop=true;specialEventBgm.currentTime=0;specialEventBgm.volume=specialEventBgmVolume();specialEventBgm.play().catch(()=>{})}
-function stopSpecialEventBgm(resume=true){const audio=specialEventBgm;specialEventBgm=null;specialEventBgmKey=null;if(audio){audio.pause();try{audio.currentTime=0}catch{}}if(resume&&audioSettings.bgm){ensureAudio();restartBgmScheduler();syncAudioGains()}}
+function loadAudioSettings(){
+ try{const raw=localStorage.getItem('ryuAudioSettings'),saved=raw?JSON.parse(raw):{};audioSettings={bgm:saved.bgm!==false,sfx:saved.sfx!==false}}
+ catch{audioSettings={bgm:true,sfx:true}}
+ updateAudioButton();syncScreenBgm()
+}
+function saveAudioSettings(){try{localStorage.setItem('ryuAudioSettings',JSON.stringify(audioSettings))}catch{}updateAudioButton()}
+function updateAudioButton(){const b=$('#audioBtn');if(!b)return;const on=!!audioSettings.bgm;b.textContent=on?'♪':'♩';b.classList.toggle('audio-on',on);b.classList.toggle('audio-off',!on);b.setAttribute('aria-label',on?'배경음악 켜짐':'배경음악 꺼짐')}
+function titleBgmElement(){return document.getElementById('titleScreenBgm')}
+function gameBgmElement(){return document.getElementById('gameMainBgm')}
+function pauseMediaBgm(audio,reset=false){if(!audio)return;if(!audio.paused)audio.pause();if(reset){try{audio.currentTime=0}catch{}}}
+function syncScreenBgm(restart=false){
+ const title=titleBgmElement(),game=gameBgmElement(),target=audioScreenMode==='game'?game:title,other=audioScreenMode==='game'?title:game;
+ [title,game].forEach(audio=>{if(audio){audio.loop=true;audio.volume=REGULAR_BGM_VOLUME}});
+ pauseMediaBgm(other,false);
+ const canPlay=!!audioSettings.bgm&&!specialEventBgm&&!endingMusicMode&&document.visibilityState!=='hidden';
+ if(!canPlay){pauseMediaBgm(target,false);return}
+ if(restart&&target){try{target.currentTime=0}catch{}}
+ target?.play().catch(()=>{})
+}
+function setAudioScreenMode(mode,restart=false){audioScreenMode=mode==='game'?'game':'title';syncScreenBgm(restart)}
+function ensureAudio(){if(!audioCtx){const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx){syncScreenBgm();return false}audioCtx=new Ctx();audioMaster=audioCtx.createGain();bgmGain=audioCtx.createGain();sfxGain=audioCtx.createGain();audioMaster.gain.value=FIXED_MASTER_VOLUME;bgmGain.gain.value=(endingMusicMode&&audioSettings.bgm)?0.30:0;sfxGain.gain.value=audioSettings.sfx?0.55:0;bgmGain.connect(audioMaster);sfxGain.connect(audioMaster);audioMaster.connect(audioCtx.destination)}if(audioCtx.state==='suspended')audioCtx.resume();syncAudioGains();syncScreenBgm();if(endingMusicMode&&audioSettings.bgm&&!bgmTimer&&!specialEventBgm)startBgm();return true}
+function forceAudioOn(){const ok=ensureAudio();syncScreenBgm();return ok}
+function specialEventBgmVolume(){return audioSettings.bgm?SPECIAL_EVENT_BGM_VOLUME:0}
+function syncAudioGains(){
+ if(specialEventBgm){specialEventBgm.volume=specialEventBgmVolume();if(audioSettings.bgm&&specialEventBgm.paused)specialEventBgm.play().catch(()=>{});if(!audioSettings.bgm&&!specialEventBgm.paused)specialEventBgm.pause()}
+ if(audioCtx){const t=audioCtx.currentTime;audioMaster.gain.setTargetAtTime(FIXED_MASTER_VOLUME,t,.04);bgmGain.gain.setTargetAtTime((audioSettings.bgm&&endingMusicMode&&!specialEventBgm)?0.30:0,t,.08);sfxGain.gain.setTargetAtTime(audioSettings.sfx?0.55:0,t,.04)}
+ if(audioSettings.bgm&&endingMusicMode&&!bgmTimer&&!specialEventBgm)startBgm();
+ if((!audioSettings.bgm||!endingMusicMode||specialEventBgm)&&bgmTimer){clearInterval(bgmTimer);bgmTimer=null}
+ syncScreenBgm()
+}
+function startSpecialEventBgm(key){const elementId=specialEventBgmMap[key];if(!elementId)return;stopSpecialEventBgm(false);specialEventBgmKey=key;specialEventBgm=document.getElementById(elementId);if(!specialEventBgm){specialEventBgmKey=null;return}pauseMediaBgm(titleBgmElement());pauseMediaBgm(gameBgmElement());if(bgmTimer){clearInterval(bgmTimer);bgmTimer=null}if(audioCtx&&bgmGain){const t=audioCtx.currentTime;bgmGain.gain.cancelScheduledValues(t);bgmGain.gain.setTargetAtTime(0,t,.04)}specialEventBgm.loop=true;specialEventBgm.currentTime=0;specialEventBgm.volume=specialEventBgmVolume();if(audioSettings.bgm)specialEventBgm.play().catch(()=>{})}
+function stopSpecialEventBgm(resume=true){const audio=specialEventBgm;specialEventBgm=null;specialEventBgmKey=null;if(audio){audio.pause();try{audio.currentTime=0}catch{}}if(resume&&audioSettings.bgm){if(endingMusicMode){ensureAudio();restartBgmScheduler();syncAudioGains()}else syncScreenBgm()}}
 const bgmScales={home:[48,52,55,59,55,52,50,55],store:[50,53,57,60,57,53,52,57],practice:[45,52,57,60,57,52,48,55],park:[48,55,59,62,59,55,52,59],stage:[45,52,56,59,64,59,56,52]};
 function midiHz(n){return 440*Math.pow(2,(n-69)/12)}
 function softNote(freq,start,duration,gain=.045,type='sine',target=bgmGain){if(!audioCtx||!target)return;const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type;o.frequency.setValueAtTime(freq,start);g.gain.setValueAtTime(.0001,start);g.gain.exponentialRampToValueAtTime(gain,start+.08);g.gain.exponentialRampToValueAtTime(.0001,start+duration);o.connect(g);g.connect(target);o.start(start);o.stop(start+duration+.04)}
@@ -491,15 +517,14 @@ function scheduleBgmBar(){
  for(let i=0;i<8;i++){const n=notes[(bgmStep+i)%notes.length];softNote(midiHz(n+12),now+i*.75,.62,.027,'triangle');if(i%2===0)softNote(midiHz(n),now+i*.75,1.35,.018,'sine')}
  const root=notes[0];softNote(midiHz(root-12),now,5.8,.012,'sine');softNote(midiHz(root-5),now,5.8,.009,'sine');bgmStep=(bgmStep+2)%notes.length
 }
-function restartBgmScheduler(){if(bgmTimer){clearInterval(bgmTimer);bgmTimer=null}bgmStep=0;if(audioSettings.bgm&&audioCtx&&!specialEventBgm){scheduleBgmBar();bgmTimer=setInterval(scheduleBgmBar,6000)}}
-function enterEndingMusic(name){stopSpecialEventBgm(false);endingMusicMode=true;endingMusicName=name;ensureAudio();if(audioCtx&&bgmGain){const t=audioCtx.currentTime;bgmGain.gain.cancelScheduledValues(t);bgmGain.gain.setValueAtTime(bgmGain.gain.value,t);bgmGain.gain.linearRampToValueAtTime(0,t+.75);setTimeout(()=>{restartBgmScheduler();syncAudioGains()},780)}else restartBgmScheduler()}
-function exitEndingMusic(){if(!endingMusicMode)return;endingMusicMode=false;endingMusicName='';if(audioCtx&&bgmGain){const t=audioCtx.currentTime;bgmGain.gain.cancelScheduledValues(t);bgmGain.gain.setValueAtTime(bgmGain.gain.value,t);bgmGain.gain.linearRampToValueAtTime(0,t+.55);setTimeout(()=>{restartBgmScheduler();syncAudioGains()},580)}else restartBgmScheduler()}
+function restartBgmScheduler(){if(bgmTimer){clearInterval(bgmTimer);bgmTimer=null}bgmStep=0;if(audioSettings.bgm&&audioCtx&&endingMusicMode&&!specialEventBgm){scheduleBgmBar();bgmTimer=setInterval(scheduleBgmBar,6000)}}
+function enterEndingMusic(name){stopSpecialEventBgm(false);endingMusicMode=true;endingMusicName=name;syncScreenBgm();ensureAudio();if(audioCtx&&bgmGain){const t=audioCtx.currentTime;bgmGain.gain.cancelScheduledValues(t);bgmGain.gain.setValueAtTime(bgmGain.gain.value,t);bgmGain.gain.linearRampToValueAtTime(0,t+.75);setTimeout(()=>{restartBgmScheduler();syncAudioGains()},780)}else restartBgmScheduler()}
+function exitEndingMusic(){if(!endingMusicMode)return;endingMusicMode=false;endingMusicName='';if(audioCtx&&bgmGain){const t=audioCtx.currentTime;bgmGain.gain.cancelScheduledValues(t);bgmGain.gain.setValueAtTime(bgmGain.gain.value,t);bgmGain.gain.linearRampToValueAtTime(0,t+.55);setTimeout(()=>{restartBgmScheduler();syncAudioGains();syncScreenBgm()},580)}else{restartBgmScheduler();syncScreenBgm()}}
 
-function startBgm(){if(!audioCtx||bgmTimer||!audioSettings.bgm||specialEventBgm)return;scheduleBgmBar();bgmTimer=setInterval(scheduleBgmBar,6000)}
+function startBgm(){if(!audioCtx||bgmTimer||!audioSettings.bgm||specialEventBgm||!endingMusicMode)return;scheduleBgmBar();bgmTimer=setInterval(scheduleBgmBar,6000)}
 function playSfx(type='tap'){if(!audioSettings.sfx||!ensureAudio()||!sfxGain)return;const now=audioCtx.currentTime+.01;const note=(n,d=.12,g=.12,w='sine',delay=0)=>softNote(midiHz(n),now+delay,d,g,w,sfxGain);switch(type){case'move':note(60,.12,.09,'triangle');note(67,.18,.08,'triangle',.1);break;case'coin':note(76,.1,.12,'square');note(83,.16,.09,'triangle',.08);break;case'save':note(64,.12,.08,'sine');note(69,.15,.08,'sine',.09);note(76,.22,.07,'sine',.18);break;case'success':note(60,.12,.09,'triangle');note(64,.15,.09,'triangle',.1);note(67,.2,.09,'triangle',.2);note(72,.3,.08,'sine',.3);break;case'fail':note(55,.2,.08,'sawtooth');note(50,.3,.07,'triangle',.15);break;case'busking':note(57,.11,.08,'triangle');note(64,.11,.08,'triangle',.09);note(69,.2,.08,'triangle',.18);break;case'drink':note(72,.08,.07,'sine');note(79,.12,.06,'sine',.08);break;case'event':note(48,.18,.07,'sine');note(60,.24,.08,'triangle',.13);break;case'click':case'tap':default:note(69,.07,.035,'sine');}}
 function toggleBgm(){audioSettings.bgm=!audioSettings.bgm;saveAudioSettings();ensureAudio();syncAudioGains();playSfx('tap');renderAudioSettingsIfOpen()}
 function toggleSfx(){audioSettings.sfx=!audioSettings.sfx;saveAudioSettings();ensureAudio();syncAudioGains();if(audioSettings.sfx)playSfx('success');renderAudioSettingsIfOpen()}
-function setAudioVolume(v){audioSettings.bgm=true;audioSettings.sfx=true;audioSettings.volume=Math.max(.12,Math.min(1,Number(v)||.72));saveAudioSettings();ensureAudio();syncAudioGains()}
 
 function gameGuideHtml(){return `<div class="game-guide">
   <section class="guide-hero">
@@ -534,7 +559,7 @@ function gameGuideHtml(){return `<div class="game-guide">
       <article><b>수입</b><p>아르바이트, 버스킹, 공연, 방송, 앨범으로 얻습니다. 채무가 있으면 수입 일부가 자동 상환됩니다.</p></article><article><b>고정비</b><p>월세와 생활비가 정기적으로 발생하며 매니저·밴드 유지비가 추가될 수 있습니다.</p></article><article><b>채무</b><p>비용 부족이나 고정비 미납 시 부족분이 채무가 됩니다. 채무 발생일부터 30일 안에 전액 상환하지 못하면 파산 엔딩이 즉시 진행됩니다.</p></article><article><b>채무 제한</b><p>앨범 제작, 장비·의상 구매, 이사 등 일부 투자 행동이 막힙니다.</p></article>
     </div><div class="guide-callout warning"><b>채무 상환 제한은 30일입니다.</b><p>훈련, 아르바이트, 버스킹은 계속 가능하지만 최초 채무 발생일부터 30일 안에 채무를 0원으로 만들어야 합니다.</p></div></section>
     <section class="guide-page" data-guide-page="save">
-      <div class="guide-step"><b>자동 저장</b><p>이동·행동·날짜 변경 때 최근 진행 상황이 저장됩니다.</p></div><div class="guide-step"><b>소리 재생</b><p>새 게임·이어하기 등 첫 화면의 첫 터치부터 BGM과 효과음이 자동으로 시작됩니다. 브라우저 정책상 페이지를 열기만 한 상태에서는 소리가 나지 않을 수 있지만, 게임을 시작하면 별도의 음악 버튼을 누를 필요가 없습니다.</p></div><div class="guide-step"><b>수동 저장 슬롯 3개</b><p>중요 선택이나 엔딩 분기 전에 서로 다른 슬롯에 저장하세요.</p></div><div class="guide-step"><b>추억 앨범</b><p>완료한 특별 이벤트의 이미지와 스토리를 다시 볼 수 있으며 보상은 중복 지급되지 않습니다.</p></div><div class="guide-step"><b>저장 주의</b><p>브라우저 사이트 데이터를 삭제하면 저장이 사라질 수 있으며 다른 기기와 자동 동기화되지 않습니다.</p></div>
+      <div class="guide-step"><b>자동 저장</b><p>이동·행동·날짜 변경 때 최근 진행 상황이 저장됩니다.</p></div><div class="guide-step"><b>소리 재생</b><p>첫 화면을 한 번 누르면 타이틀 BGM이 시작되고, 게임을 시작하면 게임 전용 BGM으로 전환됩니다. 오른쪽 위 음악 버튼에서 배경음악과 효과음을 각각 켜거나 끌 수 있습니다.</p></div><div class="guide-step"><b>수동 저장 슬롯 3개</b><p>중요 선택이나 엔딩 분기 전에 서로 다른 슬롯에 저장하세요.</p></div><div class="guide-step"><b>추억 앨범</b><p>완료한 특별 이벤트의 이미지와 스토리를 다시 볼 수 있으며 보상은 중복 지급되지 않습니다.</p></div><div class="guide-step"><b>저장 주의</b><p>브라우저 사이트 데이터를 삭제하면 저장이 사라질 수 있으며 다른 기기와 자동 동기화되지 않습니다.</p></div>
     </section>
     <section class="guide-page" data-guide-page="tips"><ol class="guide-tip-list">
       <li><b>초반에는 보컬을 우선하세요.</b><span>버스킹 성공과 수입이 안정되며, 성공한 버스킹과 공연은 보컬을 1 올립니다. 더 좋은 마이크·음향장비는 버스킹 수입을 조금 더 끌어올립니다.</span></li><li><b>체력을 전부 쓰지 마세요.</b><span>예상치 못한 사건에 대비해 15~25 정도 남겨 두는 편이 안전합니다.</span></li><li><b>월말 전에 현금을 남겨 두세요.</b><span>채무가 생기면 앨범과 장비 투자가 막힙니다.</span></li><li><b>하루 제한 행동을 확인하세요.</b><span>홍보, 단골 응대, 라이벌 관찰 등은 하루 제한이 있습니다.</span></li><li><b>두 번째 버스킹은 선택적으로 하세요.</b><span>보상이 줄고 스트레스가 늘어납니다.</span></li><li><b>매니저는 자금이 안정된 뒤 고용해도 됩니다.</b><span>추가 콘텐츠가 열리지만 유지비도 발생합니다.</span></li><li><b>중요 선택 전 수동 저장하세요.</b><span>슬롯을 나누면 여러 엔딩을 확인하기 쉽습니다.</span></li><li><b>능력치를 방치하지 마세요.</b><span>보컬과 작곡은 14일의 유예기간 후 7일마다 3씩 낮아집니다. 공연·방송은 보컬 유지, 편곡·앨범은 작곡 유지에 도움이 됩니다.</span></li><li><b>한 행동만 반복하지 마세요.</b><span>후반에는 공연·방송·앨범·특별 이벤트를 조합해야 Lv.100까지 자연스럽게 성장합니다.</span></li>
@@ -544,10 +569,10 @@ function gameGuideHtml(){return `<div class="game-guide">
 function bindGameGuide(){$$('[data-guide-tab]').forEach(btn=>btn.onclick=()=>{$$('[data-guide-tab]').forEach(x=>x.classList.toggle('active',x===btn));$$('[data-guide-page]').forEach(page=>page.classList.toggle('active',page.dataset.guidePage===btn.dataset.guideTab))})}
 function openGameGuide(){showModal('게임 설명 · 진행 가이드',gameGuideHtml());bindGameGuide()}
 
-function audioSettingsHtml(){return `<div class="audio-settings"><div class="audio-row"><div><label>잔잔한 배경음악</label><small>게임이 실행되는 동안 장소에 맞는 음악이 계속 재생됩니다.</small></div><span class="audio-always-on">항상 켜짐</span></div><div class="audio-row"><div><label>효과음</label><small>이동, 버튼, 구매, 버스킹, 저장 등에 자동으로 재생됩니다.</small></div><span class="audio-always-on">항상 켜짐</span></div><div><label for="audioVolume">전체 볼륨 ${Math.round(audioSettings.volume*100)}%</label><input id="audioVolume" class="audio-volume" type="range" min="0.12" max="1" step="0.05" value="${audioSettings.volume}"></div><p class="audio-hint">브라우저의 자동 재생 제한 때문에 웹페이지를 연 순간에는 소리를 강제로 낼 수 없습니다. 새 게임·이어하기·게임 설명 등 첫 터치부터 자동으로 음악과 효과음이 시작되며, 화면을 다시 켜거나 앱으로 돌아오면 자동 재개됩니다.</p></div>`}
+function audioSettingsHtml(){return `<div class="audio-settings"><div class="audio-row"><div><label>배경음악</label><small>타이틀과 게임 화면의 음악, 특별 이벤트 음악을 함께 켜거나 끕니다.</small></div><button id="toggleBgmSetting" class="audio-toggle ${audioSettings.bgm?'on':'off'}">${audioSettings.bgm?'켜짐':'꺼짐'}</button></div><div class="audio-row"><div><label>효과음</label><small>이동, 버튼, 구매, 버스킹, 저장 효과음을 켜거나 끕니다.</small></div><button id="toggleSfxSetting" class="audio-toggle ${audioSettings.sfx?'on':'off'}">${audioSettings.sfx?'켜짐':'꺼짐'}</button></div><p class="audio-hint">브라우저의 자동 재생 제한으로 처음 페이지를 열었을 때는 화면을 한 번 눌러야 음악이 시작될 수 있습니다. 선택한 켜짐·꺼짐 상태는 다음 실행에도 저장됩니다.</p></div>`}
 function openAudioSettings(){ensureAudio();showModal('음악·효과음 설정',audioSettingsHtml());bindAudioSettings()}
-function bindAudioSettings(){const vol=$('#audioVolume');if(vol)vol.oninput=e=>{setAudioVolume(e.target.value);const label=e.target.previousElementSibling;if(label)label.textContent=`전체 볼륨 ${Math.round(audioSettings.volume*100)}%`}}
-function renderAudioSettingsIfOpen(){if($('#modal')?.open&&$('#modalTitle')?.textContent==='음악·효과음 설정'){ $('#modalBody').innerHTML=audioSettingsHtml();bindAudioSettings()}}
+function bindAudioSettings(){const bgm=$('#toggleBgmSetting'),sfx=$('#toggleSfxSetting');if(bgm)bgm.onclick=toggleBgm;if(sfx)sfx.onclick=toggleSfx}
+function renderAudioSettingsIfOpen(){if($('#modal')?.open&&$('#modalTitle')?.textContent==='음악·효과음 설정'){$('#modalBody').innerHTML=audioSettingsHtml();bindAudioSettings()}}
 let toastTimer=null,toastMessage='',toastSerial=0;
 function syncToastLayer(){
  const modal=$('#modal'),modalToast=$('#modalToast'),pageToast=$('#toast');
@@ -3056,14 +3081,14 @@ function openItemMenu(){
 }
 function openPhone(type){if(state.specialScene?.active)return toast('진행 중인 특별 이벤트를 먼저 마쳐 주세요.');if(type==='manager')managerEvent();if(type==='band')showBand();if(type==='fan')openFanCommunity();if(type==='sns')openSNS();if(type==='items')openItemMenu()}
 function showBand(){showModal('밴드 멤버',Object.entries(state.band.members).map(([k,v])=>`<div class="info-card"><b>${k.toUpperCase()}</b><p>${v||'공석'}</p></div>`).join('')+`<p>결속력: ${state.band.bond}</p>`)}
-$('#newGameBtn').onclick=()=>{forceAudioOn();const collected=loadMetaEndings();state=structuredClone(baseState);state.endings=collected;startPrologue()};
+$('#newGameBtn').onclick=()=>{forceAudioOn();setAudioScreenMode('game',true);const collected=loadMetaEndings();state=structuredClone(baseState);state.endings=collected;startPrologue()};
 $('#continueBtn').onclick=()=>{forceAudioOn();migrateLegacySave();const hasAny=!!readSave(AUTO_SAVE_KEY)||MANUAL_SAVE_KEYS.some(k=>!!readSave(k));if(!hasAny)return toast('저장된 게임이 없습니다.');openSaveManager('load')};
 $('#howBtn').onclick=()=>{forceAudioOn();openGameGuide()};
 $('#closeModal').onclick=()=>closeModal();$('#modal').addEventListener('cancel',e=>{if(memoryGameActive||blockingNoticeActive||instagramLiveActive){e.preventDefault();if(memoryGameActive)closeModal()}});$('#audioBtn').onclick=openAudioSettings;$('#menuBtn').onclick=()=>showModal('메뉴','<div class="card-list"><button id="gameGuideBtn" class="primary">게임 설명 · 진행 가이드</button><button id="manualSave">저장 / 불러오기</button><button id="backTitle">타이틀로 돌아가기</button></div>');
 $('#modal').addEventListener('click',e=>{if(e.target===$('#modal'))closeModal()});
 $$('[data-phone]').forEach(b=>b.onclick=()=>openPhone(b.dataset.phone));
 $$('[data-tab]').forEach(b=>b.onclick=()=>{if(state.specialScene?.active)return toast('진행 중인 특별 이벤트를 먼저 마쳐 주세요.');const t=b.dataset.tab;$$('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));if(t==='band')showBand();if(t==='album')openSpecialAlbum();if(t==='shop')openShopHub();if(t==='ending'){showModal('엔딩 컬렉션',state.endings.length?state.endings.map(x=>`<button class="info-card ending-replay" data-ending-replay="${x}"><b>${x}</b><small>다시 읽기</small></button>`).join(''):'아직 해금된 엔딩이 없습니다.');$$('[data-ending-replay]').forEach(x=>x.onclick=()=>runEndingStory(x.dataset.endingReplay));}if(t==='story')showModal('스토리 기록',state.history.length?`<div class="card-list story-history-list">${[...state.history].reverse().map(x=>`<div class="info-card story-history-item">${x}</div>`).join('')}</div>`:'류현상의 이야기는 이제 시작입니다.')});
-document.addEventListener('click',e=>{if(e.target&&e.target.id==='gameGuideBtn'){openGameGuide()}if(e.target&&e.target.id==='manualSave'){openSaveManager('all')}if(e.target&&e.target.id==='backTitle'){save(false);setChoiceLock(false);stopSpecialEventBgm(false);exitEndingMusic();$('#gameScreen').classList.remove('active');$('#titleScreen').classList.add('active');closeModal()}});
+document.addEventListener('click',e=>{if(e.target&&e.target.id==='gameGuideBtn'){openGameGuide()}if(e.target&&e.target.id==='manualSave'){openSaveManager('all')}if(e.target&&e.target.id==='backTitle'){save(false);setChoiceLock(false);stopSpecialEventBgm(false);exitEndingMusic();$('#gameScreen').classList.remove('active');$('#titleScreen').classList.add('active');setAudioScreenMode('title',true);closeModal()}});
 
 document.addEventListener('click',e=>{
  if(!choiceLock)return;
@@ -3116,7 +3141,7 @@ if(installBtn)installBtn.onclick=async()=>{
 };
 refreshInstallUi();
 try{window.matchMedia('(display-mode: standalone)').addEventListener('change',refreshInstallUi)}catch(_){}
-if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',async()=>{try{const reg=await navigator.serviceWorker.register('service-worker.js?v=111-stalker-five-safe',{updateViaCache:'none'});await reg.update();refreshInstallUi()}catch(err){console.warn('서비스워커 등록 실패',err);refreshInstallUi()}});
+if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',async()=>{try{const reg=await navigator.serviceWorker.register('service-worker.js?v=118-screen-bgm-purple-map',{updateViaCache:'none'});await reg.update();refreshInstallUi()}catch(err){console.warn('서비스워커 등록 실패',err);refreshInstallUi()}});
 
 
 /* v36: iOS standalone PWA viewport synchronization */

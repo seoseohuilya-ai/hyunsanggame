@@ -1715,3 +1715,25 @@ dialog.drawer-dialog .modal-body{max-height:78vh;padding:16px}
 .action-card[data-action="national"]:disabled{background:linear-gradient(145deg,#7e405d,#68334f 58%,#4d293d)!important;border-color:#985873!important;color:#f8dbe8!important;opacity:.82!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)!important}
 .action-card[data-action="national"] .action-disabled-reason{color:#ffe3ef!important}
 @media(max-width:540px){.action-card .action-disabled-reason{font-size:.54rem!important;line-height:1.08!important;margin-top:2px}}
+
+
+/* v118: fixed audio toggles and purple location navigation */
+.audio-toggle.off{background:#171b27!important;border-color:#4a5265!important;color:#9ba5b8!important}
+.audio-toggle.on{background:linear-gradient(135deg,#7754de,#a056d8)!important;border-color:#b785f0!important;color:#fff!important;box-shadow:0 6px 18px rgba(119,84,222,.25)}
+.location-buttons button,.mobile-location-buttons button{
+ background:linear-gradient(145deg,#34224f,#56317c)!important;
+ border-color:#7651a5!important;
+ color:#f4eaff!important;
+ box-shadow:inset 0 1px rgba(255,255,255,.08),0 4px 12px rgba(32,14,52,.24)!important;
+}
+.location-buttons button:hover,.mobile-location-buttons button:hover{
+ background:linear-gradient(145deg,#4a2c70,#7541a2)!important;
+ border-color:#a57ad1!important;
+}
+.location-buttons button.active,.mobile-location-buttons button.active{
+ background:linear-gradient(145deg,#7a4bc0,#a660d4)!important;
+ border-color:#d5a6ff!important;
+ color:#fff!important;
+ box-shadow:0 0 0 1px rgba(232,205,255,.25),0 0 18px rgba(162,91,218,.35)!important;
+}
+.location-buttons button:disabled,.mobile-location-buttons button:disabled{opacity:.48!important}
