@@ -1,11 +1,12 @@
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const locations={home:{name:'자취방',cls:'home'},store:{name:'편의점',cls:'store'},practice:{name:'연습실',cls:'practice'},park:{name:'공원',cls:'park'},stage:{name:'공연장',cls:'stage'}};
-const baseState={day:1,slot:0,time:0,location:'home',level:1,exp:0,rank:'무명 가수',weather:'sun',housing:0,endingPrompted:{},pendingEnding:null,stats:{hp:80,vocal:22,compose:16,looks:35,fame:0,fans:0,money:800000,stress:10},equipment:{mic:false,amp:false,battery:false},equipmentModel:{mic:null,amp:null},equipmentDamage:{mic:false,amp:false},equipmentDurability:{mic:0,amp:0,battery:0},forcedRest:{count:0,lastTriggeredDay:-99},restStreak:0,restNightmares:{totalRests:0,lastTriggeredRest:0,seen:[]},dailyPractice:{vocalDay:0,composeDay:0,vocalPenaltyCount:0,composePenaltyCount:0,penaltyInterval:7},instruments:{acousticGuitar:false,keyboard:false,audioInterface:false,studioMic:false,monitorHeadphones:false},fanGroups:{regular:0,enthusiast:0,gay:0,overseas:0},sns:{lastPostDay:-99,totalPosts:0,lastLiveDay:-99,totalLives:0,lastLiveScenario:null,nextVocalBonus:0,nextComposeBonus:0,controversy:0,lastEventDay:-99},drawer:{photos:Array.from({length:5},()=>Array(9).fill(false)),photoMissStreak:0,diaries:[],diaryFoundDays:{},diaryCheckedDay:-99,diaryMissStreak:0,todayDiaryId:null,todayMessage:'',newPhotos:false,newDiary:false,lastTab:'photos'},rival:{met:false,stage:0,respect:0,lastEventDay:-99},items:{bakcas:1,energizer:0,dietPill:0,bakcasUsedToday:0,mealsToday:0,bakcasBoughtToday:0,snacksBoughtToday:0},storeDaily:{promoDay:-99,customerDay:-99,flyerDay:-99,observeDay:-99,buskingDay:-99,buskingCount:0},storeJobs:{workCount:0,stockWorkCount:0},dailyUse:{styleCareDay:-99,styleCareLastDay:1,styleDecayCount:0,meditationDay:-99,meditationCount:0,walkDay:-99,walkCount:0},effects:{energizerUntilDay:0,energizerConsecutiveCount:0,energizerOverdose:false},specialProgress:{cardCollectorOfferSeen:false,cardCollectorEligibleDay:0,cardCollectorVisitDone:false,cardCollectorDeclinedDay:0,cardTheftDone:false,weddingSongSeen:false,weddingInviteSeen:false,hurabonoWeddingDone:false},economy:{workStreak:0,lastWorkDay:-99,debt:0,totalDebtRepaid:0,lastDebtNoticeDay:-99,debtStartDay:0},equippedInstruments:[],career:{peakFame:0,totalWork:0,totalConcerts:0,totalBroadcasts:0,totalBusking:0,soloBusking:0,bandBusking:0},skillMaintenance:{lastVocalUseDay:1,lastComposeUseDay:1,vocalDecayCount:0,composeDecayCount:0},manager:{hired:false,bond:0,wedding:false},band:{formed:false,bond:60,members:{guitar:null,bass:null,piano:null,drums:null}},albums:[],endings:[],history:[],dialogue:null,seenEvents:[],soloStreak:0,outfit:0,ownedOutfits:[0],performanceCount:0,stalker:{active:false,resolved:false,encounters:0,safety:0,motherEvacuated:false},narrative:{lastMajorEventDay:-99,twentyDaySeen:[]},gambling:{cards:{C:0,U:0,R:0,SR:0,SEC:0,SP:0},totalCardDraws:0,spDraws:0,lotteryTickets:[],lotteryResults:[]},minigames:{songSurvivalLastDay:-99,quizShowLastDay:-99,songBestStage:0,quizBest:0,quizBag:[],cookingPlayed:0,cookingBest:0,cookingPerfect:0},arrogance:{lastDay:-99,count:0,lesson:0},specialEvents:{iziViral:false,waitedMoreViral:false,day30Hair:false,day60Workout:false,day90Live:false,day120Chat:false,day150Birthday:false,day180Archive:false,day210Demo:false,day240Meme:false,day300Promise:false,day330Mother:false,day360Reflection:false,hiddenGameOst:false,hiddenRadioDj:false,hiddenDingo:false,careerLv70:false,careerLv80:false,careerLv90:false,mysteriousMerchantPurchased:false,cardCollectorVisit:false,cardTheft:false,hurabonoWeddingDay:false},specialScene:{active:false,key:null},preparation:{stageReady:false,stageReadyDay:-99,buskingInsight:false,buskingInsightDay:-99},cooldowns:{managerTalk:-99,recruit:-99,audition:-99,concert:-99,broadcast:-99,fanmeeting:-99,album:-99,fanEvent:-99,snsPost:-99},milestones:{firstAudition:false,firstConcert:false,firstBroadcast:false,firstFanmeeting:false,firstAlbum:false,managerHired:false,bandFormed:false,stalkerResolved:false,randomSeen:[]},historyKeys:[],lastAction:null,prologueSeen:false};
+const baseState={day:1,slot:0,time:0,location:'home',level:1,exp:0,rank:'무명 가수',weather:'sun',housing:0,endingPrompted:{},pendingEnding:null,stats:{hp:80,vocal:22,compose:16,looks:35,fame:0,fans:0,money:800000,stress:10},equipment:{mic:false,amp:false,battery:false},equipmentModel:{mic:null,amp:null},equipmentDamage:{mic:false,amp:false},equipmentDurability:{mic:0,amp:0,battery:0},forcedRest:{count:0,lastTriggeredDay:-99},restStreak:0,restNightmares:{totalRests:0,lastTriggeredRest:0,seen:[]},dailyPractice:{vocalDay:0,composeDay:0,vocalPenaltyCount:0,composePenaltyCount:0,penaltyInterval:7},instruments:{acousticGuitar:false,keyboard:false,audioInterface:false,studioMic:false,monitorHeadphones:false},fanGroups:{regular:0,enthusiast:0,gay:0,overseas:0},sns:{lastPostDay:-99,totalPosts:0,lastLiveDay:-99,totalLives:0,lastLiveScenario:null,nextVocalBonus:0,nextComposeBonus:0,controversy:0,lastEventDay:-99},drawer:{photos:Array.from({length:5},()=>Array(9).fill(false)),photoMissStreak:0,diaries:[],diaryFoundDays:{},diaryCheckedDay:-99,diaryMissStreak:0,todayDiaryId:null,todayMessage:'',newPhotos:false,newDiary:false,lastTab:'photos'},rival:{met:false,stage:0,respect:0,lastEventDay:-99},items:{bakcas:1,energizer:0,dietPill:0,bakcasUsedToday:0,mealsToday:0,bakcasBoughtToday:0,snacksBoughtToday:0},storeDaily:{promoDay:-99,customerDay:-99,flyerDay:-99,observeDay:-99,buskingDay:-99,buskingCount:0},storeJobs:{workCount:0,stockWorkCount:0},dailyUse:{styleCareDay:-99,styleCareLastDay:1,styleDecayCount:0,meditationDay:-99,meditationCount:0,walkDay:-99,walkCount:0},effects:{energizerUntilDay:0,energizerConsecutiveCount:0,energizerOverdose:false},specialProgress:{cardCollectorOfferSeen:false,cardCollectorEligibleDay:0,cardCollectorVisitDone:false,cardCollectorDeclinedDay:0,cardTheftDone:false,weddingSongSeen:false,weddingInviteSeen:false,hurabonoWeddingDone:false},economy:{workStreak:0,lastWorkDay:-99,debt:0,totalDebtRepaid:0,lastDebtNoticeDay:-99,debtStartDay:0,debtCriticalDay:0},equippedInstruments:[],career:{peakFame:0,totalWork:0,totalConcerts:0,totalBroadcasts:0,totalBusking:0,soloBusking:0,bandBusking:0},skillMaintenance:{lastVocalUseDay:1,lastComposeUseDay:1,vocalDecayCount:0,composeDecayCount:0},manager:{hired:false,bond:0,wedding:false},band:{formed:false,bond:60,members:{guitar:null,bass:null,piano:null,drums:null}},albums:[],endings:[],history:[],dialogue:null,seenEvents:[],soloStreak:0,outfit:0,ownedOutfits:[0],performanceCount:0,stalker:{active:false,resolved:false,encounters:0,safety:0,motherEvacuated:false},narrative:{lastMajorEventDay:-99,twentyDaySeen:[]},gambling:{cards:{C:0,U:0,R:0,SR:0,SEC:0,SP:0},totalCardDraws:0,spDraws:0,lotteryTickets:[],lotteryResults:[]},minigames:{songSurvivalLastDay:-99,quizShowLastDay:-99,songBestStage:0,quizBest:0,quizBag:[],cookingPlayed:0,cookingBest:0,cookingPerfect:0},arrogance:{lastDay:-99,count:0,lesson:0},specialEvents:{iziViral:false,waitedMoreViral:false,day30Hair:false,day60Workout:false,day90Live:false,day120Chat:false,day150Birthday:false,day180Archive:false,day210Demo:false,day240Meme:false,day300Promise:false,day330Mother:false,day360Reflection:false,hiddenGameOst:false,hiddenRadioDj:false,hiddenDingo:false,careerLv70:false,careerLv80:false,careerLv90:false,mysteriousMerchantPurchased:false,cardCollectorVisit:false,cardTheft:false,hurabonoWeddingDay:false},specialScene:{active:false,key:null},preparation:{stageReady:false,stageReadyDay:-99,buskingInsight:false,buskingInsightDay:-99},cooldowns:{managerTalk:-99,recruit:-99,audition:-99,concert:-99,broadcast:-99,fanmeeting:-99,album:-99,fanEvent:-99,snsPost:-99},milestones:{firstAudition:false,firstConcert:false,firstBroadcast:false,firstFanmeeting:false,firstAlbum:false,managerHired:false,bandFormed:false,stalkerResolved:false,randomSeen:[]},historyKeys:[],lastAction:null,prologueSeen:false};
 let state=structuredClone(baseState);let deferredPrompt=null;let audioCtx=null;let motionTimer=null;let burstTimer=null;let memoryGameActive=false;let activeTrainingAbort=null;
 let audioMaster=null,bgmGain=null,sfxGain=null,bgmTimer=null,bgmStep=0;
 let specialEventBgm=null,specialEventBgmKey=null;
 let audioScreenMode='title';
 let choiceLock=false,endingMusicMode=false,endingMusicName='';
+let customEndingBgm=null,customEndingBgmName='';
 let blockingNoticeActive=false;
 let instagramLiveActive=false;
 let pendingLocationActionStress=false;
@@ -13,8 +14,23 @@ let deferredPostAdvance=null;
 let cardRevealPending=false;
 let pendingTrainingActionBefore=null;
 let audioSettings={bgm:true,sfx:true};
-const FIXED_MASTER_VOLUME=.72,REGULAR_BGM_VOLUME=.348,SPECIAL_EVENT_BGM_VOLUME=.30,ENDING_BGM_VOLUME=.18;
+const FIXED_MASTER_VOLUME=.72,REGULAR_BGM_VOLUME=.14,SPECIAL_EVENT_BGM_VOLUME=.12,ENDING_BGM_VOLUME=.072,SFX_GAIN_VOLUME=.78;
+const BANKRUPTCY_CRITICAL_DEBT=500000,BANKRUPTCY_CRITICAL_DAYS=15,BANKRUPTCY_MAX_DAYS=30;
 const specialEventBgmMap={iziViral:'emergencyRoomEventBgm',waitedMoreViral:'waitedMoreEventBgm'};
+const customEndingBgmMap={'파산 엔딩':'fatalEndingBgm','스토커 살해 엔딩':'fatalEndingBgm'};
+const endingArtworkMap={
+ '작곡가 엔딩':'assets/images/endings/ending-composer.png',
+ '디지몬 카드샵 사장 엔딩':'assets/images/endings/ending-cardshop.png',
+ '무명가수 엔딩':'assets/images/endings/ending-nameless.png',
+ '밴드가수 엔딩':'assets/images/endings/ending-band.png',
+ '보컬트레이너 엔딩':'assets/images/endings/ending-trainer.png',
+ '유명 솔로가수 엔딩':'assets/images/endings/ending-solo.png',
+ '스토커 살해 엔딩':'assets/images/endings/ending-stalker.png',
+ '월드스타 엔딩':'assets/images/endings/ending-worldstar.png',
+ '인플루언서 엔딩':'assets/images/endings/ending-influencer.png',
+ '파산 엔딩':'assets/images/endings/ending-bankruptcy.png',
+ '편의점 사장 엔딩':'assets/images/endings/ending-store-owner.png'
+};
 const actions={
  home:[
   ['깊은 휴식','체력 +25~45 · 스트레스 -10 · 시간 +2 · 2회 연속 시 보컬·작곡 -1 · 누적 5회 이후 휴식 3회 간격·20% 악몽','rest'],
@@ -345,8 +361,8 @@ function normalizeState(){
  state.storeDaily={promoDay:Number(state.storeDaily?.promoDay??-99),customerDay:Number(state.storeDaily?.customerDay??-99),flyerDay:Number(state.storeDaily?.flyerDay??-99),observeDay:Number(state.storeDaily?.observeDay??-99),buskingDay:Number(state.storeDaily?.buskingDay??-99),buskingCount:Math.max(0,Number(state.storeDaily?.buskingCount)||0)};const sj=state.storeJobs||{};state.storeJobs={workCount:Math.max(0,Math.floor(Number(sj.workCount)||0)),stockWorkCount:Math.max(0,Math.floor(Number(sj.stockWorkCount)||0))};const du=state.dailyUse||{};const hasStyleCareLastDay=Number.isFinite(Number(du.styleCareLastDay));state.dailyUse={styleCareDay:Number(du.styleCareDay??-99),styleCareLastDay:hasStyleCareLastDay?Math.max(1,Number(du.styleCareLastDay)):Math.max(1,state.day),styleDecayCount:hasStyleCareLastDay?Math.max(0,Math.floor(Number(du.styleDecayCount)||0)):0,meditationDay:Number(du.meditationDay??-99),meditationCount:Math.max(0,Math.min(2,Math.floor(Number(du.meditationCount)||0))),walkDay:Number(du.walkDay??-99),walkCount:Math.max(0,Math.min(2,Math.floor(Number(du.walkCount)||0)))};
  const fx=state.effects||{};const energizerUntilDay=Math.max(0,Math.floor(Number(fx.energizerUntilDay)||0));const energizerStillActive=energizerUntilDay>=state.day;state.effects={energizerUntilDay,energizerConsecutiveCount:energizerStillActive?1:0,energizerOverdose:false};
  const sp=state.specialProgress||{};state.specialProgress={cardCollectorOfferSeen:!!sp.cardCollectorOfferSeen,cardCollectorEligibleDay:Math.max(0,Math.floor(Number(sp.cardCollectorEligibleDay)||0)),cardCollectorVisitDone:!!sp.cardCollectorVisitDone,cardCollectorDeclinedDay:Math.max(0,Math.floor(Number(sp.cardCollectorDeclinedDay)||0)),cardTheftDone:!!sp.cardTheftDone,weddingSongSeen:!!sp.weddingSongSeen,weddingInviteSeen:!!sp.weddingInviteSeen,hurabonoWeddingDone:!!sp.hurabonoWeddingDone};
- const economy=state.economy||{};const normalizedDebt=Math.max(0,Number(economy.debt)||0);const savedDebtStart=Number(economy.debtStartDay);
- state.economy={workStreak:Math.max(0,Number(economy.workStreak)||0),lastWorkDay:Number(economy.lastWorkDay??-99),debt:normalizedDebt,totalDebtRepaid:Math.max(0,Number(economy.totalDebtRepaid)||0),lastDebtNoticeDay:Number(economy.lastDebtNoticeDay??-99),debtStartDay:normalizedDebt>0?(Number.isFinite(savedDebtStart)&&savedDebtStart>0?Math.max(1,Math.floor(savedDebtStart)):state.day):0};
+ const economy=state.economy||{};const normalizedDebt=Math.max(0,Number(economy.debt)||0);const savedDebtStart=Number(economy.debtStartDay),savedCriticalDay=Number(economy.debtCriticalDay);
+ state.economy={workStreak:Math.max(0,Number(economy.workStreak)||0),lastWorkDay:Number(economy.lastWorkDay??-99),debt:normalizedDebt,totalDebtRepaid:Math.max(0,Number(economy.totalDebtRepaid)||0),lastDebtNoticeDay:Number(economy.lastDebtNoticeDay??-99),debtStartDay:normalizedDebt>0?(Number.isFinite(savedDebtStart)&&savedDebtStart>0?Math.max(1,Math.floor(savedDebtStart)):state.day):0,debtCriticalDay:normalizedDebt>=BANKRUPTCY_CRITICAL_DEBT?(Number.isFinite(savedCriticalDay)&&savedCriticalDay>0?Math.max(1,Math.floor(savedCriticalDay)):state.day):0};
  const career=state.career||{};const totalBusking=Math.max(0,Number(career.totalBusking)||0);const hasSplitBusking=Number.isFinite(Number(career.soloBusking))||Number.isFinite(Number(career.bandBusking));
  state.career={peakFame:Math.max(Number(career.peakFame)||0,Number(state.stats.fame)||0),totalWork:Math.max(0,Number(career.totalWork)||0),totalConcerts:Math.max(0,Number(career.totalConcerts)||0),totalBroadcasts:Math.max(0,Number(career.totalBroadcasts)||0),totalBusking,soloBusking:Math.max(0,Number(career.soloBusking)||(hasSplitBusking?0:totalBusking)),bandBusking:Math.max(0,Number(career.bandBusking)||0)};
  const sm=state.skillMaintenance||{};state.skillMaintenance={lastVocalUseDay:Number.isFinite(Number(sm.lastVocalUseDay))?Math.max(1,Number(sm.lastVocalUseDay)):state.day,lastComposeUseDay:Number.isFinite(Number(sm.lastComposeUseDay))?Math.max(1,Number(sm.lastComposeUseDay)):state.day,vocalDecayCount:Math.max(0,Math.floor(Number(sm.vocalDecayCount)||0)),composeDecayCount:Math.max(0,Math.floor(Number(sm.composeDecayCount)||0))};
@@ -466,24 +482,30 @@ function syncScreenBgm(restart=false){
  const title=titleBgmElement(),game=gameBgmElement(),target=audioScreenMode==='game'?game:title,other=audioScreenMode==='game'?title:game;
  [title,game].forEach(audio=>{if(audio){audio.loop=true;audio.volume=REGULAR_BGM_VOLUME}});
  pauseMediaBgm(other,false);
- const canPlay=!!audioSettings.bgm&&!specialEventBgm&&!endingMusicMode&&document.visibilityState!=='hidden';
+ const canPlay=!!audioSettings.bgm&&!specialEventBgm&&!endingMusicMode&&!customEndingBgm&&document.visibilityState!=='hidden';
  if(!canPlay){pauseMediaBgm(target,false);return}
  if(restart&&target){try{target.currentTime=0}catch{}}
  target?.play().catch(()=>{})
 }
 function setAudioScreenMode(mode,restart=false){audioScreenMode=mode==='game'?'game':'title';syncScreenBgm(restart)}
-function ensureAudio(){if(!audioCtx){const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx){syncScreenBgm();return false}audioCtx=new Ctx();audioMaster=audioCtx.createGain();bgmGain=audioCtx.createGain();sfxGain=audioCtx.createGain();audioMaster.gain.value=FIXED_MASTER_VOLUME;bgmGain.gain.value=(endingMusicMode&&audioSettings.bgm)?ENDING_BGM_VOLUME:0;sfxGain.gain.value=audioSettings.sfx?0.55:0;bgmGain.connect(audioMaster);sfxGain.connect(audioMaster);audioMaster.connect(audioCtx.destination)}if(audioCtx.state==='suspended')audioCtx.resume();syncAudioGains();syncScreenBgm();if(endingMusicMode&&audioSettings.bgm&&!bgmTimer&&!specialEventBgm)startBgm();return true}
+function ensureAudio(){if(!audioCtx){const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx){syncScreenBgm();return false}audioCtx=new Ctx();audioMaster=audioCtx.createGain();bgmGain=audioCtx.createGain();sfxGain=audioCtx.createGain();audioMaster.gain.value=FIXED_MASTER_VOLUME;bgmGain.gain.value=(endingMusicMode&&audioSettings.bgm)?ENDING_BGM_VOLUME:0;sfxGain.gain.value=audioSettings.sfx?SFX_GAIN_VOLUME:0;bgmGain.connect(audioMaster);sfxGain.connect(audioMaster);audioMaster.connect(audioCtx.destination)}if(audioCtx.state==='suspended')audioCtx.resume();syncAudioGains();syncScreenBgm();if(endingMusicMode&&audioSettings.bgm&&!bgmTimer&&!specialEventBgm)startBgm();return true}
 function forceAudioOn(){const ok=ensureAudio();syncScreenBgm();return ok}
 function specialEventBgmVolume(){return audioSettings.bgm?SPECIAL_EVENT_BGM_VOLUME:0}
 function syncAudioGains(){
  if(specialEventBgm){specialEventBgm.volume=specialEventBgmVolume();if(audioSettings.bgm&&specialEventBgm.paused)specialEventBgm.play().catch(()=>{});if(!audioSettings.bgm&&!specialEventBgm.paused)specialEventBgm.pause()}
- if(audioCtx){const t=audioCtx.currentTime;audioMaster.gain.setTargetAtTime(FIXED_MASTER_VOLUME,t,.04);bgmGain.gain.setTargetAtTime((audioSettings.bgm&&endingMusicMode&&!specialEventBgm)?ENDING_BGM_VOLUME:0,t,.08);sfxGain.gain.setTargetAtTime(audioSettings.sfx?0.55:0,t,.04)}
- if(audioSettings.bgm&&endingMusicMode&&!bgmTimer&&!specialEventBgm)startBgm();
- if((!audioSettings.bgm||!endingMusicMode||specialEventBgm)&&bgmTimer){clearInterval(bgmTimer);bgmTimer=null}
+ if(customEndingBgm){customEndingBgm.volume=audioSettings.bgm?SPECIAL_EVENT_BGM_VOLUME:0; if(audioSettings.bgm&&customEndingBgm.paused)customEndingBgm.play().catch(()=>{}); if(!audioSettings.bgm&&!customEndingBgm.paused)customEndingBgm.pause()}
+ if(audioCtx){const t=audioCtx.currentTime;audioMaster.gain.setTargetAtTime(FIXED_MASTER_VOLUME,t,.04);bgmGain.gain.setTargetAtTime((audioSettings.bgm&&endingMusicMode&&!specialEventBgm&&!customEndingBgm)?ENDING_BGM_VOLUME:0,t,.08);sfxGain.gain.setTargetAtTime(audioSettings.sfx?SFX_GAIN_VOLUME:0,t,.04)}
+ if(audioSettings.bgm&&endingMusicMode&&!bgmTimer&&!specialEventBgm&&!customEndingBgm)startBgm();
+ if((!audioSettings.bgm||!endingMusicMode||specialEventBgm||customEndingBgm)&&bgmTimer){clearInterval(bgmTimer);bgmTimer=null}
  syncScreenBgm()
 }
 function startSpecialEventBgm(key){const elementId=specialEventBgmMap[key];if(!elementId)return;stopSpecialEventBgm(false);specialEventBgmKey=key;specialEventBgm=document.getElementById(elementId);if(!specialEventBgm){specialEventBgmKey=null;return}pauseMediaBgm(titleBgmElement());pauseMediaBgm(gameBgmElement());if(bgmTimer){clearInterval(bgmTimer);bgmTimer=null}if(audioCtx&&bgmGain){const t=audioCtx.currentTime;bgmGain.gain.cancelScheduledValues(t);bgmGain.gain.setTargetAtTime(0,t,.04)}specialEventBgm.loop=true;specialEventBgm.currentTime=0;specialEventBgm.volume=specialEventBgmVolume();if(audioSettings.bgm)specialEventBgm.play().catch(()=>{})}
 function stopSpecialEventBgm(resume=true){const audio=specialEventBgm;specialEventBgm=null;specialEventBgmKey=null;if(audio){audio.pause();try{audio.currentTime=0}catch{}}if(resume&&audioSettings.bgm){if(endingMusicMode){ensureAudio();restartBgmScheduler();syncAudioGains()}else syncScreenBgm()}}
+function stopCustomEndingBgm(resume=true){
+ const audio=customEndingBgm;customEndingBgm=null;customEndingBgmName='';
+ if(audio){audio.pause();try{audio.currentTime=0}catch{}}
+ if(resume&&audioSettings.bgm){if(endingMusicMode){ensureAudio();restartBgmScheduler();syncAudioGains()}else syncScreenBgm()}
+}
 const bgmScales={home:[48,52,55,59,55,52,50,55],store:[50,53,57,60,57,53,52,57],practice:[45,52,57,60,57,52,48,55],park:[48,55,59,62,59,55,52,59],stage:[45,52,56,59,64,59,56,52]};
 function midiHz(n){return 440*Math.pow(2,(n-69)/12)}
 function softNote(freq,start,duration,gain=.045,type='sine',target=bgmGain){if(!audioCtx||!target)return;const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type;o.frequency.setValueAtTime(freq,start);g.gain.setValueAtTime(.0001,start);g.gain.exponentialRampToValueAtTime(gain,start+.08);g.gain.exponentialRampToValueAtTime(.0001,start+duration);o.connect(g);g.connect(target);o.start(start);o.stop(start+duration+.04)}
@@ -518,8 +540,32 @@ function scheduleBgmBar(){
  const root=notes[0];softNote(midiHz(root-12),now,5.8,.012,'sine');softNote(midiHz(root-5),now,5.8,.009,'sine');bgmStep=(bgmStep+2)%notes.length
 }
 function restartBgmScheduler(){if(bgmTimer){clearInterval(bgmTimer);bgmTimer=null}bgmStep=0;if(audioSettings.bgm&&audioCtx&&endingMusicMode&&!specialEventBgm){scheduleBgmBar();bgmTimer=setInterval(scheduleBgmBar,6000)}}
-function enterEndingMusic(name){stopSpecialEventBgm(false);endingMusicMode=true;endingMusicName=name;syncScreenBgm();ensureAudio();if(audioCtx&&bgmGain){const t=audioCtx.currentTime;bgmGain.gain.cancelScheduledValues(t);bgmGain.gain.setValueAtTime(bgmGain.gain.value,t);bgmGain.gain.linearRampToValueAtTime(0,t+.75);setTimeout(()=>{restartBgmScheduler();syncAudioGains()},780)}else restartBgmScheduler()}
-function exitEndingMusic(){if(!endingMusicMode)return;endingMusicMode=false;endingMusicName='';if(audioCtx&&bgmGain){const t=audioCtx.currentTime;bgmGain.gain.cancelScheduledValues(t);bgmGain.gain.setValueAtTime(bgmGain.gain.value,t);bgmGain.gain.linearRampToValueAtTime(0,t+.55);setTimeout(()=>{restartBgmScheduler();syncAudioGains();syncScreenBgm()},580)}else{restartBgmScheduler();syncScreenBgm()}}
+function enterEndingMusic(name){
+ stopSpecialEventBgm(false);
+ stopCustomEndingBgm(false);
+ endingMusicName=name;
+ const customId=customEndingBgmMap[name];
+ if(customId){
+  endingMusicMode=false;
+  if(bgmTimer){clearInterval(bgmTimer);bgmTimer=null}
+  ensureAudio();
+  if(audioCtx&&bgmGain){const t=audioCtx.currentTime;bgmGain.gain.cancelScheduledValues(t);bgmGain.gain.setTargetAtTime(0,t,.05)}
+  customEndingBgm=document.getElementById(customId);
+  customEndingBgmName=name;
+  if(customEndingBgm){customEndingBgm.loop=true;customEndingBgm.volume=audioSettings.bgm?SPECIAL_EVENT_BGM_VOLUME:0;customEndingBgm.currentTime=0;if(audioSettings.bgm)customEndingBgm.play().catch(()=>{})}
+  syncAudioGains();
+  syncScreenBgm();
+  return;
+ }
+ endingMusicMode=true;
+ syncScreenBgm();
+ ensureAudio();
+ if(audioCtx&&bgmGain){const t=audioCtx.currentTime;bgmGain.gain.cancelScheduledValues(t);bgmGain.gain.setValueAtTime(bgmGain.gain.value,t);bgmGain.gain.linearRampToValueAtTime(0,t+.75);setTimeout(()=>{restartBgmScheduler();syncAudioGains()},780)}else restartBgmScheduler()
+}
+function exitEndingMusic(){
+ if(customEndingBgm){endingMusicMode=false;endingMusicName='';stopCustomEndingBgm(false);syncAudioGains();syncScreenBgm();return}
+ if(!endingMusicMode)return;endingMusicMode=false;endingMusicName='';if(audioCtx&&bgmGain){const t=audioCtx.currentTime;bgmGain.gain.cancelScheduledValues(t);bgmGain.gain.setValueAtTime(bgmGain.gain.value,t);bgmGain.gain.linearRampToValueAtTime(0,t+.55);setTimeout(()=>{restartBgmScheduler();syncAudioGains();syncScreenBgm()},580)}else{restartBgmScheduler();syncScreenBgm()}
+}
 
 function startBgm(){if(!audioCtx||bgmTimer||!audioSettings.bgm||specialEventBgm||!endingMusicMode)return;scheduleBgmBar();bgmTimer=setInterval(scheduleBgmBar,6000)}
 function playSfx(type='tap'){if(!audioSettings.sfx||!ensureAudio()||!sfxGain)return;const now=audioCtx.currentTime+.01;const note=(n,d=.12,g=.12,w='sine',delay=0)=>softNote(midiHz(n),now+delay,d,g,w,sfxGain);switch(type){case'move':note(60,.12,.09,'triangle');note(67,.18,.08,'triangle',.1);break;case'coin':note(76,.1,.12,'square');note(83,.16,.09,'triangle',.08);break;case'save':note(64,.12,.08,'sine');note(69,.15,.08,'sine',.09);note(76,.22,.07,'sine',.18);break;case'success':note(60,.12,.09,'triangle');note(64,.15,.09,'triangle',.1);note(67,.2,.09,'triangle',.2);note(72,.3,.08,'sine',.3);break;case'fail':note(55,.2,.08,'sawtooth');note(50,.3,.07,'triangle',.15);break;case'busking':note(57,.11,.08,'triangle');note(64,.11,.08,'triangle',.09);note(69,.2,.08,'triangle',.18);break;case'drink':note(72,.08,.07,'sine');note(79,.12,.06,'sine',.08);break;case'event':note(48,.18,.07,'sine');note(60,.24,.08,'triangle',.13);break;case'click':case'tap':default:note(69,.07,.035,'sine');}}
@@ -556,8 +602,8 @@ function gameGuideHtml(){return `<div class="game-guide">
       <div class="guide-callout"><b>추천 성장 흐름</b><p>초반: 홍보·버스킹·오디션 → 중반: 앨범·공연·방송 → 후반: 전국 페스티벌·투어·해외 쇼케이스</p></div>
     </section>
     <section class="guide-page" data-guide-page="money"><div class="guide-grid">
-      <article><b>수입</b><p>아르바이트, 버스킹, 공연, 방송, 앨범으로 얻습니다. 채무가 있으면 수입 일부가 자동 상환됩니다.</p></article><article><b>고정비</b><p>월세와 생활비가 정기적으로 발생하며 매니저·밴드 유지비가 추가될 수 있습니다.</p></article><article><b>채무</b><p>비용 부족이나 고정비 미납 시 부족분이 채무가 됩니다. 채무 발생일부터 30일 안에 전액 상환하지 못하면 파산 엔딩이 즉시 진행됩니다.</p></article><article><b>채무 제한</b><p>앨범 제작, 장비·의상 구매, 이사 등 일부 투자 행동이 막힙니다.</p></article>
-    </div><div class="guide-callout warning"><b>채무 상환 제한은 30일입니다.</b><p>훈련, 아르바이트, 버스킹은 계속 가능하지만 최초 채무 발생일부터 30일 안에 채무를 0원으로 만들어야 합니다.</p></div></section>
+      <article><b>수입</b><p>아르바이트, 버스킹, 공연, 방송, 앨범으로 얻습니다. 채무가 있으면 수입 일부가 자동 상환됩니다.</p></article><article><b>고정비</b><p>월세와 생활비가 정기적으로 발생하며 매니저·밴드 유지비가 추가될 수 있습니다.</p></article><article><b>채무</b><p>비용 부족이나 고정비 미납 시 부족분이 채무가 됩니다. 채무가 50만원 이상인 상태가 15일 지속되거나, 금액과 관계없이 채무가 30일 동안 남아 있으면 파산 엔딩이 즉시 진행됩니다.</p></article><article><b>채무 제한</b><p>앨범 제작, 장비·의상 구매, 이사 등 일부 투자 행동이 막힙니다.</p></article>
+    </div><div class="guide-callout warning"><b>채무 위험선은 50만원입니다.</b><p>채무가 50만원 이상이면 15일 안에 50만원 미만으로 줄여야 하며, 채무가 조금이라도 남은 상태가 30일을 넘으면 파산 엔딩이 발생합니다.</p></div></section>
     <section class="guide-page" data-guide-page="save">
       <div class="guide-step"><b>자동 저장</b><p>이동·행동·날짜 변경 때 최근 진행 상황이 저장됩니다.</p></div><div class="guide-step"><b>소리 재생</b><p>첫 화면을 한 번 누르면 타이틀 BGM이 시작되고, 새 게임의 프롤로그가 끝나 실제 게임이 시작될 때 게임 전용 BGM으로 전환됩니다. 오른쪽 위 음악 버튼에서 배경음악과 효과음을 각각 켜거나 끌 수 있습니다.</p></div><div class="guide-step"><b>수동 저장 슬롯 3개</b><p>중요 선택이나 엔딩 분기 전에 서로 다른 슬롯에 저장하세요.</p></div><div class="guide-step"><b>추억 앨범</b><p>완료한 특별 이벤트의 이미지와 스토리를 다시 볼 수 있으며 보상은 중복 지급되지 않습니다.</p></div><div class="guide-step"><b>저장 주의</b><p>브라우저 사이트 데이터를 삭제하면 저장이 사라질 수 있으며 다른 기기와 자동 동기화되지 않습니다.</p></div>
     </section>
@@ -616,7 +662,7 @@ function distributeFanGrowth(delta){if(delta<=0)return;const lv=fameLevel();let 
 function stat(name,delta,rawHp=false){
  if(name==='fame'){state.stats.fame=Math.max(0,Math.min(10000,state.stats.fame+delta));if(state.career)state.career.peakFame=Math.max(state.career.peakFame||0,state.stats.fame);return delta}
  if(name==='money'){
-  if(delta>0&&state.economy?.debt>0){const repay=Math.min(state.economy.debt,Math.max(1,Math.floor(delta*.5)));state.economy.debt-=repay;state.economy.totalDebtRepaid=(state.economy.totalDebtRepaid||0)+repay;if(state.economy.debt<=0){state.economy.debt=0;state.economy.debtStartDay=0}state.stats.money=Math.max(0,state.stats.money+delta-repay);return delta-repay}
+  if(delta>0&&state.economy?.debt>0){const repay=Math.min(state.economy.debt,Math.max(1,Math.floor(delta*.5)));state.economy.debt-=repay;state.economy.totalDebtRepaid=(state.economy.totalDebtRepaid||0)+repay;if(state.economy.debt<=0){state.economy.debt=0;state.economy.debtStartDay=0;state.economy.debtCriticalDay=0}else if(state.economy.debt<BANKRUPTCY_CRITICAL_DEBT){state.economy.debtCriticalDay=0}state.stats.money=Math.max(0,state.stats.money+delta-repay);return delta-repay}
   if(delta<0&&state.stats.money+delta<0){const shortage=Math.abs(delta)-state.stats.money;state.stats.money=0;addDebt(shortage,'예상 밖의 지출');return delta+shortage}
   state.stats.money=Math.max(0,state.stats.money+delta);return delta
  }
@@ -642,7 +688,7 @@ function stat(name,delta,rawHp=false){
  }
  state.stats[name]=clamp(state.stats[name]+delta);return delta
 }
-function addDebt(amount,reason='미납금'){amount=Math.max(0,Math.floor(Number(amount)||0));if(!amount)return 0;const wasDebt=Math.max(0,Number(state.economy?.debt)||0);if(wasDebt<=0)state.economy.debtStartDay=state.day;state.economy.debt=wasDebt+amount;state.economy.lastDebtNoticeDay=state.day;addHistory(`💳 채무 발생 · ${reason} ${amount.toLocaleString()}원 · 30일 안에 전액 상환 필요`,`debt:${state.day}:${state.economy.debt}`);return amount}
+function addDebt(amount,reason='미납금'){amount=Math.max(0,Math.floor(Number(amount)||0));if(!amount)return 0;const wasDebt=Math.max(0,Number(state.economy?.debt)||0);if(wasDebt<=0)state.economy.debtStartDay=state.day;state.economy.debt=wasDebt+amount;if(wasDebt<BANKRUPTCY_CRITICAL_DEBT&&state.economy.debt>=BANKRUPTCY_CRITICAL_DEBT)state.economy.debtCriticalDay=state.day;state.economy.lastDebtNoticeDay=state.day;const rule=state.economy.debt>=BANKRUPTCY_CRITICAL_DEBT?`채무 50만원 이상 상태를 ${BANKRUPTCY_CRITICAL_DAYS}일 안에 줄여야 함`:`최대 ${BANKRUPTCY_MAX_DAYS}일 안에 전액 상환 필요`;addHistory(`💳 채무 발생 · ${reason} ${amount.toLocaleString()}원 · ${rule}`,`debt:${state.day}:${state.economy.debt}`);return amount}
 function chargeMonthlyUpkeep(){let upkeep=500000;if(state.manager.hired)upkeep+=250000;if(state.band.formed)upkeep+=400000;const paid=Math.min(state.stats.money,upkeep);state.stats.money-=paid;const unpaid=upkeep-paid;if(unpaid>0)addDebt(unpaid,'월 고정비 미납');addHistory(`🏠 월 고정비 정산 · ${upkeep.toLocaleString()}원${unpaid>0?` · 미납 ${unpaid.toLocaleString()}원 채무 발생`:''}`,`monthly-upkeep:${state.day}`)}
 function debtBlocked(label='이 활동'){if((state.economy?.debt||0)<=0)return false;toast(`채무 ${state.economy.debt.toLocaleString()}원을 먼저 줄여야 ${label}을 진행할 수 있습니다.`);return true}
 function energizerRemainingDays(){return Math.max(0,(Number(state.effects?.energizerUntilDay)||0)-state.day+1)}
@@ -677,22 +723,28 @@ function cookingTrayFor(recipe){
  const required=[...recipe.steps],decoys=Object.keys(cookingStepCatalog).filter(key=>!required.includes(key));
  shuffleInPlace(decoys);return shuffleInPlace([...required,...decoys.slice(0,5)]);
 }
+function runCookingCountdown(onStart){
+ let n=3;const body=$('#modalBody');if(!body)return()=>{};
+ const overlay=document.createElement('div');overlay.className='training-countdown cooking-countdown';overlay.innerHTML=`<strong>${n}</strong><small>요리 준비</small>`;body.appendChild(overlay);playSfx('tap');
+ let startTimer=null;const tick=setInterval(()=>{n--;if(n>0){overlay.querySelector('strong').textContent=n;playSfx('tap');return}clearInterval(tick);overlay.querySelector('strong').textContent='START';overlay.querySelector('small').textContent='';playSfx('success');startTimer=setTimeout(()=>{overlay.remove();onStart()},300)},1000);
+ return()=>{clearInterval(tick);if(startTimer)clearTimeout(startTimer);overlay.remove()}
+}
 function startCookingTycoon(before,cost,baseGain){
  state.items.mealsToday=(state.items.mealsToday||0)+1;stat('money',-cost);
  const orders=shuffleInPlace([...cookingRecipes]).slice(0,3);
- let orderIndex=0,stepIndex=0,completed=0,mistakes=0,finished=false,locked=false;
+ let orderIndex=0,stepIndex=0,completed=0,mistakes=0,finished=false,locked=true;
  let tray=cookingTrayFor(orders[0]);
- const totalSeconds=35;let endAt=performance.now()+totalSeconds*1000;let timer=null;
+ const totalSeconds=35;let endAt=null,timer=null,countdownCancel=null;
  beginMiniGameUi();
  showModal('자취방 요리 타이쿤','', 'cooking');
  const modal=$('#modal');modal.classList.add('cooking-dialog');
  const closeButton=$('#closeModal');if(closeButton)closeButton.hidden=true;
- const remaining=()=>Math.max(0,Math.ceil((endAt-performance.now())/1000));
+ const remaining=()=>endAt===null?totalSeconds:Math.max(0,Math.ceil((endAt-performance.now())/1000));
  const renderGame=()=>{
   if(finished)return;
   const recipe=orders[orderIndex];
   const progress=recipe.steps.map((key,index)=>{const item=cookingStepCatalog[key];const cls=index<stepIndex?'done':index===stepIndex?'current':'';return `<span class="cooking-recipe-step ${cls}"><i>${item.icon}</i><small>${item.label}</small></span>`}).join('<b class="cooking-arrow">›</b>');
-  $('#modalBody').innerHTML=`<div class="cooking-game"><div class="cooking-hud"><div><small>남은 시간</small><b id="cookingTime">${remaining()}초</b></div><div><small>완성 주문</small><b>${completed} / 3</b></div><div><small>실수</small><b>${mistakes}회</b></div></div><div class="cooking-timebar"><i id="cookingTimeFill" style="width:${Math.max(0,remaining()/totalSeconds*100)}%"></i></div><section class="cooking-ticket"><span>ORDER ${orderIndex+1} / 3</span><h3>${recipe.icon} ${recipe.name}</h3><p>레시피 순서대로 재료와 조리 버튼을 빠르게 눌러 주세요.</p><div class="cooking-recipe">${progress}</div></section><div id="cookingTray" class="cooking-tray">${tray.map(key=>{const item=cookingStepCatalog[key];return `<button data-cooking-step="${key}"><i>${item.icon}</i><b>${item.label}</b></button>`}).join('')}</div><div class="cooking-tip">틀린 재료를 누르면 제한 시간이 2초 줄어듭니다.</div><button id="skipCookingGame" class="cooking-skip">미니게임 건너뛰고 평범하게 먹기</button></div>`;
+  $('#modalBody').innerHTML=`<div class="cooking-game"><div class="cooking-hud"><div><small>남은 시간</small><b id="cookingTime">${endAt===null?'대기':`${remaining()}초`}</b></div><div><small>완성 주문</small><b>${completed} / 3</b></div><div><small>실수</small><b>${mistakes}회</b></div></div><div class="cooking-timebar"><i id="cookingTimeFill" style="width:${Math.max(0,remaining()/totalSeconds*100)}%"></i></div><section class="cooking-ticket"><span>ORDER ${orderIndex+1} / 3</span><h3>${recipe.icon} ${recipe.name}</h3><p>${locked?'3초 뒤 영업을 시작합니다. 레시피 순서를 미리 확인하세요.':'레시피 순서대로 재료와 조리 버튼을 빠르게 눌러 주세요.'}</p><div class="cooking-recipe">${progress}</div></section><div id="cookingTray" class="cooking-tray">${tray.map(key=>{const item=cookingStepCatalog[key];return `<button data-cooking-step="${key}" ${locked?'disabled':''}><i>${item.icon}</i><b>${item.label}</b></button>`}).join('')}</div><div class="cooking-tip">틀린 재료를 누르면 제한 시간이 2초 줄어듭니다.</div><button id="skipCookingGame" class="cooking-skip" ${locked?'disabled':''}>미니게임 건너뛰고 평범하게 먹기</button></div>`;
   $$('[data-cooking-step]').forEach(button=>button.onclick=()=>selectStep(button.dataset.cookingStep));
   $('#skipCookingGame').onclick=()=>finish('skip');
  };
@@ -713,7 +765,7 @@ function startCookingTycoon(before,cost,baseGain){
   setTimeout(()=>{if(finished)return;if(completed>=3){finish('complete');return}orderIndex++;stepIndex=0;tray=cookingTrayFor(orders[orderIndex]);locked=false;renderGame()},420);
  };
  const finish=mode=>{
-  if(finished)return;finished=true;if(timer)clearInterval(timer);
+  if(finished)return;finished=true;if(timer)clearInterval(timer);if(countdownCancel)countdownCancel();countdownCancel=null;
   endMiniGameUi();activeTrainingAbort=null;
   modal.classList.remove('cooking-dialog');if(closeButton)closeButton.hidden=false;closeModal(true);
   let bonus=0,stressDelta=0,title='평범한 한 끼',summary='미니게임을 건너뛰고 천천히 식사를 마쳤다.';
@@ -737,7 +789,10 @@ function startCookingTycoon(before,cost,baseGain){
   $('#cookingResultConfirm').onclick=()=>{blockingNoticeActive=false;if(resultClose)resultClose.hidden=false;closeModal(true)};
  };
  activeTrainingAbort=()=>finish('skip');
- renderGame();timer=setInterval(updateClock,250);
+ renderGame();
+ countdownCancel=runCookingCountdown(()=>{
+  countdownCancel=null;if(finished)return;locked=false;endAt=performance.now()+totalSeconds*1000;renderGame();timer=setInterval(updateClock,250)
+ });
 }
 const equipmentCatalog={
  mic:{
@@ -1485,13 +1540,21 @@ function useDietPill(amount=1){
  let message='아무런 효과가 없었다.';if(lookChange<0)message=`부작용이 나타나 외모가 ${Math.abs(lookChange)} 감소했다.`;else if(lookChange>0)message=`조금 효과를 보여 외모가 ${lookChange} 증가했다.`;else if(negative&&positive)message='효과와 부작용이 동시에 나타나 외모 변화는 없었다.';
  const changes=describeStatChanges(before);addHistory(`💊 다이어트 알약 ${amount}알 ${amount===10?'연속 ':''}복용 · ${message}`,`diet-pill-use:${state.day}:${amount}:${Date.now()}`);state.dialogue={name:'류현상',text:`다이어트 알약을 ${amount}알${amount===10?' 연속으로':''} 삼킨 뒤 한동안 거울을 바라봤다. ${message}`};save(false);render();showModal('다이어트 알약 결과',`<div class="info-card"><b>${message}</b><p>${changes||'수치 변화 없음'}</p>${amount===10?'<small>10알 연속 복용은 한 알씩 먹을 때보다 각 알약의 외모 감소 부작용 확률이 1%에서 1.5%로 소폭 증가합니다.</small>':''}<button id="dietPillConfirm" class="primary wide">확인</button></div>`);const button=$('#dietPillConfirm');if(button)button.onclick=openItemMenu
 }
+function bankruptcyStatusText(){
+ const debt=Math.max(0,Number(state.economy?.debt)||0),start=Number(state.economy?.debtStartDay)||state.day,critical=Number(state.economy?.debtCriticalDay)||state.day;
+ if(debt>=BANKRUPTCY_CRITICAL_DEBT){const elapsed=Math.max(0,state.day-critical),remain=Math.max(0,BANKRUPTCY_CRITICAL_DAYS-elapsed);return `채무가 50만원 이상인 상태 ${elapsed}/${BANKRUPTCY_CRITICAL_DAYS}일 · ${remain}일 안에 50만원 미만으로 줄이지 못하면 파산 엔딩이 발생합니다.`}
+ const elapsed=Math.max(0,state.day-start),remain=Math.max(0,BANKRUPTCY_MAX_DAYS-elapsed);return `채무 발생 후 ${elapsed}/${BANKRUPTCY_MAX_DAYS}일 · ${remain}일 안에 전액 상환하지 못하면 파산 엔딩이 발생합니다.`
+}
 function openFinance(){
  const debt=Math.max(0,state.economy?.debt||0);
- if(debt<=0)return showModal('가계부·채무','<p>현재 채무가 없습니다. 월 고정비와 다음 달 지출을 확인하며 현금을 관리하세요.</p>');
+ if(debt<=0)return showModal('가계부·채무','<p>현재 채무가 없습니다. 월 고정비와 다음 달 지출을 확인하며 현금을 관리하세요.</p><p>채무가 50만원 이상이면 15일, 50만원 미만이면 최대 30일 안에 정리해야 파산을 피할 수 있습니다.</p>');
  const options=[100000,500000,debt].filter((v,i,a)=>v<=debt&&v<=state.stats.money&&a.indexOf(v)===i);
- showModal('가계부·채무',`<p>현재 채무 <b>${debt.toLocaleString()}원</b> · 보유금 <b>${state.stats.money.toLocaleString()}원</b></p><p>채무 발생 후 ${Math.max(0,state.day-(state.economy.debtStartDay||state.day))}/30일 경과 · 30일 안에 전액 상환하지 못하면 파산 엔딩이 즉시 발생합니다.</p><p>수입 발생 시 50%가 자동 상환되며, 여기서 원하는 금액을 즉시 상환할 수 있습니다.</p>${options.length?options.map(v=>`<button class="wide" data-repay-debt="${v}">${v===debt?'전액 ':''}${v.toLocaleString()}원 상환</button>`).join(''):'<p>현재 보유금으로 상환할 수 없습니다.</p>'}`);
- $$('[data-repay-debt]').forEach(b=>b.onclick=()=>{const amount=Math.min(Number(b.dataset.repayDebt)||0,state.stats.money,state.economy.debt);if(amount<=0)return;state.stats.money-=amount;state.economy.debt-=amount;if(state.economy.debt<=0){state.economy.debt=0;state.economy.debtStartDay=0}state.economy.totalDebtRepaid=(state.economy.totalDebtRepaid||0)+amount;addHistory(`💳 직접 채무 상환 · ${amount.toLocaleString()}원`,`debt:manual:${state.day}:${state.economy.debt}`);state.dialogue={name:'가계부',text:`채무 ${amount.toLocaleString()}원을 직접 상환했다.\n\n【수치 변화】 돈 -${amount.toLocaleString()} · 채무 -${amount.toLocaleString()}`};save(false);render();openFinance()})
+ showModal('가계부·채무',`<p>현재 채무 <b>${debt.toLocaleString()}원</b> · 보유금 <b>${state.stats.money.toLocaleString()}원</b></p><p>${bankruptcyStatusText()}</p><p>수입 발생 시 50%가 자동 상환되며, 여기서 원하는 금액을 즉시 상환할 수 있습니다.</p>${options.length?options.map(v=>`<button class="wide" data-repay-debt="${v}">${v===debt?'전액 ':''}${v.toLocaleString()}원 상환</button>`).join(''):'<p>현재 보유금으로 상환할 수 없습니다.</p>'}`);
+ $$('[data-repay-debt]').forEach(b=>b.onclick=()=>{const amount=Math.min(Number(b.dataset.repayDebt)||0,state.stats.money,state.economy.debt);if(amount<=0)return;state.stats.money-=amount;state.economy.debt-=amount;if(state.economy.debt<=0){state.economy.debt=0;state.economy.debtStartDay=0;state.economy.debtCriticalDay=0}else if(state.economy.debt<BANKRUPTCY_CRITICAL_DEBT){state.economy.debtCriticalDay=0}state.economy.totalDebtRepaid=(state.economy.totalDebtRepaid||0)+amount;addHistory(`💳 직접 채무 상환 · ${amount.toLocaleString()}원`,`debt:manual:${state.day}:${state.economy.debt}`);state.dialogue={name:'가계부',text:`채무 ${amount.toLocaleString()}원을 직접 상환했다.
+
+【수치 변화】 돈 -${amount.toLocaleString()} · 채무 -${amount.toLocaleString()}`};save(false);render();openFinance()})
 }
+
 function stageRehearsal(){
  if(!concertRequirementMet())return toast(`공연을 열 수 있는 수준이 되어야 리허설도 가능합니다. ${concertRequirementText()}`);
  if(state.preparation?.stageReady)return toast('이미 다음 무대를 위한 리허설을 마쳤습니다.');
@@ -2450,9 +2513,9 @@ const endingStories={
   ['다시 첫 곡','그는 다음 날에도 낡은 마이크를 세웠다. 관객은 적었지만 첫 소절을 대충 부르지 않았다. 류현상은 이름 없는 가수로 남았지만, 노래를 포기하지 않은 사람으로 계속 살아갔다.']
  ],
  '파산 엔딩':[
-  ['미뤄 둔 고지서','처음 생긴 채무는 다음 수입으로 갚을 수 있을 것 같았다. 하지만 월세와 유지비, 예상 밖의 지출이 이어졌고 30일 동안 원금은 끝내 사라지지 않았다. 독촉 문자는 공연 알림보다 더 자주 울렸다.'],
+  ['미뤄 둔 고지서','처음 생긴 채무는 다음 수입으로 갚을 수 있을 것 같았다. 하지만 월세와 유지비, 예상 밖의 지출이 이어지며 채무는 50만원을 넘겼고, 15일 동안 위험선을 벗어나지 못했다. 독촉 문자는 공연 알림보다 더 자주 울렸다.'],
   ['닫히는 문','장비와 가구가 정리되고 계약은 하나씩 취소됐다. 류현상은 마지막으로 남은 마이크를 바라봤지만 당장 필요한 것은 새 노래가 아니라 생활을 다시 세울 돈이었다. 음악 활동은 강제로 멈췄다.'],
-  ['파산','그는 실패를 인정하는 서류에 이름을 적었다. 다시 시작할 가능성까지 사라진 것은 아니었지만, 채무를 방치한 30일의 결과는 명확했다. 이번 이야기는 꿈보다 먼저 지켜야 할 생활의 균형을 잃은 결말로 끝났다.']
+  ['파산','그는 실패를 인정하는 서류에 이름을 적었다. 다시 시작할 가능성까지 사라진 것은 아니었지만, 채무가 위험선을 넘은 뒤에도 제때 줄이지 못한 결과는 명확했다. 이번 이야기는 꿈보다 먼저 지켜야 할 생활의 균형을 잃은 결말로 끝났다.']
  ],
  '스토커 살해 엔딩':[
   ['쌓여 있던 경고','인지도 Lv.40부터 이어진 시선과 전화, 침입 흔적은 우연이 아니었다. 류현상은 팬을 의심하고 싶지 않았고 위험을 크게 만들고 싶지도 않았다. 그러나 해결되지 않은 사건은 Lv.50에 도달할 때까지 계속 가까워졌다.'],
@@ -2627,7 +2690,8 @@ function checkStalkerEvent(){
   ['방문자',`추운 겨울날, 류현상의 어머니가 반찬을 놓아 주려고 집에 들렀다. 류현상은 외부 일정으로 자리를 비운 상태였다. 노크 소리에 문을 열자 젊은 여성이 서 있었다. “저는 류현상 팬이에요. 일본에서 왔어요.” 여성은 먼 곳에서 왔고 밖이 너무 춥다며 잠깐만 기다리게 해 달라고 부탁했다.\n\n어머니는 아들의 팬이라는 말과 떨고 있는 모습을 보고 여성을 집 안으로 들였다. 여성은 공손하게 웃으며 화장실 위치와 류현상의 방, 자주 쓰는 컵까지 자연스럽게 물었다. 그 시각 다른 곳에 있던 류현상의 휴대전화가 ‘띵동’ 하고 울렸다.\n\n메시지를 열자 자신의 집 안 사진이 연달아 도착했다. 침대, 옷장, 욕실, 냉장고 안, 가족사진까지 집을 샅샅이 찍은 사진이었다. 마지막 사진에는 거실에 앉아 있는 어머니의 뒷모습이 담겨 있었다. 류현상은 식겁해 전화를 걸며 집으로 달려갔지만, 도착했을 때 여성은 이미 “잠깐 편의점에 다녀오겠다”며 사라진 뒤였다.`,[[`어머니를 즉시 대피시키고 경찰 신고·주거 보안을 강화한다`,()=>{state.stalker.motherEvacuated=true;state.stalker.safety=Math.min(5,state.stalker.safety+1);return state.manager.hired?'후라보노가 경찰과 함께 현장에 먼저 도착해 어머니를 안전한 곳으로 옮겼다. 출입 기록, 주변 CCTV, 일본에서 왔다는 진술까지 모두 대조했고 그동안 모은 증거가 하나의 인물로 연결됐다.':'류현상은 어머니에게 문을 잠그고 방에서 나오지 말라고 한 뒤 경찰에 신고했다. 주변 CCTV와 앞선 증거가 연결되면서 용의자의 동선이 확인됐다.'}],['다시 찾아오면 직접 대화해 보려 한다',()=>{return '류현상은 어머니를 안심시키며 자신이 직접 만나 끝내겠다고 말했다. 그러나 상대에게는 그 생각조차 “둘만의 만남을 원한다”는 신호로 왜곡될 수 있었다. 집은 더 이상 안전한 공간처럼 느껴지지 않았다.'}]]]
  ];
  const scene=scenes[n-1];state.skipNextStory=true;
- const choices=scene[2].map(([label,fn])=>[label,()=>{state.stalker.encounters=Math.max(state.stalker.encounters,n);let result=fn();addHistory(`🚨 스토커 사건 ${n}/5 · ${scene[0]} — ${label}`);if(n===5&&state.stalker.safety===5){state.stalker.resolved=true;state.stalker.active=false;state.milestones.stalkerResolved=true;addHistory('✅ 스토커 사건 해결 · 다섯 단계에서 모두 안전한 선택을 해 스토커를 검거했다.','stalker:resolved');result+=' 첫 사건부터 마지막 방문자 사건까지 모든 위험 신호를 기록하고 신고한 덕분에 증거가 완성됐다. 경찰은 스토커를 검거했고 류현상과 가족의 주거 및 공연 안전 조치도 마련됐다.'}else if(n===5){result+=` 하지만 다섯 단계 중 안전한 선택은 ${state.stalker.safety}회였다. 사건은 완전히 해결되지 않았고, 인지도 Lv.50에 도달하기 전까지 불안은 계속된다.`}state.skipNextStory=true;advance(1);return result}]);
+ const orderedStalkerChoices=n%2===1?[scene[2][1],scene[2][0]]:scene[2];
+ const choices=orderedStalkerChoices.map(([label,fn])=>[label,()=>{state.stalker.encounters=Math.max(state.stalker.encounters,n);let result=fn();addHistory(`🚨 스토커 사건 ${n}/5 · ${scene[0]} — ${label}`);if(n===5&&state.stalker.safety===5){state.stalker.resolved=true;state.stalker.active=false;state.milestones.stalkerResolved=true;addHistory('✅ 스토커 사건 해결 · 다섯 단계에서 모두 안전한 선택을 해 스토커를 검거했다.','stalker:resolved');result+=' 첫 사건부터 마지막 방문자 사건까지 모든 위험 신호를 기록하고 신고한 덕분에 증거가 완성됐다. 경찰은 스토커를 검거했고 류현상과 가족의 주거 및 공연 안전 조치도 마련됐다.'}else if(n===5){result+=` 하지만 다섯 단계 중 안전한 선택은 ${state.stalker.safety}회였다. 사건은 완전히 해결되지 않았고, 인지도 Lv.50에 도달하기 전까지 불안은 계속된다.`}state.skipNextStory=true;advance(1);return result}]);
  showDialogue('핵심 스토리 · 스토커',`【${n}/5 · ${scene[0]}】\n\n${scene[1]}\n\n현재 안전도 ${state.stalker.safety}/5`,choices);return true
 }
 function getEndingChapters(name){
@@ -2637,6 +2701,9 @@ function getEndingChapters(name){
  if(name==='월드스타 엔딩'){const viral=[];if(state.specialEvents.iziViral)viral.push('수원역 응급실 커버 영상');if(state.specialEvents.waitedMoreViral)viral.push('명동 기다린만큼, 더 영상');const past=viral.length?viral.join('과 '):'첫 오디션과 직접 만든 앨범';chapters[2]=['월드스타 류현상',`마지막 공연의 전광판에는 폐업한 기획사와 군 복무, 첫 공원 버스킹, ${past}이 차례로 흘렀다. 그는 세계적인 스타가 되었지만 다음 날 호텔 책상에서 다시 새 곡의 첫 문장을 썼다. 세계 무대는 결승점이 아니라 더 큰 시작이었다.`]}
  return chapters
 }
+function endingVisualFor(name){return endingArtworkMap[name]||''}
+function endingVisualHtml(name,title){const src=endingVisualFor(name);return src?`<div class="ending-visual-frame"><img src="${src}" alt="${name} 장면 이미지"></div>`:`<div class="ending-visual-frame"><div class="ending-visual-fallback">${title}</div></div>`}
+
 function runEndingStory(name,restartAfter=false){
  enterEndingMusic(name);
  setChoiceLock(false);
@@ -2690,8 +2757,10 @@ function checkProgress(){
  const lv=fameLevel();state.level=lv;
  if(lv>=100)state.rank='월드스타 후보';else if(lv>=50)state.rank='유명 가수';else if(lv>=10)state.rank='인디 가수';else state.rank='무명 가수';
  if(state.pendingEnding)return;
- const debt=state.economy?.debt||0,debtStart=state.economy?.debtStartDay||0;
- if(debt>0&&debtStart>0&&state.day-debtStart>=30){offerEnding('파산 엔딩',`채무가 발생한 ${debtStart}일차부터 30일이 지났지만 ${debt.toLocaleString()}원을 전액 해결하지 못했다. 파산 엔딩이 즉시 진행된다.`,false,'fatal:bankruptcy',true);return}
+ const debt=state.economy?.debt||0,debtStart=state.economy?.debtStartDay||0,criticalDay=state.economy?.debtCriticalDay||0;
+ const criticalBankruptcy=debt>=BANKRUPTCY_CRITICAL_DEBT&&criticalDay>0&&state.day-criticalDay>=BANKRUPTCY_CRITICAL_DAYS;
+ const overdueBankruptcy=debt>0&&debtStart>0&&state.day-debtStart>=BANKRUPTCY_MAX_DAYS;
+ if(criticalBankruptcy||overdueBankruptcy){const reason=criticalBankruptcy?`채무가 50만원 이상이 된 ${criticalDay}일차부터 ${BANKRUPTCY_CRITICAL_DAYS}일 동안 위험선을 벗어나지 못했고 현재 채무는 ${debt.toLocaleString()}원이다.`:`채무가 발생한 ${debtStart}일차부터 ${BANKRUPTCY_MAX_DAYS}일이 지났지만 ${debt.toLocaleString()}원을 전액 해결하지 못했다.`;offerEnding('파산 엔딩',`${reason} 파산 엔딩이 즉시 진행된다.`,false,'fatal:bankruptcy',true);return}
  if(lv>=40&&!state.stalker.resolved&&checkStalkerEvent())return;
  const stalkerFatal=lv>=50&&state.stalker.active&&!state.stalker.resolved&&state.stalker.encounters>=5&&state.stalker.safety<5;
  if(stalkerFatal){offerEnding('스토커 살해 엔딩','인지도 Lv.40부터 시작된 다섯 단계에서 안전한 선택을 5번 모두 고르지 못한 채 Lv.50에 도달했다. 이 엔딩은 즉시 진행된다.',false,'fatal:stalker',true);return}
@@ -2711,14 +2780,14 @@ function applyModalTheme(theme=''){
  [...modal.classList].filter(c=>c.startsWith('theme-')).forEach(c=>modal.classList.remove(c));
  if(theme)modal.classList.add(`theme-${theme}`)
 }
-function showModal(title,html,theme=''){const modal=$('#modal');if(modal.open)modal.close();if(!instagramLiveActive)modal.classList.remove('instagram-live-dialog');applyModalTheme(theme);$('#modalTitle').textContent=title;$('#modalBody').innerHTML=html;modal.showModal();syncToastLayer()}
+function showModal(title,html,theme=''){const modal=$('#modal');if(modal.open)modal.close();if(!instagramLiveActive)modal.classList.remove('instagram-live-dialog');modal.classList.remove('ending-focus-modal');applyModalTheme(theme);$('#modalTitle').textContent=title;$('#modalBody').innerHTML=html;modal.showModal();syncToastLayer()}
 function showBlockingNotice(title,html,onConfirm){
  blockingNoticeActive=true;
  showModal(title,`${html}<button id="blockingNoticeConfirm" class="primary wide">확인</button>`);
  const closeButton=$('#closeModal');if(closeButton)closeButton.hidden=true;
  const confirm=$('#blockingNoticeConfirm');if(confirm)confirm.onclick=()=>{blockingNoticeActive=false;if(closeButton)closeButton.hidden=false;closeModal(true);if(typeof onConfirm==='function')onConfirm()};
 }
-function closeModal(force=false){const modal=$('#modal');if(instagramLiveActive&&!force)return;if(blockingNoticeActive&&!force)return;if(memoryGameActive&&!force){if(typeof activeTrainingAbort==='function'){activeTrainingAbort();return}endMiniGameUi()}if(force&&instagramLiveActive){instagramLiveActive=false;modal.classList.remove('instagram-live-dialog');const closeButton=$('#closeModal');if(closeButton)closeButton.hidden=false}if(force&&blockingNoticeActive){blockingNoticeActive=false;const closeButton=$('#closeModal');if(closeButton)closeButton.hidden=false}if(!memoryGameActive)document.documentElement.classList.remove('minigame-active');modal.classList.remove('drawer-dialog');if(modal.open)modal.close();syncToastLayer();if(endingMusicMode)exitEndingMusic();if(deferredPostAdvance&&!cardRevealPending)finishDeferredPostAdvance()}
+function closeModal(force=false){const modal=$('#modal');if(instagramLiveActive&&!force)return;if(blockingNoticeActive&&!force)return;if(memoryGameActive&&!force){if(typeof activeTrainingAbort==='function'){activeTrainingAbort();return}endMiniGameUi()}if(force&&instagramLiveActive){instagramLiveActive=false;modal.classList.remove('instagram-live-dialog');const closeButton=$('#closeModal');if(closeButton)closeButton.hidden=false}if(force&&blockingNoticeActive){blockingNoticeActive=false;const closeButton=$('#closeModal');if(closeButton)closeButton.hidden=false}if(!memoryGameActive)document.documentElement.classList.remove('minigame-active');modal.classList.remove('drawer-dialog');modal.classList.remove('ending-focus-modal');if(modal.open)modal.close();syncToastLayer();if(endingMusicMode||customEndingBgm)exitEndingMusic();if(deferredPostAdvance&&!cardRevealPending)finishDeferredPostAdvance()}
 function getLocationDialoguePool(loc){
  const contextual=pool=>(pool||[]).filter(line=>{if(!state.manager.hired&&/후라보노/.test(line))return false;const m=state.band.members;if(!m.guitar&&/P군/.test(line))return false;if(!m.bass&&/L군/.test(line))return false;if(!m.piano&&/J군/.test(line))return false;if(!m.drums&&/R군/.test(line))return false;return true});
  if(loc!=='practice')return contextual(dialogues[loc]);
