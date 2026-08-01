@@ -3503,18 +3503,16 @@ function onlineQuizErrorMessage(error){
  const raw=String(error?.message||error||'알 수 없는 오류');
  const code=String(error?.code||'');
  if(/anonymous|sign-?ins?.*disabled/i.test(raw))return 'Supabase의 Anonymous Sign-In을 켜 주세요.';
- if(/PGRST202|Could not find the function|does not exist|schema cache|42P01/i.test(raw+' '+code))return `실시간 퀴즈 DB 함수/테이블을 찾지 못했습니다. v145의 SUPABASE_QUIZ_SETUP.sql을 전체 실행해 주세요.\n[오류] ${raw}`;
- if(/row-level security|permission denied|42501/i.test(raw+' '+code))return `실시간 퀴즈 DB 권한(RLS) 오류입니다. v145 SQL을 다시 전체 실행해 주세요.\n[오류] ${raw}`;
+ if(/PGRST202|Could not find the function|does not exist|schema cache|42P01/i.test(raw+' '+code))return `실시간 퀴즈 DB 함수/테이블을 찾지 못했습니다. ZIP 안의 SUPABASE_QUIZ_SETUP.sql과 SUPABASE_QUIZ_LOBBY_UPDATE.sql을 순서대로 실행해 주세요.\n[오류] ${raw}`;
+ if(/row-level security|permission denied|42501/i.test(raw+' '+code))return `실시간 퀴즈 DB 권한(RLS) 오류입니다. ZIP 안의 퀴즈 SQL 2개를 다시 실행해 주세요.\n[오류] ${raw}`;
  if(/Failed to fetch|NetworkError|fetch/i.test(raw))return '인터넷 연결 또는 Supabase 접속 상태를 확인해 주세요.';
  return `퀴즈 대전 오류: ${raw}${code?` (${code})`:''}`;
 }
 async function onlineQuizHealthcheck(){
+ // v148: quiz_healthcheck RPC 의존성 제거.
+ // Supabase 연결/익명 로그인만 확인하고 실제 퀴즈 함수 존재 여부는 로비 RPC에서 검증한다.
  await ensureCommunityReady();
- const {data,error}=await communityDb.rpc('quiz_healthcheck');
- if(error)throw error;
- const info=Array.isArray(data)?data[0]:data;
- if(!info?.ok||Number(info?.questions||0)<10)throw new Error(`퀴즈 문제가 부족합니다. 현재 ${Number(info?.questions||0)}개`);
- return info;
+ return {ok:true};
 }
 function onlineQuizStoredRoom(){try{return localStorage.getItem('ryuOnlineQuizRoom')||''}catch{return ''}}
 function saveOnlineQuizStoredRoom(code){try{if(code)localStorage.setItem('ryuOnlineQuizRoom',code);else localStorage.removeItem('ryuOnlineQuizRoom')}catch{}}
