@@ -14,7 +14,7 @@ let deferredPostAdvance=null;
 let cardRevealPending=false;
 let pendingTrainingActionBefore=null;
 let audioSettings={bgm:true,sfx:true};
-const FIXED_MASTER_VOLUME=.72,REGULAR_BGM_VOLUME=.14,SPECIAL_EVENT_BGM_VOLUME=.12,ENDING_BGM_VOLUME=.072,SFX_GAIN_VOLUME=.78;
+const FIXED_MASTER_VOLUME=.72,REGULAR_BGM_VOLUME=.042,SPECIAL_EVENT_BGM_VOLUME=.036,ENDING_BGM_VOLUME=.0216,SFX_GAIN_VOLUME=.78;
 const BANKRUPTCY_CRITICAL_DEBT=500000,BANKRUPTCY_CRITICAL_DAYS=15,BANKRUPTCY_MAX_DAYS=30;
 const specialEventBgmMap={iziViral:'emergencyRoomEventBgm',waitedMoreViral:'waitedMoreEventBgm'};
 const customEndingBgmMap={'파산 엔딩':'fatalEndingBgm','스토커 살해 엔딩':'fatalEndingBgm'};
@@ -31,13 +31,13 @@ const endingArtworkMap={
  '파산 엔딩':'assets/images/endings/ending-bankruptcy.png',
  '편의점 사장 엔딩':'assets/images/endings/ending-store-owner.png'
 };
-const OUTFIT_FILES=['outfit-black.png','outfit-white.png','outfit-check.png','outfit-leather.png','outfit-hoodie.png','outfit-stage.png','outfit-mystery.png','user-flea-military.jpeg','user-flea-towel.jpeg','user-flea-sports.jpeg','user-flea-flashy.jpeg','user-flea-uniform.jpeg'];
+const OUTFIT_FILES=['outfit-black.png','outfit-white.png','outfit-check.png','outfit-leather.png','outfit-hoodie.png','outfit-stage.png','outfit-mystery.png','user-flea-military.png','user-flea-towel.png','user-flea-sports.png','user-flea-flashy.png','user-flea-uniform.png'];
 const FLEA_MARKET_ITEMS=[
- {id:'military',name:'군복',price:800000,desc:'재입대하기 싫은데...',outfit:7,image:'assets/images/user-flea-military.jpeg',lookBonus:0},
- {id:'towel',name:'수건',price:3000000,desc:'수건? 집에 하나 있으면 좋겠지. 그런데 수건 가격이 왜이러지',outfit:8,image:'assets/images/user-flea-towel.jpeg',lookBonus:0},
- {id:'sports',name:'운동복',price:900000,desc:'뭔가 굉장히 타이트해 보인다',outfit:9,image:'assets/images/user-flea-sports.jpeg',lookBonus:1},
- {id:'flashy',name:'화려한 옷',price:4000000,desc:'화려해보이는데 뭔가....',outfit:10,image:'assets/images/user-flea-flashy.jpeg',lookBonus:2},
- {id:'uniform',name:'제복',price:5000000,desc:'엄청 멋져보이는 제복',outfit:11,image:'assets/images/user-flea-uniform.jpeg',lookBonus:2},
+ {id:'military',name:'군복',price:800000,desc:'재입대하기 싫은데...',outfit:7,image:'assets/images/user-flea-military.png',lookBonus:0},
+ {id:'towel',name:'수건',price:3000000,desc:'수건? 집에 하나 있으면 좋겠지. 그런데 수건 가격이 왜이러지',outfit:8,image:'assets/images/user-flea-towel.png',lookBonus:0},
+ {id:'sports',name:'운동복',price:900000,desc:'뭔가 굉장히 타이트해 보인다',outfit:9,image:'assets/images/user-flea-sports.png',lookBonus:1},
+ {id:'flashy',name:'화려한 옷',price:4000000,desc:'화려해보이는데 뭔가....',outfit:10,image:'assets/images/user-flea-flashy.png',lookBonus:2},
+ {id:'uniform',name:'제복',price:5000000,desc:'엄청 멋져보이는 제복',outfit:11,image:'assets/images/user-flea-uniform.png',lookBonus:2},
  {id:'strongDiet',name:'강력한 다이어트알약',price:200000,desc:'굉장히 쎄보이는 다이어트약이다. 약이 잘들수도?',strongDiet:true,image:null}
 ];
 function outfitImage(index=state.outfit){return `assets/images/${OUTFIT_FILES[index]||OUTFIT_FILES[0]}`}
@@ -613,7 +613,7 @@ function gameGuideHtml(){return `<div class="game-guide">
       <article><b>인지도</b><p>100점마다 레벨이 1 상승하며 최대 Lv.100입니다. 높은 레벨에서 대형 커리어 이벤트가 열립니다.</p></article><article><b>밴드 결속력</b><p>밴드 활동의 안정성과 일부 사건 결과에 영향을 줍니다.</p></article>
     </div></section>
     <section class="guide-page" data-guide-page="career">
-      <div class="guide-callout"><b>최근 밸런스 규칙</b><p>보컬은 보컬 훈련을, 작곡은 작곡 훈련 또는 편곡을 7일 연속 하지 않았을 때 각각 1 감소합니다. 장소 이동은 시간과 능력치를 소모하지 않지만 도착 장소의 돌발 스토리는 발생할 수 있습니다. 강제 휴식은 스트레스 50 이상·체력 15 이하에서 판정됩니다. 편의점 알바와 야간 진열 보조는 각각 누적 10·30·80회에 승급해 급여가 증가합니다. 편의점 알바 급여는 수습 45,000원→1단계 55,000원→2단계 70,000원→3단계 90,000원, 야간 진열 보조는 25,000원→32,000원→42,000원→55,000원입니다. 복권은 주 100장 제한이며 1장과 10장 자동 구매 모두 시간 미소모입니다. SNS 게시물은 팬 규모가 커질수록 보상이 조금씩 증가합니다. 깊은 휴식 악몽은 누적 휴식 5회부터, 최근 악몽 이후 휴식 3회가 지난 경우 20% 확률로 발생합니다. 보컬·작곡 훈련 미니게임은 19%, 버스킹 리듬게임은 17.5% 확률로 등장합니다. 집 등급이 오를 때마다 식사비는 2배가 되고, 지하 단칸방보다 높은 집은 기존보다 체력 회복량이 3 높습니다. 자취방 식사는 15% 확률로 요리 타이쿤이 열리며, 토마토 달걀볶음·김치볶음밥·닭 날개 구이·계란죽·순두부찌개의 재료를 주문서 순서대로 조합하면 추가 회복과 스트레스 감소를 얻습니다. 디지몬 카드는 1장 구매 시 체력 1, 10장 구매 시 체력 5가 소모되며, 복권도 1장 체력 1·10장 체력 5가 소모됩니다. 배경 이미지가 있는 특별 이벤트에서는 캐릭터가 숨겨집니다. 산책 시 1% 확률로 박칵스를, 솔로·밴드 버스킹 시 1% 확률로 에너자이저를 획득하며 확인 버튼을 눌러야 획득창이 닫힙니다. 수상한 상인은 행동·이동 판정마다 0.9% 확률로 등장합니다. 산책은 하루 2회로 제한되며, 헤어·스타일 관리는 15일마다 외모가 1 증가합니다. 조건이나 일일 횟수가 부족한 행동 버튼은 비활성화되고 부족한 조건이 버튼에 표시됩니다. 수상한 가게에서 산 에너자이저와 다이어트 알약은 즉시 사용되지 않고 아이템창에 보관됩니다. 에너자이저는 복용 후 7일 동안 체력 소모를 20% 줄이며, 다이어트 알약은 1알 또는 10알 연속 복용할 수 있습니다. 10알 연속 복용 시 각 알약의 외모 감소 부작용 확률이 1%에서 1.5%로 소폭 증가합니다. 공원 플리마켓은 7일마다 열리고 80% 확률로 랜덤 상품이 나오며 20% 확률로 전부 판매된 날이 됩니다. 플리마켓 의상은 구매 후 옷장에 추가됩니다. 선택형 일반 엔딩은 365일차에 처음 확인하며, 계속 성장하면 465·565·665일차처럼 100일마다 다시 선택할 수 있습니다.</p></div><div class="guide-callout"><b>서랍 수집 콘텐츠</b><p>자취방의 서랍에서는 사진 5장×9조각과 류현상의 일기 50편을 수집합니다. 사진 조각은 편의점 알바·야간 진열·산책·보컬·작곡·편곡 중 5% 확률로 발견하며 12회 연속 실패부터 10%, 18회 연속 실패 후 다음 대상 행동에서 확정됩니다. 일기는 하루 첫 서랍 확인 때 20% 확률로 발견하고 5회 연속 미발견 후 다음 확인에서 확정됩니다. 서랍 확인은 시간과 능력치를 소모하지 않습니다.</p></div><div class="guide-table"><div><b>훈련</b><span>보컬·작곡 성장의 기본입니다.</span></div><div><b>버스킹</b><span>초반 팬과 현금을 동시에 얻는 활동입니다.</span></div><div><b>오디션</b><span>첫 합격 보상이 크며 충분한 능력치가 필요합니다.</span></div><div><b>앨범 제작</b><span>연습실에서 진행합니다. 싱글·미니·정규 순으로 비용과 보상이 커집니다.</span></div><div><b>공연</b><span>팬, 인지도, 수익을 함께 얻습니다.</span></div><div><b>방송 출연</b><span>인지도 성장에 효과적이며 재도전 간격이 있습니다.</span></div><div><b>366일 방송 미니게임</b><span>공연장의 노래 서바이벌과 O/X 퀴즈쇼는 각각 7일 간격으로 참가합니다.</span></div><div><b>특별 이벤트</b><span>특정 날짜·레벨·조건에서 열리고 엔딩에도 영향을 줍니다.</span></div></div>
+      <div class="guide-callout"><b>최근 밸런스 규칙</b><p>보컬은 보컬 훈련을, 작곡은 작곡 훈련 또는 편곡을 7일 연속 하지 않았을 때 각각 1 감소합니다. 장소 이동은 시간과 능력치를 소모하지 않지만 도착 장소의 돌발 스토리는 발생할 수 있습니다. 강제 휴식은 스트레스 50 이상·체력 15 이하에서 판정됩니다. 편의점 알바와 야간 진열 보조는 각각 누적 10·30·80회에 승급해 급여가 증가합니다. 편의점 알바 급여는 수습 45,000원→1단계 55,000원→2단계 70,000원→3단계 90,000원, 야간 진열 보조는 25,000원→32,000원→42,000원→55,000원입니다. 복권은 주 100장 제한이며 1장과 10장 자동 구매 모두 시간 미소모입니다. SNS 게시물은 팬 규모가 커질수록 보상이 조금씩 증가합니다. 깊은 휴식 악몽은 누적 휴식 5회부터, 최근 악몽 이후 휴식 3회가 지난 경우 20% 확률로 발생합니다. 보컬·작곡 훈련 미니게임은 19%, 버스킹 리듬게임은 17.5% 확률로 등장합니다. 집 등급이 오를 때마다 식사비는 2배가 되고, 지하 단칸방보다 높은 집은 기존보다 체력 회복량이 3 높습니다. 자취방 식사는 15% 확률로 요리 타이쿤이 열리며, 토마토 달걀볶음·김치볶음밥·닭 날개 구이·계란죽·순두부찌개의 재료를 주문서 순서대로 조합하면 추가 회복과 스트레스 감소를 얻습니다. 디지몬 카드는 1장 구매 시 체력 1, 10장 구매 시 체력 5가 소모되며, 복권도 1장 체력 1·10장 체력 5가 소모됩니다. 배경 이미지가 있는 특별 이벤트에서는 캐릭터가 숨겨집니다. 산책 시 1% 확률로 박칵스를, 솔로·밴드 버스킹 시 1% 확률로 에너자이저를 획득하며 확인 버튼을 눌러야 획득창이 닫힙니다. 수상한 상인은 행동·이동 판정마다 0.9% 확률로 등장합니다. 산책은 하루 2회로 제한되며, 헤어·스타일 관리는 15일마다 외모가 1 증가합니다. 조건이나 일일 횟수가 부족한 행동 버튼은 비활성화되고 부족한 조건이 버튼에 표시됩니다. 수상한 가게에서 산 에너자이저와 다이어트 알약은 즉시 사용되지 않고 아이템창에 보관됩니다. 에너자이저는 복용 후 7일 동안 체력 소모를 20% 줄이며, 다이어트 알약은 1알 또는 10알 연속 복용할 수 있습니다. 10알 연속 복용 시 각 알약의 외모 감소 부작용 확률이 1%에서 1.5%로 소폭 증가합니다. 공원 플리마켓은 7일마다 열리고 80% 확률로 랜덤 상품 1~2개가 나오며 20% 확률로 전부 판매된 날이 됩니다. 플리마켓에는 상품 미리보기 이미지가 표시되지 않으며, 의상은 구매 후 옷장에 추가됩니다. 선택형 일반 엔딩은 365일차에 처음 확인하며, 계속 성장하면 465·565·665일차처럼 100일마다 다시 선택할 수 있습니다.</p></div><div class="guide-callout"><b>서랍 수집 콘텐츠</b><p>자취방의 서랍에서는 사진 5장×9조각과 류현상의 일기 50편을 수집합니다. 사진 조각은 편의점 알바·야간 진열·산책·보컬·작곡·편곡 중 5% 확률로 발견하며 12회 연속 실패부터 10%, 18회 연속 실패 후 다음 대상 행동에서 확정됩니다. 일기는 하루 첫 서랍 확인 때 20% 확률로 발견하고 5회 연속 미발견 후 다음 확인에서 확정됩니다. 서랍 확인은 시간과 능력치를 소모하지 않습니다.</p></div><div class="guide-table"><div><b>훈련</b><span>보컬·작곡 성장의 기본입니다.</span></div><div><b>버스킹</b><span>초반 팬과 현금을 동시에 얻는 활동입니다.</span></div><div><b>오디션</b><span>첫 합격 보상이 크며 충분한 능력치가 필요합니다.</span></div><div><b>앨범 제작</b><span>연습실에서 진행합니다. 싱글·미니·정규 순으로 비용과 보상이 커집니다.</span></div><div><b>공연</b><span>팬, 인지도, 수익을 함께 얻습니다.</span></div><div><b>방송 출연</b><span>인지도 성장에 효과적이며 재도전 간격이 있습니다.</span></div><div><b>366일 방송 미니게임</b><span>공연장의 노래 서바이벌과 O/X 퀴즈쇼는 각각 7일 간격으로 참가합니다.</span></div><div><b>특별 이벤트</b><span>특정 날짜·레벨·조건에서 열리고 엔딩에도 영향을 줍니다.</span></div></div>
       <div class="guide-callout"><b>추천 성장 흐름</b><p>초반: 홍보·버스킹·오디션 → 중반: 앨범·공연·방송 → 후반: 전국 페스티벌·투어·해외 쇼케이스</p></div>
     </section>
     <section class="guide-page" data-guide-page="money"><div class="guide-grid">
@@ -1525,7 +1525,7 @@ function resetFleaMarketForToday(){
  if(Math.random()<.20){state.fleaMarket.soldOut=true;save(false);return true}
  const candidates=FLEA_MARKET_ITEMS.filter(item=>item.outfit===undefined||!state.ownedOutfits.includes(item.outfit));
  const shuffled=[...candidates].sort(()=>Math.random()-.5);
- const count=Math.min(shuffled.length,2+Math.floor(Math.random()*3));
+ const count=Math.min(shuffled.length,1+Math.floor(Math.random()*2));
  state.fleaMarket.offers=shuffled.slice(0,count).map(x=>x.id);
  if(!state.fleaMarket.offers.length)state.fleaMarket.soldOut=true;
  save(false);return true
@@ -1535,7 +1535,7 @@ function fleaMarketItemCard(item){
  const owned=item.outfit!==undefined&&state.ownedOutfits.includes(item.outfit);
  const unavailable=alreadyBought||owned||state.stats.money<item.price;
  const label=alreadyBought||owned?'판매 완료':state.stats.money<item.price?'돈 부족':'구매';
- return `<div class="info-card flea-market-card">${item.image?`<img src="${item.image}" alt="${item.name}">`:''}<div class="flea-market-copy"><header><b>${item.name}</b><span>${item.price.toLocaleString()}원</span></header><p>${item.desc}</p><button data-flea-buy="${item.id}" ${unavailable?'disabled':''}>${label}</button></div></div>`
+ return `<div class="info-card flea-market-card no-preview"><div class="flea-market-copy"><header><b>${item.name}</b><span>${item.price.toLocaleString()}원</span></header><p>${item.desc}</p><button data-flea-buy="${item.id}" ${unavailable?'disabled':''}>${label}</button></div></div>`
 }
 function openFleaMarket(){
  if(!fleaMarketIsOpen())return toast(`플리마켓은 ${fleaMarketDaysUntilOpen()}일 후 다시 열립니다.`);
