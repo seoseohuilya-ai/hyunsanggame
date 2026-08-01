@@ -2862,7 +2862,7 @@ function showBlockingNotice(title,html,onConfirm){
  const closeButton=$('#closeModal');if(closeButton)closeButton.hidden=true;
  const confirm=$('#blockingNoticeConfirm');if(confirm)confirm.onclick=()=>{blockingNoticeActive=false;if(closeButton)closeButton.hidden=false;closeModal(true);if(typeof onConfirm==='function')onConfirm()};
 }
-function closeModal(force=false){const modal=$('#modal');if(!force&&modal?.classList.contains('theme-online')&&onlineQuizRoomCode){leaveOnlineQuizRoom(true,false);return}if(instagramLiveActive&&!force)return;if(blockingNoticeActive&&!force)return;if(memoryGameActive&&!force){if(typeof activeTrainingAbort==='function'){activeTrainingAbort();return}endMiniGameUi()}if(force&&instagramLiveActive){instagramLiveActive=false;modal.classList.remove('instagram-live-dialog');const closeButton=$('#closeModal');if(closeButton)closeButton.hidden=false}if(force&&blockingNoticeActive){blockingNoticeActive=false;const closeButton=$('#closeModal');if(closeButton)closeButton.hidden=false}if(!memoryGameActive)document.documentElement.classList.remove('minigame-active');modal.classList.remove('drawer-dialog');modal.classList.remove('ending-focus-modal');if(modal.open)modal.close();syncToastLayer();if(endingMusicMode||customEndingBgm)exitEndingMusic();if(deferredPostAdvance&&!cardRevealPending)finishDeferredPostAdvance()}
+function closeModal(force=false){const modal=$('#modal');if(!force&&modal?.classList.contains('theme-online')&&rummyRoomCode){if(rummyLastStatus==='playing'&&!confirm('루미큐브 대전에서 나가면 패배 처리되고 판돈을 잃습니다. 나갈까요?'))return;leaveRummyRoom(true,false,rummyLastStatus==='playing');return}if(!force&&modal?.classList.contains('theme-online')&&onlineQuizRoomCode){leaveOnlineQuizRoom(true,false);return}if(instagramLiveActive&&!force)return;if(blockingNoticeActive&&!force)return;if(memoryGameActive&&!force){if(typeof activeTrainingAbort==='function'){activeTrainingAbort();return}endMiniGameUi()}if(force&&instagramLiveActive){instagramLiveActive=false;modal.classList.remove('instagram-live-dialog');const closeButton=$('#closeModal');if(closeButton)closeButton.hidden=false}if(force&&blockingNoticeActive){blockingNoticeActive=false;const closeButton=$('#closeModal');if(closeButton)closeButton.hidden=false}if(!memoryGameActive)document.documentElement.classList.remove('minigame-active');modal.classList.remove('drawer-dialog');modal.classList.remove('ending-focus-modal');if(modal.open)modal.close();syncToastLayer();if(endingMusicMode||customEndingBgm)exitEndingMusic();if(deferredPostAdvance&&!cardRevealPending)finishDeferredPostAdvance()}
 function getLocationDialoguePool(loc){
  const contextual=pool=>(pool||[]).filter(line=>{if(!state.manager.hired&&/후라보노/.test(line))return false;const m=state.band.members;if(!m.guitar&&/B군/.test(line))return false;if(!m.bass&&/L군/.test(line))return false;if(!m.piano&&/J군/.test(line))return false;if(!m.drums&&/R군/.test(line))return false;return true});
  if(loc!=='practice')return contextual(dialogues[loc]);
@@ -3494,16 +3494,27 @@ let onlineQuizChannel=null;
 let onlineQuizPollTimer=null;
 let onlineQuizClockTimer=null;
 let onlineQuizRefreshTimer=null;
+let onlineQuizLobbyPollTimer=null;
 let onlineQuizAdvanceLock=false;
 let onlineQuizSubmitLock=false;
 let onlineQuizFeedback=null;
 
 function onlineQuizErrorMessage(error){
  const raw=String(error?.message||error||'알 수 없는 오류');
- if(/quiz_rooms|quiz_players|quiz_answers|quiz_questions|quiz_create_room|quiz_join_room|quiz_get_current_question|quiz_submit_answer|quiz_start_room|quiz_advance_room|PGRST202|does not exist|schema cache/i.test(raw))return '실시간 퀴즈 DB 설정이 아직 없습니다. ZIP의 SUPABASE_QUIZ_SETUP.sql을 Supabase SQL Editor에서 한 번 실행해 주세요.';
+ const code=String(error?.code||'');
  if(/anonymous|sign-?ins?.*disabled/i.test(raw))return 'Supabase의 Anonymous Sign-In을 켜 주세요.';
+ if(/PGRST202|Could not find the function|does not exist|schema cache|42P01/i.test(raw+' '+code))return `실시간 퀴즈 DB 함수/테이블을 찾지 못했습니다. v145의 SUPABASE_QUIZ_SETUP.sql을 전체 실행해 주세요.\n[오류] ${raw}`;
+ if(/row-level security|permission denied|42501/i.test(raw+' '+code))return `실시간 퀴즈 DB 권한(RLS) 오류입니다. v145 SQL을 다시 전체 실행해 주세요.\n[오류] ${raw}`;
  if(/Failed to fetch|NetworkError|fetch/i.test(raw))return '인터넷 연결 또는 Supabase 접속 상태를 확인해 주세요.';
- return raw;
+ return `퀴즈 대전 오류: ${raw}${code?` (${code})`:''}`;
+}
+async function onlineQuizHealthcheck(){
+ await ensureCommunityReady();
+ const {data,error}=await communityDb.rpc('quiz_healthcheck');
+ if(error)throw error;
+ const info=Array.isArray(data)?data[0]:data;
+ if(!info?.ok||Number(info?.questions||0)<10)throw new Error(`퀴즈 문제가 부족합니다. 현재 ${Number(info?.questions||0)}개`);
+ return info;
 }
 function onlineQuizStoredRoom(){try{return localStorage.getItem('ryuOnlineQuizRoom')||''}catch{return ''}}
 function saveOnlineQuizStoredRoom(code){try{if(code)localStorage.setItem('ryuOnlineQuizRoom',code);else localStorage.removeItem('ryuOnlineQuizRoom')}catch{}}
@@ -3511,6 +3522,7 @@ function onlineQuizClearTimers(){
  if(onlineQuizPollTimer){clearInterval(onlineQuizPollTimer);onlineQuizPollTimer=null}
  if(onlineQuizClockTimer){clearInterval(onlineQuizClockTimer);onlineQuizClockTimer=null}
  if(onlineQuizRefreshTimer){clearTimeout(onlineQuizRefreshTimer);onlineQuizRefreshTimer=null}
+ if(onlineQuizLobbyPollTimer){clearInterval(onlineQuizLobbyPollTimer);onlineQuizLobbyPollTimer=null}
 }
 async function onlineQuizUnsubscribe(){
  if(onlineQuizChannel&&communityDb){try{await communityDb.removeChannel(onlineQuizChannel)}catch{}}
@@ -3535,20 +3547,19 @@ async function onlineQuizSubscribe(code){
 function onlineQuizLobbyHtml(message=''){
  const nick=communityNickname();const resume=onlineQuizStoredRoom();
  return `<div class="online-quiz-shell">
-  <section class="online-quiz-hero"><div><small>REALTIME 1 VS 1</small><h3>류현상 퀴즈 대전</h3><p>두 플레이어가 같은 문제 10개를 실시간으로 풉니다. 문제당 12초, 먼저 맞히면 100점 · 두 번째 정답은 70점.</p></div><span class="online-live-badge">● LIVE</span></section>
+  <button id="onlineQuizBackHub" class="community-back">← 대전 종목 선택</button>
+  <section class="online-quiz-hero"><div><small>REALTIME 1 VS 1</small><h3>류현상 퀴즈 대전</h3><p>방 코드를 입력할 필요 없이 대기 중인 방을 골라 바로 입장합니다. 두 플레이어가 같은 문제 10개를 실시간으로 풉니다.</p></div><span class="online-live-badge">● LIVE</span></section>
   ${message?`<div class="online-quiz-notice">${communityEsc(message)}</div>`:''}
   <section class="online-quiz-profile"><span>대전 닉네임</span><strong>${communityEsc(nick||'미설정')}</strong><button id="onlineQuizNicknameBtn">닉네임 변경</button></section>
-  ${resume?`<button id="onlineQuizResumeBtn" class="online-resume wide">진행 중인 방 ${communityEsc(resume)} 이어가기</button>`:''}
-  <div class="online-quiz-lobby-grid">
-    <section class="online-quiz-lobby-card"><b>새 방 만들기</b><p>방을 만들고 친구에게 6자리 방 코드를 알려주세요.</p><button id="onlineQuizCreateBtn" class="primary wide" ${nick?'':'disabled'}>방 만들기</button></section>
-    <section class="online-quiz-lobby-card"><b>방 코드로 참가</b><p>상대방에게 받은 6자리 코드를 입력하세요.</p><input id="onlineQuizJoinCode" maxlength="6" inputmode="text" autocomplete="off" placeholder="예: A1B2C3"><button id="onlineQuizJoinBtn" class="wide" ${nick?'':'disabled'}>참가하기</button></section>
-  </div>
+  ${resume?`<button id="onlineQuizResumeBtn" class="online-resume wide">진행 중인 대전 이어가기</button>`:''}
+  <section class="online-quiz-lobby-card online-create-room"><b>새 공개방 만들기</b><p>방을 만들면 아래 대기방 목록에 자동으로 표시됩니다. 상대방은 입장 버튼만 누르면 됩니다.</p><button id="onlineQuizCreateBtn" class="primary wide" ${nick?'':'disabled'}>방 만들기</button></section>
+  <section class="online-public-rooms"><header><div><b>대기 중인 방</b><small>1명이 기다리는 공개방만 표시됩니다.</small></div><button id="onlineQuizRefreshLobby">새로고침</button></header><div id="onlineQuizRoomList" class="online-room-list"><div class="online-room-loading">대기방을 불러오는 중...</div></div></section>
   <section class="online-quiz-rules"><b>대전 규칙</b><span>10문제</span><span>문제당 12초</span><span>첫 정답 100점</span><span>두 번째 정답 70점</span><span>오답 0점</span><span>본편 시간·능력치 소모 없음</span></section>
  </div>`
 }
 async function openOnlineQuiz(message=''){
  try{
-  await ensureCommunityReady();
+  await onlineQuizHealthcheck();
   onlineQuizRoomCode='';onlineQuizFeedback=null;await onlineQuizUnsubscribe();
   showModal('온라인 대전',onlineQuizLobbyHtml(message),'online');
   bindOnlineQuizLobby();
@@ -3564,20 +3575,35 @@ function openOnlineQuizNickname(){
  $('#onlineQuizNicknameSave').onclick=()=>{const value=$('#onlineQuizNicknameInput').value.trim();if(!value)return toast('닉네임을 입력해 주세요.');saveCommunityNickname(value);toast('대전 닉네임을 저장했습니다.');openOnlineQuiz()};
 }
 function bindOnlineQuizLobby(){
+ const backHub=$('#onlineQuizBackHub');if(backHub)backHub.onclick=openOnlineBattleHub;
  const nickBtn=$('#onlineQuizNicknameBtn');if(nickBtn)nickBtn.onclick=openOnlineQuizNickname;
  const create=$('#onlineQuizCreateBtn');if(create)create.onclick=createOnlineQuizRoom;
- const join=$('#onlineQuizJoinBtn');if(join)join.onclick=joinOnlineQuizRoom;
- const code=$('#onlineQuizJoinCode');if(code){code.oninput=()=>{code.value=code.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6)};code.onkeydown=e=>{if(e.key==='Enter')joinOnlineQuizRoom()}}
+ const refresh=$('#onlineQuizRefreshLobby');if(refresh)refresh.onclick=()=>refreshOnlineQuizLobbyRooms(true);
  const resume=$('#onlineQuizResumeBtn');if(resume)resume.onclick=()=>enterOnlineQuizRoom(onlineQuizStoredRoom(),true);
+ refreshOnlineQuizLobbyRooms();
+ if(onlineQuizLobbyPollTimer)clearInterval(onlineQuizLobbyPollTimer);
+ onlineQuizLobbyPollTimer=setInterval(()=>refreshOnlineQuizLobbyRooms(false),2500);
+}
+async function refreshOnlineQuizLobbyRooms(showToast=false){
+ const target=$('#onlineQuizRoomList');if(!target||!communityDb)return;
+ try{
+  const {data,error}=await communityDb.rpc('quiz_list_open_rooms');if(error)throw error;
+  const rooms=Array.isArray(data)?data:[];
+  if(!rooms.length){target.innerHTML='<div class="online-room-empty"><b>지금 대기 중인 방이 없습니다.</b><span>새 공개방을 만들면 다른 플레이어에게 바로 표시됩니다.</span></div>';if(showToast)toast('대기 중인 방이 없습니다.');return}
+  target.innerHTML=rooms.map(room=>`<article class="online-room-row"><div><b>${communityEsc(room.host_nickname||'익명')}님의 방</b><span>${Number(room.player_count)||1}/2 · 상대를 기다리는 중</span></div><button class="primary" data-online-room-join="${communityEsc(room.room_code)}">${room.is_mine?'이어가기':'입장'}</button></article>`).join('');
+  $$('[data-online-room-join]').forEach(btn=>btn.onclick=()=>joinOnlineQuizRoomByCode(btn.dataset.onlineRoomJoin,btn));
+  if(showToast)toast('대기방 목록을 새로고침했습니다.');
+ }catch(error){target.innerHTML=`<div class="online-room-empty error"><b>대기방을 불러오지 못했습니다.</b><span>${communityEsc(onlineQuizErrorMessage(error))}</span></div>`}
 }
 async function createOnlineQuizRoom(){
  const btn=$('#onlineQuizCreateBtn');if(btn){btn.disabled=true;btn.textContent='방 만드는 중...'}
  try{await ensureCommunityReady();const {data,error}=await communityDb.rpc('quiz_create_room',{p_nickname:communityNickname()});if(error)throw error;playSfx('success');await enterOnlineQuizRoom(String(data||'').toUpperCase())}catch(error){toast(onlineQuizErrorMessage(error));if(btn){btn.disabled=false;btn.textContent='방 만들기'}}
 }
-async function joinOnlineQuizRoom(){
- const input=$('#onlineQuizJoinCode');const code=String(input?.value||'').trim().toUpperCase();if(code.length!==6)return toast('6자리 방 코드를 입력해 주세요.');
- const btn=$('#onlineQuizJoinBtn');if(btn){btn.disabled=true;btn.textContent='입장 중...'}
- try{await ensureCommunityReady();const {data,error}=await communityDb.rpc('quiz_join_room',{p_code:code,p_nickname:communityNickname()});if(error)throw error;playSfx('success');await enterOnlineQuizRoom(String(data||code).toUpperCase())}catch(error){toast(onlineQuizErrorMessage(error));if(btn){btn.disabled=false;btn.textContent='참가하기'}}
+async function joinOnlineQuizRoomByCode(code,btn=null){
+ code=String(code||'').trim().toUpperCase();if(!code)return toast('입장할 방을 찾지 못했습니다.');
+ if(!communityNickname()){toast('먼저 대전 닉네임을 설정해 주세요.');return openOnlineQuizNickname()}
+ if(btn){btn.disabled=true;btn.textContent='입장 중...'}
+ try{await ensureCommunityReady();const {data,error}=await communityDb.rpc('quiz_join_room',{p_code:code,p_nickname:communityNickname()});if(error)throw error;playSfx('success');await enterOnlineQuizRoom(String(data||code).toUpperCase())}catch(error){toast(onlineQuizErrorMessage(error));if(btn){btn.disabled=false;btn.textContent='입장'};refreshOnlineQuizLobbyRooms()}
 }
 async function enterOnlineQuizRoom(code,resume=false){
  if(!code)return openOnlineQuiz();
@@ -3621,8 +3647,8 @@ function renderOnlineQuizWaiting({room,players}){
  if(onlineQuizClockTimer){clearInterval(onlineQuizClockTimer);onlineQuizClockTimer=null}
  const me=players.find(p=>p.user_id===communityUserId);const active=players.filter(p=>!p.left_at);const host=room.host_id===communityUserId;const canStart=host&&active.length===2&&active.every(p=>p.ready);
  $('#modalTitle').textContent='2인 퀴즈 대전 · 대기실';
- $('#modalBody').innerHTML=`<div class="online-quiz-shell"><section class="online-room-code"><div><small>ROOM CODE</small><strong>${communityEsc(room.code)}</strong></div><button id="onlineQuizCopyCode">코드 복사</button></section><div class="online-player-grid">${players.map(p=>onlineQuizPlayerCard(p,room)).join('')}${active.length<2?'<div class="online-player-card empty"><b>상대방을 기다리는 중...</b><small>방 코드를 친구에게 알려주세요.</small></div>':''}</div><div class="online-waiting-actions"><button id="onlineQuizReadyBtn" class="${me?.ready?'ready':''}">${me?.ready?'준비 취소':'준비'}</button>${host?`<button id="onlineQuizStartBtn" class="primary" ${canStart?'':'disabled'}>대전 시작</button>`:'<span>방장이 시작하면 자동으로 대전이 시작됩니다.</span>'}<button id="onlineQuizLeaveBtn">방 나가기</button></div><p class="online-waiting-tip">두 명 모두 <b>준비 완료</b>가 되면 방장이 시작할 수 있습니다.</p></div>`;
- $('#onlineQuizCopyCode').onclick=async()=>{try{await navigator.clipboard.writeText(room.code);toast('방 코드를 복사했습니다.')}catch{toast(`방 코드: ${room.code}`)}};
+ $('#modalBody').innerHTML=`<div class="online-quiz-shell"><button id="onlineQuizBackPublicLobby" class="community-back">← 공개방 목록</button><div class="online-player-grid">${players.map(p=>onlineQuizPlayerCard(p,room)).join('')}${active.length<2?'<div class="online-player-card empty"><b>상대방을 기다리는 중...</b><small>공개방 목록에서 다른 플레이어가 바로 입장할 수 있습니다.</small></div>':''}</div><div class="online-waiting-actions"><button id="onlineQuizReadyBtn" class="${me?.ready?'ready':''}">${me?.ready?'준비 취소':'준비'}</button>${host?`<button id="onlineQuizStartBtn" class="primary" ${canStart?'':'disabled'}>대전 시작</button>`:'<span>방장이 시작하면 자동으로 대전이 시작됩니다.</span>'}<button id="onlineQuizLeaveBtn">방 나가기</button></div><p class="online-waiting-tip">두 명 모두 <b>준비 완료</b>가 되면 방장이 시작할 수 있습니다.</p></div>`;
+ const backPublic=$('#onlineQuizBackPublicLobby');if(backPublic)backPublic.onclick=()=>leaveOnlineQuizRoom(true,true);
  $('#onlineQuizReadyBtn').onclick=async()=>{const b=$('#onlineQuizReadyBtn');b.disabled=true;try{const {error}=await communityDb.rpc('quiz_set_ready',{p_code:room.code,p_ready:!me?.ready});if(error)throw error;playSfx('click');onlineQuizScheduleRefresh()}catch(error){toast(onlineQuizErrorMessage(error));b.disabled=false}};
  const start=$('#onlineQuizStartBtn');if(start)start.onclick=async()=>{start.disabled=true;start.textContent='시작 중...';try{const {error}=await communityDb.rpc('quiz_start_room',{p_code:room.code});if(error)throw error;playSfx('success');onlineQuizFeedback=null;onlineQuizScheduleRefresh()}catch(error){toast(onlineQuizErrorMessage(error));start.disabled=false;start.textContent='대전 시작'}};
  $('#onlineQuizLeaveBtn').onclick=()=>leaveOnlineQuizRoom(true,true);
@@ -3672,16 +3698,172 @@ async function leaveOnlineQuizRoom(callServer=true,goLobby=false,finished=false)
  if(goLobby)return openOnlineQuiz();
  closeModal(true);
 }
+
+// v146: online battle hub + 1:1 Rummikub-style tile duel
+function openOnlineBattleHub(){
+ onlineQuizClearTimers();rummyClearTimers();
+ showModal('온라인 대전',`<div class="battle-hub">
+  <section class="battle-hub-hero"><small>ONLINE 1 VS 1</small><h3>온라인 대전</h3><p>원하는 종목을 선택하세요. 모든 대전은 실시간으로 진행됩니다.</p></section>
+  <div class="battle-mode-grid">
+   <button id="battleQuizBtn" class="battle-mode-card quiz"><span>QUIZ</span><b>류현상 퀴즈 대전</b><small>10문제 실시간 스피드 퀴즈</small></button>
+   <button id="battleRummyBtn" class="battle-mode-card rummy"><span>RUMMY</span><b>1:1 루미큐브 대전</b><small>현재 캐릭터 보유금에서 최대 100만원까지 판돈 설정</small></button>
+  </div>
+  <p class="battle-hub-note">루미큐브 판돈은 게임 속 가상 보유금만 사용하며 실제 현금과 관련이 없습니다.</p>
+ </div>`,'online');
+ $('#battleQuizBtn').onclick=()=>openOnlineQuiz();
+ $('#battleRummyBtn').onclick=()=>openRummyLobby();
+}
+
+let rummyRoomCode='';
+let rummyChannel=null;
+let rummyPollTimer=null;
+let rummyLobbyTimer=null;
+let rummyRefreshTimer=null;
+let rummySelected=new Set();
+let rummyLastStatus='';
+let rummyBusy=false;
+const RUMMY_MAX_STAKE=1000000;
+const RUMMY_ESCROW_KEY='ryuRummyEscrowsV146';
+const RUMMY_ROOM_KEY='ryuRummyRoomV146';
+const RUMMY_COLORS=[
+ {name:'빨강',cls:'red'},
+ {name:'파랑',cls:'blue'},
+ {name:'노랑',cls:'yellow'},
+ {name:'검정',cls:'black'}
+];
+function rummyErrorMessage(error){
+ const raw=String(error?.message||error||'알 수 없는 오류'),code=String(error?.code||'');
+ if(/PGRST202|Could not find the function|does not exist|schema cache|42P01/i.test(raw+' '+code))return `루미큐브 DB 설정을 찾지 못했습니다. ZIP 안의 SUPABASE_RUMMY_SETUP.sql을 Supabase에서 전체 실행해 주세요.\n[오류] ${raw}`;
+ if(/row-level security|permission denied|42501/i.test(raw+' '+code))return `루미큐브 DB 권한(RLS) 오류입니다. SUPABASE_RUMMY_SETUP.sql을 다시 실행해 주세요.\n[오류] ${raw}`;
+ return raw;
+}
+function rummyEscrows(){try{return JSON.parse(localStorage.getItem(RUMMY_ESCROW_KEY)||'{}')||{}}catch{return {}}}
+function saveRummyEscrows(map){try{localStorage.setItem(RUMMY_ESCROW_KEY,JSON.stringify(map))}catch{}}
+function rummyStoredRoom(){try{return localStorage.getItem(RUMMY_ROOM_KEY)||''}catch{return ''}}
+function saveRummyStoredRoom(code){try{if(code)localStorage.setItem(RUMMY_ROOM_KEY,code);else localStorage.removeItem(RUMMY_ROOM_KEY)}catch{}}
+function rummyEscrowFor(code){return rummyEscrows()[code]||null}
+function rummyReserveStake(code,stake){
+ stake=Math.max(0,Math.min(RUMMY_MAX_STAKE,Math.floor(Number(stake)||0)));
+ const map=rummyEscrows(),old=map[code];if(old?.reserved&&!old?.settled)return true;
+ if((state.stats?.money||0)<stake)return false;
+ if(stake)stat('money',-stake);
+ map[code]={stake,reserved:true,settled:false,createdAt:Date.now()};saveRummyEscrows(map);save(false);render();return true;
+}
+function rummySettleStake(code,result){
+ const map=rummyEscrows(),rec=map[code];if(!rec||rec.settled)return 0;
+ const stake=Math.max(0,Number(rec.stake)||0);let credit=0;
+ if(result==='win')credit=stake*2;else if(result==='draw'||result==='refund')credit=stake;
+ if(credit)stat('money',credit);
+ rec.settled=true;rec.result=result;rec.settledAt=Date.now();map[code]=rec;saveRummyEscrows(map);save(false);render();return credit;
+}
+async function rummyHealthcheck(){await ensureCommunityReady();const {data,error}=await communityDb.rpc('rummy_healthcheck');if(error)throw error;return data}
+function rummyClearTimers(){if(rummyPollTimer){clearInterval(rummyPollTimer);rummyPollTimer=null}if(rummyLobbyTimer){clearInterval(rummyLobbyTimer);rummyLobbyTimer=null}if(rummyRefreshTimer){clearTimeout(rummyRefreshTimer);rummyRefreshTimer=null}}
+async function rummyUnsubscribe(){if(rummyChannel&&communityDb){try{await communityDb.removeChannel(rummyChannel)}catch{}}rummyChannel=null;rummyClearTimers()}
+function rummyScheduleRefresh(){if(!rummyRoomCode||!$('#modal')?.open||!$('#modal')?.classList.contains('theme-online'))return;if(rummyRefreshTimer)return;rummyRefreshTimer=setTimeout(()=>{rummyRefreshTimer=null;refreshRummyRoom()},100)}
+async function rummySubscribe(code){
+ await rummyUnsubscribe();if(!communityDb)return;
+ rummyChannel=communityDb.channel(`ryu-rummy-${code}-${communityUserId.slice(0,8)}`)
+  .on('postgres_changes',{event:'*',schema:'public',table:'rummy_rooms',filter:`code=eq.${code}`},rummyScheduleRefresh)
+  .on('postgres_changes',{event:'*',schema:'public',table:'rummy_players',filter:`room_code=eq.${code}`},rummyScheduleRefresh)
+  .subscribe();
+ rummyPollTimer=setInterval(rummyScheduleRefresh,1200);
+}
+function rummyMaxStake(){return Math.max(0,Math.min(RUMMY_MAX_STAKE,Math.floor(Number(state.stats?.money)||0)))}
+function rummyLobbyHtml(message=''){
+ const nick=communityNickname(),max=rummyMaxStake(),resume=rummyStoredRoom();
+ return `<div class="rummy-shell">
+  <button id="rummyBackHub" class="community-back">← 대전 종목 선택</button>
+  <section class="rummy-hero"><div><small>REALTIME 1 VS 1</small><h3>루미큐브 대전</h3><p>공개방을 만들거나 대기 중인 방에 바로 입장합니다. 방 코드는 필요 없습니다.</p></div><span>● LIVE</span></section>
+  ${message?`<div class="online-quiz-notice">${communityEsc(message)}</div>`:''}
+  <section class="rummy-balance"><span>현재 캐릭터 보유금</span><strong>${(state.stats?.money||0).toLocaleString()}원</strong><small>한 판에 걸 수 있는 최대 금액: ${max.toLocaleString()}원</small></section>
+  <section class="online-quiz-profile"><span>대전 닉네임</span><strong>${communityEsc(nick||'미설정')}</strong><button id="rummyNicknameBtn">닉네임 변경</button></section>
+  ${resume?'<button id="rummyResumeBtn" class="online-resume wide">진행 중인 루미큐브 이어가기</button>':''}
+  <section class="rummy-create-card"><b>새 공개방 만들기</b><p>판돈은 방을 만든 순간 보유금에서 보관되며, 대기 중 취소하면 그대로 환불됩니다.</p>
+   <div class="rummy-stake-quick"><button data-rummy-stake="0">0원</button><button data-rummy-stake="100000">10만</button><button data-rummy-stake="300000">30만</button><button data-rummy-stake="500000">50만</button><button data-rummy-stake="1000000">100만</button></div>
+   <label class="rummy-stake-input">판돈 <input id="rummyStakeInput" type="number" min="0" max="${max}" step="10000" value="${Math.min(100000,max)}"> 원</label>
+   <button id="rummyCreateBtn" class="primary wide" ${nick?'':'disabled'}>루미큐브 방 만들기</button>
+  </section>
+  <section class="online-public-rooms"><header><div><b>대기 중인 루미큐브 방</b><small>내 보유금으로 참가할 수 있는 방만 입장할 수 있습니다.</small></div><button id="rummyRefreshLobby">새로고침</button></header><div id="rummyRoomList" class="online-room-list"><div class="online-room-loading">대기방을 불러오는 중...</div></div></section>
+  <section class="rummy-rules"><b>기본 규칙</b><span>각자 14장 시작</span><span>같은 숫자 3~4장 또는 같은 색 연속 숫자 3장 이상</span><span>첫 등록 숫자 합계 30점 이상</span><span>등록을 못 하면 1장 뽑고 턴 종료</span><span>먼저 패를 모두 비우면 승리</span><span>테이블 묶음에 패 추가 가능</span></section>
+ </div>`;
+}
+async function openRummyLobby(message=''){
+ try{
+  await rummyHealthcheck();rummyRoomCode='';rummySelected.clear();rummyLastStatus='';await rummyUnsubscribe();
+  showModal('1:1 루미큐브 대전',rummyLobbyHtml(message),'online');bindRummyLobby();
+ }catch(error){showModal('루미큐브 대전',`<div class="online-quiz-error"><b>루미큐브 대전을 연결하지 못했습니다.</b><p>${communityEsc(rummyErrorMessage(error))}</p><button id="rummyRetry" class="primary">다시 시도</button><button id="rummyErrorBack">대전 메뉴</button></div>`,'online');$('#rummyRetry').onclick=()=>openRummyLobby();$('#rummyErrorBack').onclick=openOnlineBattleHub}
+}
+function openRummyNickname(){
+ const nick=communityNickname();showModal('대전 닉네임',`<div class="community-form"><p>커뮤니티·퀴즈·루미큐브에서 함께 사용하는 닉네임입니다.</p><input id="rummyNicknameInput" maxlength="16" value="${communityEsc(nick)}" placeholder="닉네임 입력"><div class="community-form-actions"><button id="rummyNicknameBack">취소</button><button id="rummyNicknameSave" class="primary">저장</button></div></div>`,'online');
+ $('#rummyNicknameBack').onclick=()=>openRummyLobby();$('#rummyNicknameSave').onclick=()=>{const v=$('#rummyNicknameInput').value.trim();if(!v)return toast('닉네임을 입력해 주세요.');saveCommunityNickname(v);openRummyLobby('닉네임을 저장했습니다.')};
+}
+function bindRummyLobby(){
+ $('#rummyBackHub').onclick=openOnlineBattleHub;$('#rummyNicknameBtn').onclick=openRummyNickname;$('#rummyRefreshLobby').onclick=()=>refreshRummyLobby(true);$('#rummyCreateBtn').onclick=createRummyRoom;
+ const resume=$('#rummyResumeBtn');if(resume)resume.onclick=()=>enterRummyRoom(rummyStoredRoom(),true);
+ $$('[data-rummy-stake]').forEach(b=>b.onclick=()=>{const input=$('#rummyStakeInput'),v=Math.min(Number(b.dataset.rummyStake)||0,rummyMaxStake());if(input)input.value=v});
+ refreshRummyLobby();if(rummyLobbyTimer)clearInterval(rummyLobbyTimer);rummyLobbyTimer=setInterval(()=>refreshRummyLobby(false),2500);
+}
+async function refreshRummyLobby(showToast=false){
+ const target=$('#rummyRoomList');if(!target||!communityDb)return;
+ try{const {data,error}=await communityDb.rpc('rummy_list_open_rooms');if(error)throw error;const rooms=Array.isArray(data)?data:[];
+  if(!rooms.length){target.innerHTML='<div class="online-room-empty"><b>지금 대기 중인 방이 없습니다.</b><span>새 방을 만들면 다른 플레이어에게 바로 표시됩니다.</span></div>';return}
+  target.innerHTML=rooms.map(r=>{const stake=Number(r.stake)||0,can=(state.stats?.money||0)>=stake||r.is_mine;return `<article class="online-room-row rummy-room-row"><div><b>${communityEsc(r.host_nickname||'익명')}님의 루미큐브</b><span>${Number(r.player_count)||1}/2 · 판돈 ${stake.toLocaleString()}원</span></div><button class="primary" data-rummy-join="${communityEsc(r.room_code)}" data-rummy-room-stake="${stake}" ${can?'':'disabled'}>${r.is_mine?'이어가기':can?'입장':'보유금 부족'}</button></article>`}).join('');
+  $$('[data-rummy-join]').forEach(b=>b.onclick=()=>joinRummyRoom(b.dataset.rummyJoin,Number(b.dataset.rummyRoomStake)||0,b));if(showToast)toast('루미큐브 대기방을 새로고침했습니다.');
+ }catch(error){target.innerHTML=`<div class="online-room-empty error"><b>대기방을 불러오지 못했습니다.</b><span>${communityEsc(rummyErrorMessage(error))}</span></div>`}
+}
+async function createRummyRoom(){
+ if(rummyStoredRoom())return enterRummyRoom(rummyStoredRoom(),true);
+ if(!communityNickname())return openRummyNickname();const input=$('#rummyStakeInput');let stake=Math.floor(Number(input?.value)||0);const max=rummyMaxStake();if(stake<0||stake>max||stake>RUMMY_MAX_STAKE)return toast(`판돈은 현재 보유금 범위에서 최대 ${max.toLocaleString()}원까지 가능합니다.`);
+ const btn=$('#rummyCreateBtn');btn.disabled=true;btn.textContent='방 만드는 중...';
+ try{await ensureCommunityReady();const {data,error}=await communityDb.rpc('rummy_create_room',{p_nickname:communityNickname(),p_stake:stake});if(error)throw error;const code=String(data||'').toUpperCase();if(!rummyReserveStake(code,stake)){await communityDb.rpc('rummy_leave_room',{p_room_code:code});throw new Error('판돈을 보관할 보유금이 부족합니다.')}playSfx('success');await enterRummyRoom(code)}catch(error){toast(rummyErrorMessage(error));btn.disabled=false;btn.textContent='루미큐브 방 만들기'}
+}
+async function joinRummyRoom(code,stake,btn){
+ if(rummyStoredRoom()&&rummyStoredRoom()!==String(code||'').toUpperCase())return toast('이미 참가 중인 루미큐브 방이 있습니다. 진행 중인 대전을 먼저 마쳐 주세요.');
+ code=String(code||'').toUpperCase();if(!communityNickname())return openRummyNickname();const escrow=rummyEscrowFor(code);if(!escrow?.reserved&&(state.stats?.money||0)<stake)return toast('이 방의 판돈보다 현재 보유금이 적습니다.');if(btn){btn.disabled=true;btn.textContent='입장 중...'}
+ try{await ensureCommunityReady();const {data,error}=await communityDb.rpc('rummy_join_room',{p_code:code,p_nickname:communityNickname()});if(error)throw error;const joined=String(data||code).toUpperCase();if(!rummyReserveStake(joined,stake)){await communityDb.rpc('rummy_leave_room',{p_room_code:joined});throw new Error('판돈을 보관할 보유금이 부족합니다.')}playSfx('success');await enterRummyRoom(joined)}catch(error){toast(rummyErrorMessage(error));if(btn){btn.disabled=false;btn.textContent='입장'};refreshRummyLobby()}
+}
+async function enterRummyRoom(code,resume=false){
+ if(!code)return openRummyLobby();try{await ensureCommunityReady();rummyRoomCode=String(code).toUpperCase();saveRummyStoredRoom(rummyRoomCode);rummySelected.clear();showModal('1:1 루미큐브 대전','<div class="online-quiz-loading">루미큐브 방 정보를 불러오는 중...</div>','online');await rummySubscribe(rummyRoomCode);await refreshRummyRoom()}catch(error){if(resume){const rec=rummyEscrowFor(String(code).toUpperCase());if(rec&&!rec.settled)rummySettleStake(String(code).toUpperCase(),'refund');saveRummyStoredRoom('')}showModal('루미큐브 대전',`<div class="online-quiz-error"><b>방에 들어갈 수 없습니다.</b><p>${communityEsc(rummyErrorMessage(error))}</p><button id="rummyBackLobby">로비로</button></div>`,'online');$('#rummyBackLobby').onclick=()=>openRummyLobby()}
+}
+async function refreshRummyRoom(){
+ if(!rummyRoomCode||rummyBusy)return;try{const {data,error}=await communityDb.rpc('rummy_get_snapshot',{p_room_code:rummyRoomCode});if(error)throw error;const snap=data;if(!snap)throw new Error('방을 찾을 수 없습니다.');rummyLastStatus=snap.status||'';if(snap.status==='waiting')renderRummyWaiting(snap);else if(snap.status==='playing')renderRummyPlaying(snap);else renderRummyFinished(snap)}catch(error){const raw=String(error?.message||'');if(/참가자가 아닙니다|방을 찾을 수 없습니다|존재하지/.test(raw)){rummySettleStake(rummyRoomCode,'refund');saveRummyStoredRoom('');rummyRoomCode='';await rummyUnsubscribe();return openRummyLobby('방이 종료되어 보관 중이던 판돈을 돌려받았습니다.')}toast(rummyErrorMessage(error))}
+}
+function rummyPlayerCard(p,snap){const me=p.user_id===communityUserId,host=p.user_id===snap.host_id;return `<div class="online-player-card ${me?'me':''}"><div><b>${communityEsc(p.nickname)}</b>${host?'<span>방장</span>':''}${me?'<em>나</em>':''}</div><strong>${p.ready?'READY':'WAIT'}</strong><small>${p.left_at?'나감':'대기 중'}</small></div>`}
+function renderRummyWaiting(snap){
+ const players=Array.isArray(snap.players)?snap.players:[],active=players.filter(p=>!p.left_at),me=active.find(p=>p.user_id===communityUserId),host=snap.host_id===communityUserId,canStart=host&&active.length===2&&active.every(p=>p.ready);
+ $('#modalTitle').textContent='루미큐브 대기실';$('#modalBody').innerHTML=`<div class="rummy-shell"><button id="rummyWaitingBack" class="community-back">← 공개방 목록</button><section class="rummy-wait-stake"><span>이번 판 판돈</span><strong>${Number(snap.stake||0).toLocaleString()}원</strong><small>승자는 두 플레이어가 맡긴 판돈을 합쳐 받습니다.</small></section><div class="online-player-grid">${players.map(p=>rummyPlayerCard(p,snap)).join('')}${active.length<2?'<div class="online-player-card empty"><b>상대방을 기다리는 중...</b><small>공개방 목록에서 다른 플레이어가 바로 입장할 수 있습니다.</small></div>':''}</div><div class="online-waiting-actions"><button id="rummyReadyBtn" class="${me?.ready?'ready':''}">${me?.ready?'준비 취소':'준비'}</button>${host?`<button id="rummyStartBtn" class="primary" ${canStart?'':'disabled'}>대전 시작</button>`:'<span>방장이 시작하면 자동으로 시작됩니다.</span>'}<button id="rummyLeaveBtn">방 나가기</button></div></div>`;
+ $('#rummyWaitingBack').onclick=()=>leaveRummyRoom(true,true);$('#rummyLeaveBtn').onclick=()=>leaveRummyRoom(true,true);$('#rummyReadyBtn').onclick=async()=>{const b=$('#rummyReadyBtn');b.disabled=true;try{const {error}=await communityDb.rpc('rummy_set_ready',{p_code:rummyRoomCode,p_ready:!me?.ready});if(error)throw error;rummyScheduleRefresh()}catch(e){toast(rummyErrorMessage(e));b.disabled=false}};const start=$('#rummyStartBtn');if(start)start.onclick=async()=>{start.disabled=true;try{const {error}=await communityDb.rpc('rummy_start_room',{p_code:rummyRoomCode});if(error)throw error;playSfx('success');rummySelected.clear();rummyScheduleRefresh()}catch(e){toast(rummyErrorMessage(e));start.disabled=false}};
+}
+function rummyTileInfo(id){id=Number(id);if(id>=104)return {id,joker:true,num:'★',color:'조커',cls:'joker'};const ci=Math.floor(id/26),num=Math.floor((id%26)/2)+1,c=RUMMY_COLORS[ci]||RUMMY_COLORS[3];return {id,joker:false,num,color:c.name,cls:c.cls}}
+function rummyTileHtml(id,selectable=false,small=false){const t=rummyTileInfo(id),sel=rummySelected.has(Number(id));return `<button class="rummy-tile ${t.cls} ${sel?'selected':''} ${small?'small':''}" ${selectable?`data-rummy-tile="${t.id}"`:'disabled'} title="${t.joker?'조커':`${t.color} ${t.num}`}"><span>${t.num}</span>${!t.joker?`<i>${t.color}</i>`:''}</button>`}
+function rummySortTiles(ids){return [...(ids||[])].sort((a,b)=>{const A=rummyTileInfo(a),B=rummyTileInfo(b);if(A.joker!==B.joker)return A.joker?1:-1;const ca=A.joker?9:Math.floor(a/26),cb=B.joker?9:Math.floor(b/26);return ca-cb||(A.num-B.num)||a-b})}
+function renderRummyPlaying(snap){
+ const players=Array.isArray(snap.players)?snap.players:[],me=players.find(p=>p.user_id===communityUserId),opp=players.find(p=>p.user_id!==communityUserId&&!p.left_at),mine=snap.turn_user_id===communityUserId,tiles=rummySortTiles(snap.my_tiles||[]),melds=Array.isArray(snap.melds)?snap.melds:[];if(!mine)rummySelected.clear();const selected=[...rummySelected];
+ $('#modalTitle').textContent='1:1 루미큐브 대전';$('#modalBody').innerHTML=`<div class="rummy-shell"><section class="rummy-match-head"><div><span>${communityEsc(me?.nickname||'나')}</span><strong>${tiles.length}장</strong></div><div class="rummy-turn ${mine?'mine':''}">${mine?'내 차례':'상대 차례'}</div><div><span>${communityEsc(opp?.nickname||'상대')}</span><strong>${Number(snap.opponent_count)||0}장</strong></div></section><section class="rummy-match-meta"><span>판돈 <b>${Number(snap.stake||0).toLocaleString()}원</b></span><span>남은 더미 <b>${Number(snap.bag_count)||0}장</b></span><span>${snap.initial_done_self?'첫 등록 완료':'첫 등록 30점 필요'}</span></section><section class="rummy-table"><header><b>테이블</b><small>완성된 묶음</small></header><div class="rummy-meld-list">${melds.length?melds.map((m,i)=>`<div class="rummy-meld"><div>${(m.tiles||[]).map(id=>rummyTileHtml(id,false,true)).join('')}</div>${mine&&snap.initial_done_self?`<button data-rummy-append="${i}" ${selected.length?'':'disabled'}>선택 패 붙이기</button>`:''}</div>`).join(''):'<div class="rummy-table-empty">아직 등록된 패가 없습니다.</div>'}</div></section><section class="rummy-rack"><header><div><b>내 패</b><small>${mine?'패를 눌러 선택하세요.':'상대방의 행동을 기다리는 중입니다.'}</small></div><span>${selected.length}장 선택</span></header><div class="rummy-rack-tiles">${tiles.map(id=>rummyTileHtml(id,mine)).join('')}</div></section><div class="rummy-actions"><button id="rummyPlayMeld" class="primary" ${mine&&selected.length>=3?'':'disabled'}>${snap.initial_done_self?'새 묶음 등록':'첫 묶음 등록 (30점)'}</button><button id="rummyDrawTile" ${mine&&selected.length===0?'':'disabled'}>패 1장 뽑기</button><button id="rummyClearSelection" ${selected.length?'':'disabled'}>선택 취소</button><button id="rummyForfeit">대전 포기</button></div><p class="rummy-note">같은 숫자는 서로 다른 색 3~4장, 연속 숫자는 같은 색 3장 이상이어야 합니다. 첫 등록의 30점 계산에는 조커 숫자를 포함하지 않습니다.</p></div>`;
+ $$('[data-rummy-tile]').forEach(b=>b.onclick=()=>{const id=Number(b.dataset.rummyTile);rummySelected.has(id)?rummySelected.delete(id):rummySelected.add(id);renderRummyPlaying(snap)});$('#rummyClearSelection').onclick=()=>{rummySelected.clear();renderRummyPlaying(snap)};$('#rummyPlayMeld').onclick=()=>rummyPlaySelected();$('#rummyDrawTile').onclick=rummyDraw;$$('[data-rummy-append]').forEach(b=>b.onclick=()=>rummyAppendSelected(Number(b.dataset.rummyAppend)));$('#rummyForfeit').onclick=()=>{if(confirm(`대전을 포기하면 맡긴 ${Number(snap.stake||0).toLocaleString()}원을 돌려받지 못합니다. 정말 포기할까요?`))leaveRummyRoom(true,true,true)};
+}
+async function rummyPlaySelected(){if(rummyBusy||!rummySelected.size)return;rummyBusy=true;try{const ids=[...rummySelected];const {error}=await communityDb.rpc('rummy_play_meld',{p_room_code:rummyRoomCode,p_tile_ids:ids});if(error)throw error;rummySelected.clear();playSfx('success');rummyScheduleRefresh()}catch(e){toast(rummyErrorMessage(e))}finally{rummyBusy=false}}
+async function rummyAppendSelected(index){if(rummyBusy||!rummySelected.size)return;rummyBusy=true;try{const {error}=await communityDb.rpc('rummy_add_to_meld',{p_room_code:rummyRoomCode,p_meld_index:index,p_tile_ids:[...rummySelected]});if(error)throw error;rummySelected.clear();playSfx('success');rummyScheduleRefresh()}catch(e){toast(rummyErrorMessage(e))}finally{rummyBusy=false}}
+async function rummyDraw(){if(rummyBusy)return;rummyBusy=true;try{const {error}=await communityDb.rpc('rummy_draw_tile',{p_room_code:rummyRoomCode});if(error)throw error;rummySelected.clear();playSfx('tap');rummyScheduleRefresh()}catch(e){toast(rummyErrorMessage(e))}finally{rummyBusy=false}}
+function renderRummyFinished(snap){
+ const winner=snap.winner_id||null,result=!winner?'draw':winner===communityUserId?'win':'lose',credit=rummySettleStake(rummyRoomCode,result),stake=Number(snap.stake)||0;saveRummyStoredRoom('');if(rummyPollTimer){clearInterval(rummyPollTimer);rummyPollTimer=null}
+ const title=result==='win'?'승리!':result==='lose'?'패배':'무승부';$('#modalTitle').textContent='루미큐브 대전 결과';$('#modalBody').innerHTML=`<div class="rummy-shell"><section class="online-result ${result==='win'?'win':result==='lose'?'lose':'draw'}"><small>RUMMY RESULT</small><h2>${title}</h2><p>${result==='win'?`판돈 ${stake.toLocaleString()}원씩을 합쳐 <b>${(stake*2).toLocaleString()}원</b>을 받았습니다.`:result==='lose'?`맡긴 판돈 <b>${stake.toLocaleString()}원</b>을 잃었습니다.`:`무승부로 판돈 <b>${stake.toLocaleString()}원</b>을 돌려받았습니다.`}</p><strong>현재 보유금 ${(state.stats?.money||0).toLocaleString()}원</strong></section><div class="online-result-actions"><button id="rummyResultLobby" class="primary">새 대전</button><button id="rummyResultClose">닫기</button></div></div>`;if(result==='win')playSfx('success');else if(result==='lose')playSfx('fail');$('#rummyResultLobby').onclick=()=>leaveRummyRoom(false,true,false,true);$('#rummyResultClose').onclick=()=>leaveRummyRoom(false,false,false,true)
+}
+async function leaveRummyRoom(callServer=true,goLobby=false,forfeit=false,finished=false){
+ const code=rummyRoomCode,status=rummyLastStatus;rummyRoomCode='';rummySelected.clear();saveRummyStoredRoom('');await rummyUnsubscribe();
+ if(callServer&&code&&communityDb){try{const {data}=await communityDb.rpc('rummy_leave_room',{p_room_code:code});if(data==='refund'||status==='waiting')rummySettleStake(code,'refund')}catch{if(status==='waiting')rummySettleStake(code,'refund')}}
+ if(!callServer&&status==='waiting'&&!finished)rummySettleStake(code,'refund');if(goLobby)return openRummyLobby();closeModal(true);
+}
+
 $('#newGameBtn').onclick=()=>{forceAudioOn();setAudioScreenMode('title');const collected=loadMetaEndings();state=structuredClone(baseState);state.endings=collected;startPrologue()};
 $('#continueBtn').onclick=()=>{forceAudioOn();migrateLegacySave();const hasAny=!!readSave(AUTO_SAVE_KEY)||MANUAL_SAVE_KEYS.some(k=>!!readSave(k));if(!hasAny)return toast('저장된 게임이 없습니다.');openSaveManager('load')};
 $('#howBtn').onclick=()=>{forceAudioOn();openGameGuide()};
 $('#titleCommunityBtn').onclick=()=>{forceAudioOn();openCommunity()};
-$('#titleOnlineQuizBtn').onclick=()=>{forceAudioOn();openOnlineQuiz()};
-$('#closeModal').onclick=()=>closeModal();$('#modal').addEventListener('cancel',e=>{if(memoryGameActive||blockingNoticeActive||instagramLiveActive){e.preventDefault();if(memoryGameActive)closeModal()}});$('#audioBtn').onclick=openAudioSettings;$('#menuBtn').onclick=()=>showModal('메뉴','<div class="card-list"><button id="gameGuideBtn" class="primary">게임 설명 · 진행 가이드</button><button id="manualSave">저장 / 불러오기</button><button id="backTitle">타이틀로 돌아가기</button></div>');
+$('#closeModal').onclick=()=>closeModal();$('#modal').addEventListener('cancel',e=>{if(memoryGameActive||blockingNoticeActive||instagramLiveActive){e.preventDefault();if(memoryGameActive)closeModal()}});$('#audioBtn').onclick=openAudioSettings;$('#menuBtn').onclick=()=>showModal('메뉴','<div class="card-list"><button id="menuCommunity" class="community-menu-button">커뮤니티</button><button id="gameGuideBtn" class="primary">게임 설명 · 진행 가이드</button><button id="manualSave">저장 / 불러오기</button><button id="backTitle">타이틀로 돌아가기</button></div>');
 $('#modal').addEventListener('click',e=>{if(e.target===$('#modal'))closeModal()});
 $$('[data-phone]').forEach(b=>b.onclick=()=>openPhone(b.dataset.phone));
-$$('[data-tab]').forEach(b=>b.onclick=()=>{if(state.specialScene?.active)return toast('진행 중인 특별 이벤트를 먼저 마쳐 주세요.');const t=b.dataset.tab;$$('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));if(t==='band')showBand();if(t==='album')openSpecialAlbum();if(t==='shop')openShopHub();if(t==='ending'){showModal('엔딩 컬렉션',state.endings.length?`<div class="ending-collection-grid">${state.endings.map(x=>{const art=endingVisualFor(x);return `<button class="info-card ending-replay ending-collection-card" data-ending-replay="${x}">${art?`<img src="${art}" alt="${x} 미리보기">`:''}<span><b>${x}</b><small>엔딩 이미지와 이야기 다시 보기</small></span></button>`}).join('')}</div>`:'아직 해금된 엔딩이 없습니다.','ending');$$('[data-ending-replay]').forEach(x=>x.onclick=()=>runEndingStory(x.dataset.endingReplay));}if(t==='community')openCommunity();if(t==='online')openOnlineQuiz();if(t==='story')showModal('스토리 기록',state.history.length?`<div class="card-list story-history-list">${[...state.history].reverse().map(x=>`<div class="info-card story-history-item">${x}</div>`).join('')}</div>`:'류현상의 이야기는 이제 시작입니다.','story')});
-document.addEventListener('click',e=>{if(e.target&&e.target.id==='gameGuideBtn'){openGameGuide()}if(e.target&&e.target.id==='manualSave'){openSaveManager('all')}if(e.target&&e.target.id==='backTitle'){save(false);setChoiceLock(false);stopSpecialEventBgm(false);exitEndingMusic();$('#gameScreen').classList.remove('active');$('#titleScreen').classList.add('active');setAudioScreenMode('title',true);closeModal()}});
+$$('[data-tab]').forEach(b=>b.onclick=()=>{if(state.specialScene?.active)return toast('진행 중인 특별 이벤트를 먼저 마쳐 주세요.');const t=b.dataset.tab;$$('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));if(t==='band')showBand();if(t==='album')openSpecialAlbum();if(t==='shop')openShopHub();if(t==='ending'){showModal('엔딩 컬렉션',state.endings.length?`<div class="ending-collection-grid">${state.endings.map(x=>{const art=endingVisualFor(x);return `<button class="info-card ending-replay ending-collection-card" data-ending-replay="${x}">${art?`<img src="${art}" alt="${x} 미리보기">`:''}<span><b>${x}</b><small>엔딩 이미지와 이야기 다시 보기</small></span></button>`}).join('')}</div>`:'아직 해금된 엔딩이 없습니다.','ending');$$('[data-ending-replay]').forEach(x=>x.onclick=()=>runEndingStory(x.dataset.endingReplay));}if(t==='online')openOnlineBattleHub();if(t==='story')showModal('스토리 기록',state.history.length?`<div class="card-list story-history-list">${[...state.history].reverse().map(x=>`<div class="info-card story-history-item">${x}</div>`).join('')}</div>`:'류현상의 이야기는 이제 시작입니다.','story')});
+document.addEventListener('click',e=>{if(e.target&&e.target.id==='menuCommunity'){openCommunity()}if(e.target&&e.target.id==='gameGuideBtn'){openGameGuide()}if(e.target&&e.target.id==='manualSave'){openSaveManager('all')}if(e.target&&e.target.id==='backTitle'){save(false);setChoiceLock(false);stopSpecialEventBgm(false);exitEndingMusic();$('#gameScreen').classList.remove('active');$('#titleScreen').classList.add('active');setAudioScreenMode('title',true);closeModal()}});
 
 document.addEventListener('click',e=>{
  if(!choiceLock)return;
