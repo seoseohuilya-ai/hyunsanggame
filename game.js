@@ -3380,13 +3380,120 @@ function showBand(){
  showModal('밴드 멤버',`<div class="band-bond-summary"><span>현재 밴드 결속력</span><strong>${state.band.bond}</strong><small>멤버와 대화하면 하루에 멤버별 1회, 결속력이 소폭 증가합니다.</small></div><div class="card-list band-member-list">${cards}</div>`,'band');
  $$('[data-band-talk]').forEach(button=>button.onclick=()=>talkToBandMember(button.dataset.bandTalk));
 }
+
+
+// v142: Supabase-backed online community
+const COMMUNITY_SUPABASE_URL='https://xhbnnebgcddfbvripzuy.supabase.co';
+const COMMUNITY_SUPABASE_KEY='sb_publishable_Jbz_-RFUzO7XY4XsJXtmew_EPbB8xDp';
+const COMMUNITY_CATEGORIES=['전체','자유','공략','엔딩 인증','버그 제보'];
+let communityDb=null,communityUserId='',communityActiveCategory='전체',communityLoading=false;
+function communityConfigured(){return !!(COMMUNITY_SUPABASE_URL&&COMMUNITY_SUPABASE_KEY)}
+function communityNickname(){try{return localStorage.getItem('ryuCommunityNickname')||''}catch{return ''}}
+function saveCommunityNickname(value){try{localStorage.setItem('ryuCommunityNickname',String(value||'').trim().slice(0,16))}catch{}}
+function communityEsc(value){return String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]))}
+function communityText(value){return communityEsc(value).replace(/\n/g,'<br>')}
+function communityDate(value){try{return new Intl.DateTimeFormat('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(value))}catch{return ''}}
+function communityErrorMessage(error){
+ const raw=String(error?.message||error||'알 수 없는 오류');
+ if(/anonymous|sign-?ins?.*disabled/i.test(raw))return 'Supabase의 익명 로그인이 꺼져 있습니다. Authentication에서 Anonymous Sign-In을 켜 주세요.';
+ if(/relation .* does not exist|42P01/i.test(raw))return '게시판 테이블이 아직 없습니다. ZIP 안의 SUPABASE_SETUP.sql을 Supabase SQL Editor에서 한 번 실행해 주세요.';
+ if(/row-level security|policy|permission denied/i.test(raw))return '게시판 RLS 정책이 설정되지 않았습니다. SUPABASE_SETUP.sql을 다시 확인해 주세요.';
+ if(/Failed to fetch|NetworkError|fetch/i.test(raw))return '인터넷 연결 또는 Supabase 접속 상태를 확인해 주세요.';
+ return raw;
+}
+async function ensureCommunityReady(){
+ if(!communityConfigured())throw new Error('Supabase 연결 정보가 없습니다.');
+ if(!window.supabase?.createClient)throw new Error('Supabase 라이브러리를 불러오지 못했습니다. 인터넷 연결을 확인해 주세요.');
+ if(!communityDb)communityDb=window.supabase.createClient(COMMUNITY_SUPABASE_URL,COMMUNITY_SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
+ let {data:{session},error}=await communityDb.auth.getSession();if(error)throw error;
+ if(!session){const signed=await communityDb.auth.signInAnonymously();if(signed.error)throw signed.error;session=signed.data.session}
+ communityUserId=session?.user?.id||'';return communityDb
+}
+function communityHeaderHtml(status='online'){
+ const nick=communityNickname();
+ return `<section class="community-hero"><div><small>RYU COMMUNITY</small><h3>류현상 키우기 커뮤니티</h3><p>실제 플레이어들과 공략, 엔딩, 게임 이야기를 나누는 온라인 게시판입니다.</p></div><span class="community-status ${status==='online'?'online':'offline'}">${status==='online'?'온라인':'연결 확인 중'}</span></section>
+ <div class="community-tabs" aria-label="커뮤니티 게시판 분류">${COMMUNITY_CATEGORIES.map(x=>`<button data-community-category="${x}" class="${x===communityActiveCategory?'active':''}">${x}</button>`).join('')}</div>
+ <section class="community-toolbar"><div><b>${nick?communityEsc(nick):'닉네임 미설정'}</b><small>${communityUserId?'익명 계정 연결됨':'익명 계정 연결 중'}</small></div><div><button id="communityProfileBtn">닉네임</button><button id="communityRefreshBtn">새로고침</button><button id="communityWriteBtn" class="primary">글쓰기</button></div></section>`
+}
+function communityLoadingHtml(){return `<div class="community-shell">${communityHeaderHtml('checking')}<section class="community-connect-card"><div class="community-board-icon">💬</div><h3>게시글을 불러오는 중...</h3><p>Supabase 게시판에 연결하고 있습니다.</p></section></div>`}
+function communityErrorHtml(error){return `<div class="community-shell">${communityHeaderHtml('offline')}<section class="community-connect-card community-error-card"><div class="community-board-icon">⚠️</div><h3>커뮤니티에 연결하지 못했습니다.</h3><p>${communityEsc(communityErrorMessage(error))}</p><button id="communityRetryBtn" class="primary wide">다시 연결</button></section></div>`}
+function communityCount(record,key){const v=record?.[key];if(Array.isArray(v))return Number(v[0]?.count||0);if(v&&typeof v==='object')return Number(v.count||0);return 0}
+function communityPostCard(post){
+ const likes=communityCount(post,'likes'),comments=communityCount(post,'comments');
+ return `<button class="community-post-card" data-community-post="${post.id}"><div class="community-post-top"><span class="community-category">${communityEsc(post.category)}</span><time>${communityDate(post.created_at)}</time></div><h4>${communityEsc(post.title)}</h4><p>${communityEsc(String(post.content||'').replace(/\s+/g,' ').slice(0,120))}</p><div class="community-post-meta"><span>${communityEsc(post.nickname)}</span><span>♥ ${likes} · 댓글 ${comments}</span></div></button>`
+}
+async function openCommunity(){
+ showModal('커뮤니티',communityLoadingHtml(),'community');
+ try{await ensureCommunityReady();await loadCommunityPosts()}catch(error){renderCommunityError(error)}
+}
+function bindCommunityNav(){
+ $$('[data-community-category]').forEach(btn=>btn.onclick=()=>{communityActiveCategory=btn.dataset.communityCategory;loadCommunityPosts()});
+ const refresh=$('#communityRefreshBtn');if(refresh)refresh.onclick=()=>loadCommunityPosts();
+ const profile=$('#communityProfileBtn');if(profile)profile.onclick=openCommunityProfile;
+ const write=$('#communityWriteBtn');if(write)write.onclick=openCommunityWrite;
+}
+function renderCommunityError(error){if(!$('#modal')?.open)return;$('#modalTitle').textContent='커뮤니티';$('#modalBody').innerHTML=communityErrorHtml(error);const retry=$('#communityRetryBtn');if(retry)retry.onclick=openCommunity;bindCommunityNav()}
+async function loadCommunityPosts(){
+ if(communityLoading)return;communityLoading=true;
+ try{
+  await ensureCommunityReady();
+  if($('#modal')?.open){$('#modalTitle').textContent='커뮤니티';$('#modalBody').innerHTML=communityLoadingHtml();bindCommunityNav()}
+  let q=communityDb.from('posts').select('id,user_id,nickname,category,title,content,created_at,likes(count),comments(count)').order('created_at',{ascending:false}).limit(50);
+  if(communityActiveCategory!=='전체')q=q.eq('category',communityActiveCategory);
+  const {data,error}=await q;if(error)throw error;
+  if(!$('#modal')?.open)return;
+  $('#modalBody').innerHTML=`<div class="community-shell">${communityHeaderHtml('online')}<section class="community-board-list">${data?.length?data.map(communityPostCard).join(''):'<div class="community-empty"><b>아직 게시글이 없습니다.</b><p>첫 번째 글을 작성해 보세요.</p></div>'}</section></div>`;
+  bindCommunityNav();$$('[data-community-post]').forEach(btn=>btn.onclick=()=>openCommunityPost(Number(btn.dataset.communityPost)));
+ }catch(error){renderCommunityError(error)}finally{communityLoading=false}
+}
+function openCommunityProfile(){
+ const nick=communityNickname();
+ showModal('커뮤니티 닉네임',`<div class="community-form"><p>다른 플레이어에게 표시되는 닉네임입니다. 최대 16자.</p><input id="communityNicknameInput" maxlength="16" placeholder="닉네임 입력" value="${communityEsc(nick)}"><div class="community-form-actions"><button id="communityProfileBack">취소</button><button id="communityNicknameSave" class="primary">저장</button></div></div>`,'community');
+ $('#communityProfileBack').onclick=openCommunity;$('#communityNicknameSave').onclick=()=>{const value=$('#communityNicknameInput').value.trim();if(!value)return toast('닉네임을 입력해 주세요.');saveCommunityNickname(value);toast(`커뮤니티 닉네임을 ${value}(으)로 저장했습니다.`);openCommunity()}
+}
+function communityGameSnapshot(){
+ if(!$('#gameScreen')?.classList.contains('active'))return '';
+ const fameLevel=Math.max(1,Math.min(100,Math.floor((state.stats?.fame||0)/100)+1));
+ return `\n\n[게임 기록]\n${state.day}일차 · 인지도 Lv.${fameLevel} · 팬 ${(state.stats?.fans||0).toLocaleString()}명\n보컬 ${state.stats?.vocal||0} · 작곡 ${state.stats?.compose||0} · 외모 ${state.stats?.looks||0}`
+}
+function openCommunityWrite(){
+ const nick=communityNickname();if(!nick){toast('먼저 커뮤니티 닉네임을 설정해 주세요.');openCommunityProfile();return}
+ const defaultCat=communityActiveCategory==='전체'?'자유':communityActiveCategory;
+ showModal('새 게시글',`<div class="community-form"><label>게시판<select id="communityPostCategory">${COMMUNITY_CATEGORIES.filter(x=>x!=='전체').map(x=>`<option ${x===defaultCat?'selected':''}>${x}</option>`).join('')}</select></label><label>제목<input id="communityPostTitle" maxlength="80" placeholder="제목을 입력하세요"></label><label>내용<textarea id="communityPostContent" maxlength="1200" rows="9" placeholder="내용을 입력하세요"></textarea></label><button id="communityAttachGame" class="community-secondary wide">현재 게임 기록 붙이기</button><div class="community-form-actions"><button id="communityWriteBack">취소</button><button id="communitySubmitPost" class="primary">등록</button></div></div>`,'community');
+ $('#communityWriteBack').onclick=openCommunity;$('#communityAttachGame').onclick=()=>{const snap=communityGameSnapshot();if(!snap)return toast('게임 시작 후 사용할 수 있습니다.');const area=$('#communityPostContent');if(!area.value.includes('[게임 기록]'))area.value=(area.value+snap).slice(0,1200)};
+ $('#communitySubmitPost').onclick=async()=>{const btn=$('#communitySubmitPost'),title=$('#communityPostTitle').value.trim(),content=$('#communityPostContent').value.trim(),category=$('#communityPostCategory').value;if(!title||!content)return toast('제목과 내용을 모두 입력해 주세요.');btn.disabled=true;btn.textContent='등록 중...';try{await ensureCommunityReady();const {error}=await communityDb.from('posts').insert({user_id:communityUserId,nickname:communityNickname(),category,title,content});if(error)throw error;playSfx('success');toast('게시글을 등록했습니다.');communityActiveCategory=category;await loadCommunityPosts()}catch(error){toast(communityErrorMessage(error));btn.disabled=false;btn.textContent='등록'} }
+}
+async function openCommunityPost(postId){
+ showModal('게시글',`<div class="community-detail-loading">게시글을 불러오는 중...</div>`,'community');
+ try{
+  await ensureCommunityReady();
+  const [postRes,commentRes,likeRes]=await Promise.all([
+   communityDb.from('posts').select('*').eq('id',postId).single(),
+   communityDb.from('comments').select('*').eq('post_id',postId).order('created_at',{ascending:true}),
+   communityDb.from('likes').select('user_id').eq('post_id',postId)
+  ]);
+  if(postRes.error)throw postRes.error;if(commentRes.error)throw commentRes.error;if(likeRes.error)throw likeRes.error;
+  renderCommunityPostDetail(postRes.data,commentRes.data||[],likeRes.data||[])
+ }catch(error){renderCommunityError(error)}
+}
+function renderCommunityPostDetail(post,comments,likes){
+ const mine=post.user_id===communityUserId,liked=likes.some(x=>x.user_id===communityUserId);
+ const commentHtml=comments.length?comments.map(c=>`<article class="community-comment"><div><b>${communityEsc(c.nickname)}</b><time>${communityDate(c.created_at)}</time></div><p>${communityText(c.content)}</p>${c.user_id===communityUserId?`<button class="community-comment-delete" data-comment-delete="${c.id}">삭제</button>`:''}</article>`).join(''):'<div class="community-empty compact"><p>아직 댓글이 없습니다.</p></div>';
+ $('#modalTitle').textContent='게시글';$('#modalBody').innerHTML=`<div class="community-post-detail"><button id="communityPostBack" class="community-back">← 목록으로</button><article class="community-post-main"><div class="community-post-top"><span class="community-category">${communityEsc(post.category)}</span><time>${communityDate(post.created_at)}</time></div><h3>${communityEsc(post.title)}</h3><div class="community-post-author">${communityEsc(post.nickname)}</div><div class="community-post-content">${communityText(post.content)}</div><div class="community-detail-actions"><button id="communityLikeBtn" class="${liked?'liked':''}">♥ ${likes.length}</button>${mine?'<button id="communityDeletePost">게시글 삭제</button>':''}</div></article><section class="community-comments"><h4>댓글 ${comments.length}</h4>${commentHtml}<div class="community-comment-write"><textarea id="communityCommentContent" maxlength="500" rows="3" placeholder="댓글을 입력하세요"></textarea><button id="communitySubmitComment" class="primary">댓글 등록</button></div></section></div>`;
+ $('#communityPostBack').onclick=loadCommunityPosts;
+ $('#communityLikeBtn').onclick=async()=>{const btn=$('#communityLikeBtn');btn.disabled=true;try{if(liked){const {error}=await communityDb.from('likes').delete().eq('post_id',post.id).eq('user_id',communityUserId);if(error)throw error}else{const {error}=await communityDb.from('likes').insert({post_id:post.id,user_id:communityUserId});if(error)throw error}await openCommunityPost(post.id)}catch(error){toast(communityErrorMessage(error));btn.disabled=false}};
+ const del=$('#communityDeletePost');if(del)del.onclick=async()=>{if(!confirm('이 게시글을 삭제하시겠습니까? 댓글도 함께 삭제됩니다.'))return;del.disabled=true;try{const {error}=await communityDb.from('posts').delete().eq('id',post.id).eq('user_id',communityUserId);if(error)throw error;toast('게시글을 삭제했습니다.');loadCommunityPosts()}catch(error){toast(communityErrorMessage(error));del.disabled=false}};
+ $('#communitySubmitComment').onclick=async()=>{const btn=$('#communitySubmitComment'),content=$('#communityCommentContent').value.trim(),nick=communityNickname();if(!nick)return toast('먼저 닉네임을 설정해 주세요.');if(!content)return toast('댓글 내용을 입력해 주세요.');btn.disabled=true;try{const {error}=await communityDb.from('comments').insert({post_id:post.id,user_id:communityUserId,nickname:nick,content});if(error)throw error;playSfx('success');await openCommunityPost(post.id)}catch(error){toast(communityErrorMessage(error));btn.disabled=false}};
+ $$('[data-comment-delete]').forEach(btn=>btn.onclick=async()=>{if(!confirm('댓글을 삭제하시겠습니까?'))return;btn.disabled=true;try{const {error}=await communityDb.from('comments').delete().eq('id',Number(btn.dataset.commentDelete)).eq('user_id',communityUserId);if(error)throw error;await openCommunityPost(post.id)}catch(error){toast(communityErrorMessage(error));btn.disabled=false}})
+}
 $('#newGameBtn').onclick=()=>{forceAudioOn();setAudioScreenMode('title');const collected=loadMetaEndings();state=structuredClone(baseState);state.endings=collected;startPrologue()};
 $('#continueBtn').onclick=()=>{forceAudioOn();migrateLegacySave();const hasAny=!!readSave(AUTO_SAVE_KEY)||MANUAL_SAVE_KEYS.some(k=>!!readSave(k));if(!hasAny)return toast('저장된 게임이 없습니다.');openSaveManager('load')};
 $('#howBtn').onclick=()=>{forceAudioOn();openGameGuide()};
+$('#titleCommunityBtn').onclick=()=>{forceAudioOn();openCommunity()};
 $('#closeModal').onclick=()=>closeModal();$('#modal').addEventListener('cancel',e=>{if(memoryGameActive||blockingNoticeActive||instagramLiveActive){e.preventDefault();if(memoryGameActive)closeModal()}});$('#audioBtn').onclick=openAudioSettings;$('#menuBtn').onclick=()=>showModal('메뉴','<div class="card-list"><button id="gameGuideBtn" class="primary">게임 설명 · 진행 가이드</button><button id="manualSave">저장 / 불러오기</button><button id="backTitle">타이틀로 돌아가기</button></div>');
 $('#modal').addEventListener('click',e=>{if(e.target===$('#modal'))closeModal()});
 $$('[data-phone]').forEach(b=>b.onclick=()=>openPhone(b.dataset.phone));
-$$('[data-tab]').forEach(b=>b.onclick=()=>{if(state.specialScene?.active)return toast('진행 중인 특별 이벤트를 먼저 마쳐 주세요.');const t=b.dataset.tab;$$('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));if(t==='band')showBand();if(t==='album')openSpecialAlbum();if(t==='shop')openShopHub();if(t==='ending'){showModal('엔딩 컬렉션',state.endings.length?`<div class="ending-collection-grid">${state.endings.map(x=>{const art=endingVisualFor(x);return `<button class="info-card ending-replay ending-collection-card" data-ending-replay="${x}">${art?`<img src="${art}" alt="${x} 미리보기">`:''}<span><b>${x}</b><small>엔딩 이미지와 이야기 다시 보기</small></span></button>`}).join('')}</div>`:'아직 해금된 엔딩이 없습니다.','ending');$$('[data-ending-replay]').forEach(x=>x.onclick=()=>runEndingStory(x.dataset.endingReplay));}if(t==='story')showModal('스토리 기록',state.history.length?`<div class="card-list story-history-list">${[...state.history].reverse().map(x=>`<div class="info-card story-history-item">${x}</div>`).join('')}</div>`:'류현상의 이야기는 이제 시작입니다.','story')});
+$$('[data-tab]').forEach(b=>b.onclick=()=>{if(state.specialScene?.active)return toast('진행 중인 특별 이벤트를 먼저 마쳐 주세요.');const t=b.dataset.tab;$$('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));if(t==='band')showBand();if(t==='album')openSpecialAlbum();if(t==='shop')openShopHub();if(t==='ending'){showModal('엔딩 컬렉션',state.endings.length?`<div class="ending-collection-grid">${state.endings.map(x=>{const art=endingVisualFor(x);return `<button class="info-card ending-replay ending-collection-card" data-ending-replay="${x}">${art?`<img src="${art}" alt="${x} 미리보기">`:''}<span><b>${x}</b><small>엔딩 이미지와 이야기 다시 보기</small></span></button>`}).join('')}</div>`:'아직 해금된 엔딩이 없습니다.','ending');$$('[data-ending-replay]').forEach(x=>x.onclick=()=>runEndingStory(x.dataset.endingReplay));}if(t==='community')openCommunity();if(t==='story')showModal('스토리 기록',state.history.length?`<div class="card-list story-history-list">${[...state.history].reverse().map(x=>`<div class="info-card story-history-item">${x}</div>`).join('')}</div>`:'류현상의 이야기는 이제 시작입니다.','story')});
 document.addEventListener('click',e=>{if(e.target&&e.target.id==='gameGuideBtn'){openGameGuide()}if(e.target&&e.target.id==='manualSave'){openSaveManager('all')}if(e.target&&e.target.id==='backTitle'){save(false);setChoiceLock(false);stopSpecialEventBgm(false);exitEndingMusic();$('#gameScreen').classList.remove('active');$('#titleScreen').classList.add('active');setAudioScreenMode('title',true);closeModal()}});
 
 document.addEventListener('click',e=>{
