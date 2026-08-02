@@ -1,4 +1,4 @@
-/* 류현상 키우기 v156 - 싱글 맞고(후라보노 AI)
+/* 류현상 키우기 v164 - 싱글 맞고(후라보노 AI)
  * 48장 전통 화투 기반 / 2인 10장씩 + 바닥 8장 + 더미 20장
  * 룰: 7점 GO/STOP, 총통, 흔들기, 폭탄, 뻑/자뻑/뻑먹기, 쪽, 따닥, 싹쓸이,
  *      홍단/청단/초단, 고도리, 피박/광박/멍따/고박, 3고 이상 배수, 나가리 다음판 2배.
@@ -177,19 +177,30 @@ function matgoPlay(side,card){
  matgoRunAnimation('play',side,[card],`${side==='player'?'류현상':'후라보노'}이 ${matgoMonth(card)}월 패를 냅니다.`,()=>matgoResolvePlayed(side,card,ctx=>matgoDrawAndResolve(side,ctx)),360);
 }
 function matgoSkipBombTurn(side){const p=matgoGame[side];if(!p.bombCredits)return false;p.bombCredits--;matgoGame.lastPlayed=null;matgoGame.log=`${side==='player'?'류현상':'후라보노'}이 폭탄 빈패를 사용하고 더미만 뒤집습니다.`;matgoDrawAndResolve(side,{bombSkip:true,playedMonth:0,initialMatches:-1,tempCapture:null,placed:false});return true}
+function matgoCanAct(side){const p=matgoGame?.[side];return !!(p&&((p.hand?.length||0)>0||(p.bombCredits||0)>0))}
+function matgoRoundEnded(){return !!(matgoGame&&(matgoGame.deck.length===0||(!matgoCanAct('player')&&!matgoCanAct('ai'))))}
+function matgoExhausted(){return matgoRoundEnded()}
 
 function matgoAfterTurn(side){
  if(!matgoGame?.active)return;matgoGame.pending=null;matgoGame.selectedCard=null;matgoGame[side].hand=matgoSortCards(matgoGame[side].hand);matgoGame.turnNo++;
- const score=matgoCurrentScore(side),p=matgoGame[side];
+ const score=matgoCurrentScore(side),p=matgoGame[side],ended=matgoRoundEnded();
  if(score.total>=MATGO_MIN_SCORE&&score.total>p.lastDecisionScore){
+  // 더미의 마지막 패를 뒤집은 직후에는 GO를 받을 다음 턴 자체가 없으므로 자동 STOP.
+  if(ended){matgoGame.log=`마지막 패입니다. ${side==='player'?'류현상':'후라보노'} 자동 STOP!`;renderMatgo();setTimeout(()=>matgoFinish(side,'stop'),220);return}
   matgoGame.pending={type:'decision',side,score:score.total};renderMatgo();if(side==='ai')setTimeout(()=>matgoAiDecision(),520);return;
  }
- if(!matgoGame.deck.length&&matgoGame.player.hand.length===0&&matgoGame.ai.hand.length===0){return matgoFinish(null,'nagari')}
- matgoGame.turn=side==='player'?'ai':'player';renderMatgo();if(matgoGame.turn==='ai')matgoScheduleAi();
+ if(ended){return matgoFinish(null,'nagari')}
+ const next=side==='player'?'ai':'player';
+ // 정상 게임에서는 발생하지 않지만 폭탄/빈패 조합 등으로 다음 사람이 행동할 카드가 없어지는 상태를 안전 종료한다.
+ if(!matgoCanAct(next)){matgoGame.log='더 진행할 수 있는 패가 없어 판을 종료합니다.';return matgoFinish(null,'nagari')}
+ matgoGame.turn=next;renderMatgo();if(matgoGame.turn==='ai')matgoScheduleAi();
 }
 function matgoGoStop(side,go){
  if(!matgoGame?.active||matgoGame.pending?.type!=='decision'||matgoGame.pending.side!==side)return;const p=matgoGame[side];
- if(!go)return matgoFinish(side,'stop');p.goCount++;p.lastDecisionScore=matgoCurrentScore(side).total;matgoGame.pending=null;matgoGame.log=`${side==='player'?'류현상':'후라보노'}: GO! 현재 ${p.goCount}고.`;matgoGame.turn=side==='player'?'ai':'player';renderMatgo();if(matgoGame.turn==='ai')matgoScheduleAi();
+ if(!go)return matgoFinish(side,'stop');
+ // 구버전/캐시에서 마지막 패 GO 선택창이 남아 있어도 더 이상 빈 턴으로 넘기지 않는다.
+ if(matgoRoundEnded()){matgoGame.log='마지막 패라 더 진행할 수 없어 자동 STOP 처리됩니다.';return matgoFinish(side,'stop')}
+ p.goCount++;p.lastDecisionScore=matgoCurrentScore(side).total;matgoGame.pending=null;matgoGame.log=`${side==='player'?'류현상':'후라보노'}: GO! 현재 ${p.goCount}고.`;matgoGame.turn=side==='player'?'ai':'player';renderMatgo();if(matgoGame.turn==='ai')matgoScheduleAi();
 }
 
 function matgoAiChoice(){
@@ -198,7 +209,7 @@ function matgoAiChoice(){
  let best=null,bestScore=-1e9;for(const c of p.hand){const matches=matgoGame.table.filter(x=>matgoMonth(x)===matgoMonth(c));let v=matgoCardValue(c)*.25;if(matches.length)v+=Math.max(...matches.map(matgoCardValue))*2+matches.length*3;else v-=matgoCardValue(c)*.12;const m=matgoMonth(c);if(p.hand.filter(x=>matgoMonth(x)===m).length>=2)v-=1.5;if(v>bestScore){bestScore=v;best=c}}
  return {card:best??p.hand[0]};
 }
-function matgoScheduleAi(delay=720){setTimeout(()=>{if(!matgoGame?.active||matgoGame.turn!=='ai'||matgoGame.pending)return;if(matgoSkipBombTurn('ai'))return;const choice=matgoAiChoice();if(!choice)return;if(choice.bomb)matgoUseBomb('ai',choice.bomb);else matgoPlay('ai',choice.card)},delay)}
+function matgoScheduleAi(delay=720){setTimeout(()=>{if(!matgoGame?.active||matgoGame.turn!=='ai'||matgoGame.pending)return;if(matgoRoundEnded()){const ps=matgoCurrentScore('player').total,as=matgoCurrentScore('ai').total;if(as>=MATGO_MIN_SCORE&&as>=ps)return matgoFinish('ai','stop');if(ps>=MATGO_MIN_SCORE)return matgoFinish('player','stop');return matgoFinish(null,'nagari')}if(matgoSkipBombTurn('ai'))return;if(!matgoGame.ai.hand.length){matgoGame.log='후라보노가 낼 패가 없어 판을 종료합니다.';return matgoFinish(null,'nagari')}const choice=matgoAiChoice();if(!choice||choice.card==null&&!choice.bomb)return matgoFinish(null,'nagari');if(choice.bomb)matgoUseBomb('ai',choice.bomb);else matgoPlay('ai',choice.card)},delay)}
 function matgoAiDecision(){if(!matgoGame?.active||matgoGame.pending?.type!=='decision'||matgoGame.pending.side!=='ai')return;const s=matgoCurrentScore('ai').total,opp=matgoCurrentScore('player').total,left=matgoGame.deck.length;let go=s<=7&&opp<5&&left>8?Math.random()<.55:s<=8&&opp<6&&left>10?Math.random()<.3:false;if(s>=10||opp>=7||left<=5)go=false;matgoGoStop('ai',go)}
 
 function matgoSettleMoney(net){
@@ -227,8 +238,8 @@ function renderMatgo(){
  const canPlay=g.active&&turnPlayer&&!g.pending&&!g.busy;const playerHand=g.player.hand.map(id=>matgoCardHtml(id,{clickable:canPlay,selected:g.selectedCard===id})).join('');const aiBacks=g.ai.hand.map(()=>matgoCardHtml(0,{back:true,small:true})).join('');
  const bombMonths=canPlay?matgoBombMonths('player'):[];const shakeMonths=canPlay?[...new Set(g.player.hand.map(matgoMonth))].filter(m=>matgoCanShake('player',m)):[];
  const choiceHtml=pendingChoice?`<div class="matgo-overlay-choice"><div><b>${matgoEsc(g.pending.label)}</b><div class="matgo-choice-cards">${g.pending.candidates.map(id=>matgoCardHtml(id,{clickable:false})).join('')}</div><div class="matgo-choice-buttons">${g.pending.candidates.map(id=>`<button data-matgo-choice="${id}">${matgoMonth(id)}월 ${MATGO_KIND_TEXT[matgoKind(id)]}</button>`).join('')}</div></div></div>`:'';
- const decisionHtml=pendingDecision&&g.pending.side==='player'?`<div class="matgo-overlay-choice decision"><div><small>현재 ${g.pending.score}점</small><b>GO / STOP</b><p>계속 가면 더 큰 배수를 노릴 수 있지만 역전되면 고박을 맞을 수 있습니다.</p><div class="matgo-decision-buttons"><button id="matgoGo" class="primary">GO</button><button id="matgoStop">STOP</button></div></div></div>`:'';
- $('#modalTitle').textContent='후라보노AI 1:1 맞고';$('#modalBody').innerHTML=`<div class="matgo-board">${choiceHtml}${decisionHtml}${matgoActionFxHtml()}<header class="matgo-board-top"><div><b>점당 ${g.rate.toLocaleString()}원</b><span>더미 ${g.deck.length}장</span></div><strong class="${g.turn==='player'?'me':''}">${g.log}</strong><button id="matgoForfeit">기권</button></header><section class="matgo-opponent"><div class="matgo-player-info"><span>후라보노</span><strong>${as.total}점</strong><small>${g.turn==='ai'&&!g.pending?'생각 중...':`손패 ${g.ai.hand.length}장`}</small></div><div class="matgo-opponent-hand">${aiBacks}</div>${matgoCapturedHtml('ai')}</section><section class="matgo-center"><div class="matgo-table-area"><div class="matgo-table-cards">${g.table.length?matgoSortCards(g.table).map(id=>matgoCardHtml(id,{mark:g.ppukByMonth[matgoMonth(id)]?'뻑':''})).join(''):'<span class="matgo-empty-table">바닥이 비었습니다</span>'}</div><div class="matgo-deck-stack"><span class="matgo-card back"><img src="assets/hwatu/back.png" alt="더미"></span><b>${g.deck.length}</b>${g.lastDrawn!=null?`<div class="matgo-last-card"><small>방금 뒤집은 패</small>${matgoCardHtml(g.lastDrawn,{small:true})}</div>`:''}</div></div></section><section class="matgo-me">${matgoCapturedHtml('player')}<div class="matgo-hand-head"><div><span>류현상</span><strong>${ps.total}점</strong></div><small>${canPlay?(g.selectedCard!=null?'선택한 패를 한 번 더 누르면 냅니다.':'낼 패를 한 번 눌러 선택하세요.'):(g.busy?'패가 이동하는 중...':g.turn==='ai'?'후라보노 차례입니다.':'선택을 마쳐 주세요.')}</small></div>${(bombMonths.length||shakeMonths.length)?`<div class="matgo-special-actions">${bombMonths.map(m=>`<button data-matgo-bomb="${m}">💥 ${m}월 폭탄</button>`).join('')}${shakeMonths.map(m=>`<button data-matgo-shake="${m}">〰️ ${m}월 흔들기</button>`).join('')}</div>`:''}<div class="matgo-my-hand">${playerHand}</div></section></div>`;
+ const decisionHtml=pendingDecision&&g.pending.side==='player'?`<div class="matgo-overlay-choice decision"><div><small>현재 ${g.pending.score}점</small><b>GO / STOP</b><p>${matgoExhausted()?'마지막 패라 더 진행할 수 없습니다. STOP으로 승부를 끝내세요.':'계속 가면 더 큰 배수를 노릴 수 있지만 역전되면 고박을 맞을 수 있습니다.'}</p><div class="matgo-decision-buttons"><button id="matgoGo" class="primary" ${matgoExhausted()?'disabled':''}>GO</button><button id="matgoStop">STOP</button></div></div></div>`:'';
+ $('#modalTitle').textContent='후라보노AI 1:1 맞고';$('#modalBody').innerHTML=`<div class="matgo-board">${choiceHtml}${decisionHtml}${matgoActionFxHtml()}<header class="matgo-board-top"><div><b>점당 ${g.rate.toLocaleString()}원</b><span>더미 ${g.deck.length}장</span></div><strong class="${g.turn==='player'?'me':''}">${g.log}</strong><button id="matgoForfeit">기권</button></header><section class="matgo-opponent"><div class="matgo-player-info"><span>후라보노</span><strong>${as.total}점</strong><small>${g.turn==='ai'&&!g.pending?'생각 중...':`손패 ${g.ai.hand.length}장`}</small></div><div class="matgo-opponent-hand">${aiBacks}</div>${matgoCapturedHtml('ai')}</section><section class="matgo-center"><div class="matgo-table-area"><div class="matgo-table-cards">${g.table.length?matgoSortCards(g.table).map(id=>matgoCardHtml(id,{mark:g.ppukByMonth[matgoMonth(id)]?'뻑':''})).join(''):'<span class="matgo-empty-table">바닥이 비었습니다</span>'}</div><div class="matgo-deck-stack"><span class="matgo-card back"><img src="assets/hwatu/back.png" alt="더미"></span><b>${g.deck.length}</b></div></div></section><section class="matgo-me">${matgoCapturedHtml('player')}<div class="matgo-hand-head"><div><span>류현상</span><strong>${ps.total}점</strong></div><small>${canPlay?(g.selectedCard!=null?'선택한 패를 한 번 더 누르면 냅니다.':'낼 패를 한 번 눌러 선택하세요.'):(g.busy?'패가 이동하는 중...':g.turn==='ai'?'후라보노 차례입니다.':'선택을 마쳐 주세요.')}</small></div>${(bombMonths.length||shakeMonths.length)?`<div class="matgo-special-actions">${bombMonths.map(m=>`<button data-matgo-bomb="${m}">💥 ${m}월 폭탄</button>`).join('')}${shakeMonths.map(m=>`<button data-matgo-shake="${m}">〰️ ${m}월 흔들기</button>`).join('')}</div>`:''}<div class="matgo-my-hand" style="--hand-count:${Math.max(1,g.player.hand.length)}">${playerHand}</div></section></div>`;
  $$('[data-matgo-card]').forEach(b=>b.onclick=()=>matgoHandlePlayerCard(Number(b.dataset.matgoCard)));$$('[data-matgo-bomb]').forEach(b=>b.onclick=()=>matgoUseBomb('player',Number(b.dataset.matgoBomb)));$$('[data-matgo-shake]').forEach(b=>b.onclick=()=>matgoDeclareShake('player',Number(b.dataset.matgoShake)));
  $$('[data-matgo-choice]').forEach(b=>b.onclick=()=>{const p=g.pending;if(!p||p.type!=='choose')return;const id=Number(b.dataset.matgoChoice);const cb=p.callback;g.pending=null;cb(id)});if($('#matgoGo'))$('#matgoGo').onclick=()=>matgoGoStop('player',true);if($('#matgoStop'))$('#matgoStop').onclick=()=>matgoGoStop('player',false);$('#matgoForfeit').onclick=()=>matgoRequestClose();
  if(canPlay&&g.player.bombCredits>0){setTimeout(()=>{if(matgoGame?.active&&matgoGame.turn==='player'&&!matgoGame.pending&&matgoGame.player.bombCredits>0)matgoSkipBombTurn('player')},260)}

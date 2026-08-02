@@ -127,7 +127,7 @@ revoke all on function public.gostop_next_active_user(text,integer) from public;
 
 create or replace function public.gostop_healthcheck()
 returns jsonb language plpgsql security definer set search_path=public
-as $$ begin if auth.uid() is null then raise exception '로그인이 필요합니다.'; end if; return jsonb_build_object('ok',true,'version',151,'point_rate',true,'png_board',true); end; $$;
+as $$ begin if auth.uid() is null then raise exception '로그인이 필요합니다.'; end if; return jsonb_build_object('ok',true,'version',169,'point_rate',true,'png_board',true,'last_turn_guard',true,'nagari_guard',true); end; $$;
 
 drop function if exists public.gostop_create_room(text,integer);
 create or replace function public.gostop_create_room(p_nickname text,p_max_players integer,p_point_rate bigint)
@@ -278,12 +278,19 @@ begin
   update public.gostop_game_state set deck=v_deck,table_cards=v_table,turn_no=turn_no+1,last_action='패를 냈습니다.',last_played=p_card,last_drawn=v_draw where room_code=v_code;
   v_threshold:=case when v_room.max_players=2 then 7 else 3 end;
 
-  -- 손패 또는 더미가 끝난 경우 즉시 최고 점수로 종료합니다.
-  if cardinality(v_hand)=0 or cardinality(v_deck)=0 then
-    select max(public.gostop_score_cards(captured,go_count)) into v_maxscore from public.gostop_players where room_code=v_code and left_at is null;
-    select user_id into v_winner from public.gostop_players where room_code=v_code and left_at is null and public.gostop_score_cards(captured,go_count)=v_maxscore order by seat limit 1;
+  -- 더미의 마지막 패를 뒤집은 턴에서만 즉시 종료합니다.
+  -- 손패가 먼저 0장이 되어도 다른 참가자의 마지막 턴이 남아 있을 수 있으므로 손패 수만으로 종료하지 않습니다.
+  -- 마지막 행동자가 기준 점수를 넘겼으면 자동 STOP 승리, 못 넘겼으면 나가리(정산 없음)입니다.
+  if coalesce(cardinality(v_deck),0)=0 then
+    if v_score>=v_threshold then
+      v_winner:=v_uid;
+      update public.gostop_game_state set last_action='마지막 패 자동 STOP' where room_code=v_code;
+    else
+      v_winner:=null;
+      update public.gostop_game_state set last_action='마지막 패 나가리' where room_code=v_code;
+    end if;
     update public.gostop_rooms set status='finished',winner_id=v_winner,turn_user_id=null,decision_user_id=null,updated_at=now() where code=v_code;
-    return jsonb_build_object('finished',true,'score',v_score);
+    return jsonb_build_object('finished',true,'score',v_score,'winner_id',v_winner,'nagari',v_winner is null);
   end if;
 
   if v_score>=v_threshold then
@@ -300,12 +307,19 @@ $$;
 create or replace function public.gostop_choose_go(p_room_code text,p_go boolean)
 returns text language plpgsql security definer set search_path=public
 as $$
-declare v_code text:=upper(trim(p_room_code));v_uid uuid:=auth.uid();v_room public.gostop_rooms%rowtype;v_me public.gostop_players%rowtype;v_next uuid;
+declare v_code text:=upper(trim(p_room_code));v_uid uuid:=auth.uid();v_room public.gostop_rooms%rowtype;v_me public.gostop_players%rowtype;v_state public.gostop_game_state%rowtype;v_next uuid;
 begin
   if not public.gostop_is_participant(v_code) then raise exception '참가자가 아닙니다.'; end if;
   select * into v_room from public.gostop_rooms where code=v_code for update;
   if v_room.status<>'playing' or v_room.decision_user_id<>v_uid then raise exception '지금은 고/스톱을 선택할 수 없습니다.'; end if;
   select * into v_me from public.gostop_players where room_code=v_code and user_id=v_uid for update;
+  select * into v_state from public.gostop_game_state where room_code=v_code for update;
+  -- 구버전에서 마지막 패 GO 선택창이 남아 있더라도 빈 턴으로 넘기지 않고 자동 STOP합니다.
+  if p_go and coalesce(cardinality(v_state.deck),0)=0 then
+    update public.gostop_rooms set status='finished',winner_id=v_uid,turn_user_id=null,decision_user_id=null,updated_at=now() where code=v_code;
+    update public.gostop_game_state set last_action='마지막 패 자동 STOP' where room_code=v_code;
+    return 'stop';
+  end if;
   if p_go then
     update public.gostop_players set go_count=go_count+1,score=public.gostop_score_cards(captured,go_count+1) where room_code=v_code and user_id=v_uid;
     v_next:=public.gostop_next_active_user(v_code,v_me.seat);
