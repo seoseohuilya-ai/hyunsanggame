@@ -1684,13 +1684,13 @@ function storeJobAction(key){
 }
 
 const drawerPhotoCatalog=[
- {id:0,title:'어린 시절의 한 장면',image:'assets/images/drawer-photo-1.jpg',caption:'아주 오래전, 지금의 류현상이 되기 훨씬 전의 작고 귀여운 하루.',preferred:['work','stockWork']},
- {id:1,title:'빛 속의 미소',image:'assets/images/drawer-photo-2.jpg',caption:'무대 조명 같은 빛 아래에서 스쳐 지나가듯 남은, 장난스러운 웃음.',preferred:['walk']},
- {id:2,title:'생각에 잠긴 밤',image:'assets/images/drawer-photo-3.jpg',caption:'누군가를 기다리는 듯, 혹은 자기 마음을 들여다보는 듯한 고요한 시선.',preferred:['vocal']},
- {id:3,title:'말수 적던 시절',image:'assets/images/drawer-photo-4.jpg',caption:'긴 머리와 무표정한 얼굴 뒤에 더 많은 생각을 숨기고 있던 때.',preferred:['compose']},
- {id:4,title:'첫 무대의 숨결',image:'assets/images/drawer-photo-5.jpg',caption:'조용히 기타를 쥐고 있던 손끝에, 노래가 시작되기 전의 긴장이 머물던 순간.',preferred:['arrange']},
- {id:5,title:'별빛 아래의 버스킹',image:'assets/images/drawer-photo-6.jpg',caption:'수많은 불빛과 시선이 밤하늘의 별처럼 번지던 순간. 노래 하나가 사람들을 같은 마음으로 묶어 주었다.',preferred:['busking','concert','walk']},
- {id:6,title:'보랏빛 하늘의 노래',image:'assets/images/drawer-photo-7.jpg',caption:'보랏빛 저녁 하늘 아래 마이크를 쥔 채, 가장 솔직한 목소리를 꺼내던 장면.',preferred:['vocal','concert','broadcast']}
+ {id:0,title:'어린 시절인 나',image:'assets/images/drawer-photo-1.jpg',caption:'아주 오래전, 지금의 류현상이 되기 훨씬 전의 작고 귀여운 하루.',preferred:['work','stockWork']},
+ {id:1,title:'앞니플러팅인 나',image:'assets/images/drawer-photo-2.jpg',caption:'무대 조명 같은 빛 아래에서 스쳐 지나가듯 남은, 장난스러운 웃음.',preferred:['walk']},
+ {id:2,title:'짧은 머리인 나',image:'assets/images/drawer-photo-3.jpg',caption:'누군가를 기다리는 듯, 혹은 자기 마음을 들여다보는 듯한 고요한 시선.',preferred:['vocal']},
+ {id:3,title:'단발인 나',image:'assets/images/drawer-photo-4.jpg',caption:'긴 머리와 무표정한 얼굴 뒤에 더 많은 생각을 숨기고 있던 때.',preferred:['compose']},
+ {id:4,title:'팬미팅하는 나',image:'assets/images/drawer-photo-5.jpg',caption:'조용히 기타를 쥐고 있던 손끝에, 노래가 시작되기 전의 긴장이 머물던 순간.',preferred:['arrange']},
+ {id:5,title:'버스킹하는 나',image:'assets/images/drawer-photo-6.jpg',caption:'수많은 불빛과 시선이 밤하늘의 별처럼 번지던 순간. 노래 하나가 사람들을 같은 마음으로 묶어 주었다.',preferred:['busking','concert','walk']},
+ {id:6,title:'열창하는 나',image:'assets/images/drawer-photo-7.jpg',caption:'보랏빛 저녁 하늘 아래 마이크를 쥔 채, 가장 솔직한 목소리를 꺼내던 장면.',preferred:['vocal','concert','broadcast']}
 ];
 const drawerDiaryEntries=[
  {id:'d01',title:'불 꺼진 방',requires:'general',text:'오늘도 방 안에는 기타와 냉장고 소리만 남았다. 누군가 내 노래를 기다린다는 확신은 없지만, 내일의 내가 오늘보다 덜 부끄럽도록 한 줄은 적어 두기로 했다.\n\n유명해지는 것보다 계속하는 일이 더 어려운 것 같다. 그래서 오늘도 계속했다.'},
@@ -3929,7 +3929,7 @@ if(installBtn)installBtn.onclick=async()=>{
 };
 refreshInstallUi();
 try{window.matchMedia('(display-mode: standalone)').addEventListener('change',refreshInstallUi)}catch(_){}
-if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',async()=>{try{const reg=await navigator.serviceWorker.register('service-worker.js?v=155-songquiz-hwatu-ux',{updateViaCache:'none'});await reg.update();refreshInstallUi()}catch(err){console.warn('서비스워커 등록 실패',err);refreshInstallUi()}});
+if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',async()=>{try{const reg=await navigator.serviceWorker.register('service-worker.js?v=156-drawer-photo-titles',{updateViaCache:'none'});await reg.update();refreshInstallUi()}catch(err){console.warn('서비스워커 등록 실패',err);refreshInstallUi()}});
 
 
 /* v36: iOS standalone PWA viewport synchronization */
