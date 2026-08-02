@@ -281,3 +281,151 @@
   .matgo-action-fx b{white-space:nowrap!important;font-size:.65rem!important;line-height:1!important;padding:4px 8px!important}
   .matgo-action-fx .matgo-card{width:48px!important;height:69px!important}
 }
+
+
+/* v170 · 모바일 먹은 패 우선 레이아웃
+   상대 먹은 패는 '종류+개수'만 요약하고, 내 먹은 패에 화면 공간을 우선 배정한다. */
+@media(max-width:540px) and (orientation:portrait){
+  /* 상대 영역: 먹은 카드 이미지는 숨기고 카테고리/개수만 1줄 요약 */
+  .matgo-opponent>.matgo-captured-row,
+  .online-hwatu-opponent-captured .matgo-captured-row{
+    display:grid!important;
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:2px!important;
+    min-height:0!important;
+  }
+  .matgo-opponent>.matgo-captured-row .matgo-capture-group,
+  .online-hwatu-opponent-captured .matgo-capture-group{
+    min-height:20px!important;
+    padding:2px 4px!important;
+    display:block!important;
+  }
+  .matgo-opponent>.matgo-captured-row .matgo-capture-group>b,
+  .online-hwatu-opponent-captured .matgo-capture-group>b{
+    font-size:.58rem!important;
+    line-height:1.2!important;
+    margin:0!important;
+  }
+  .matgo-opponent>.matgo-captured-row .matgo-capture-group>div,
+  .online-hwatu-opponent-captured .matgo-capture-group>div{
+    display:none!important;
+  }
+  .matgo-opponent>.matgo-score-tags{
+    min-height:12px!important;
+    margin:1px 0 0!important;
+  }
+  .matgo-opponent>.matgo-score-tags strong{font-size:.7rem!important}
+  .matgo-opponent>.matgo-score-tags span{font-size:.5rem!important}
+  .online-hwatu-opponent-captured .matgo-score-meta{display:none!important}
+
+  /* 상대 전체 높이도 더 줄여 내 영역 확보 */
+  .matgo-opponent,
+  .online-hwatu-opponent,
+  .online-hwatu-opponents.three-player .online-hwatu-opponent{
+    padding:3px 4px!important;
+    gap:2px!important;
+  }
+  .matgo-opponent-hand{height:29px!important}
+  .matgo-opponent-hand .matgo-card,
+  .online-hwatu-opponent .matgo-opponent-hand .matgo-card.small{
+    width:21px!important;
+    height:30px!important;
+    margin-left:-14px!important;
+  }
+  .matgo-player-info strong{font-size:.86rem!important}
+  .matgo-player-info span,.matgo-player-info small{font-size:.58rem!important}
+
+  /* 중앙 바닥도 과한 여백 제거 */
+  .matgo-center{min-height:88px!important}
+  .matgo-table-cards{min-height:82px!important;max-height:96px!important}
+  .matgo-table-cards .matgo-card{width:33px!important;height:47px!important}
+  .matgo-deck-stack>.matgo-card{width:34px!important;height:49px!important}
+
+  /* 내 영역은 먹은 패를 우선 확보 */
+  .matgo-me,
+  .online-hwatu-me{
+    grid-template-columns:62px minmax(0,1fr)!important;
+    grid-template-areas:
+      "handhead hand"
+      "special special"
+      "captured captured"
+      "score score"!important;
+    gap:2px!important;
+    padding:3px 4px!important;
+    overflow:visible!important;
+  }
+
+  /* 내 먹은 패: 2x2, 카드 전체 모양이 보이도록 겹침 제거 */
+  .matgo-me>.matgo-captured-row,
+  .online-hwatu-my-captured>.matgo-captured-row{
+    grid-area:captured!important;
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:4px!important;
+    min-width:0!important;
+  }
+  .matgo-me>.matgo-captured-row .matgo-capture-group,
+  .online-hwatu-my-captured .matgo-capture-group{
+    padding:3px 4px!important;
+    min-height:64px!important;
+    max-height:84px!important;
+    border-radius:7px!important;
+    overflow:hidden!important;
+  }
+  .matgo-me>.matgo-captured-row .matgo-capture-group>b,
+  .online-hwatu-my-captured .matgo-capture-group>b{
+    font-size:.64rem!important;
+    line-height:1.15!important;
+    margin:0 0 3px!important;
+  }
+  .matgo-me>.matgo-captured-row .matgo-capture-group>div,
+  .online-hwatu-my-captured .matgo-capture-group>div{
+    display:flex!important;
+    flex-wrap:wrap!important;
+    align-content:flex-start!important;
+    align-items:flex-start!important;
+    gap:2px!important;
+    min-height:48px!important;
+    max-height:58px!important;
+    overflow:hidden!important;
+  }
+  .matgo-me>.matgo-captured-row .matgo-card.small,
+  .online-hwatu-my-captured .matgo-card.small{
+    width:27px!important;
+    height:39px!important;
+    margin:0!important;
+    box-shadow:0 1px 3px #0005!important;
+  }
+
+  /* 내 점수/고/흔들기/폭탄은 먹은 패 바로 아래 한 줄 */
+  .matgo-me>.matgo-score-tags{
+    grid-area:score!important;
+    display:flex!important;
+    align-items:center!important;
+    gap:6px!important;
+    min-height:14px!important;
+    margin:0!important;
+  }
+  .matgo-me>.matgo-score-tags strong{font-size:.78rem!important}
+  .matgo-me>.matgo-score-tags span{font-size:.55rem!important;white-space:nowrap!important}
+  .online-hwatu-my-captured .matgo-score-meta{margin:2px 0 0!important}
+
+  /* 내 손패는 한 줄 유지. 전체 화면 높이를 차지하지 않도록 조금만 축소 */
+  .matgo-my-hand,
+  .online-hwatu-me>.matgo-my-hand{
+    min-height:49px!important;
+    padding:1px 0!important;
+    gap:2px!important;
+  }
+  .matgo-my-hand .matgo-card,
+  .online-hwatu-me>.matgo-my-hand .matgo-card{
+    width:min(37px,100%)!important;
+    max-height:54px!important;
+  }
+
+  /* 화면 전체가 넘치지 않도록 */
+  .matgo-board,
+  .online-hwatu-board{
+    grid-template-rows:auto auto minmax(88px,1fr) auto!important;
+  }
+}
