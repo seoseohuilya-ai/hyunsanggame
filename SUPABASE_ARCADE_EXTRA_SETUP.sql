@@ -1,5 +1,5 @@
 -- 류현상 키우기 v147 : 2~4인 실시간 쿵쿵따 Supabase 설정
--- 기존 커뮤니티/퀴즈/루미큐브 DB는 건드리지 않습니다.
+-- 기존 커뮤니티/퀴즈 DB는 건드리지 않습니다.
 
 create table if not exists public.kung_dictionary (
   word text primary key,
@@ -532,7 +532,7 @@ alter table public.kung_used_words replica identity full;
 
 select '류현상 키우기 v147 쿵쿵따 DB 설정 완료!' as result;
 -- 류현상 키우기 v151 : 2~3인 실시간 맞고·고스톱 Supabase 설정
--- 게임 속 가상 보유금을 사용하는 점당 판돈을 지원합니다. 기존 커뮤니티/퀴즈/루미큐브/쿵쿵따 DB는 건드리지 않습니다.
+-- 게임 속 가상 보유금을 사용하는 점당 판돈을 지원합니다. 기존 커뮤니티/퀴즈/쿵쿵따 DB는 건드리지 않습니다.
 
 create table if not exists public.gostop_rooms (
   code text primary key,

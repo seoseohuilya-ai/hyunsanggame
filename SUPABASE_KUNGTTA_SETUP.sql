@@ -1,5 +1,5 @@
 -- 류현상 키우기 v147 : 2~4인 실시간 쿵쿵따 Supabase 설정
--- 기존 커뮤니티/퀴즈/루미큐브 DB는 건드리지 않습니다.
+-- 기존 커뮤니티/퀴즈 DB는 건드리지 않습니다.
 
 create table if not exists public.kung_dictionary (
   word text primary key,
