@@ -76,8 +76,15 @@ function matgoCapturedGroup(cards,kind,title){
 }
 function matgoCapturedHtml(side){const p=matgoGame[side],s=matgoCurrentScore(side);return `<div class="matgo-captured-row">${matgoCapturedGroup(p.captured,'bright','광')}${matgoCapturedGroup(p.captured,'animal','열끗')}${matgoCapturedGroup(p.captured,'ribbon','띠')}${matgoCapturedGroup(p.captured,'pi','피')}</div><div class="matgo-score-tags"><strong>${s.total}점</strong><span>${p.goCount?`${p.goCount}고`:''}${p.shakeCount?` · 흔듦 ${p.shakeCount}`:''}${p.bombCount?` · 폭탄 ${p.bombCount}`:''}${p.ppukCount?` · 뻑 ${p.ppukCount}`:''}</span></div>`}
 
+function matgoSetFullscreen(on=false){
+ const modal=$('#modal');if(!modal)return;
+ modal.classList.toggle('matgo-fullscreen',!!on);
+ const closeButton=$('#closeModal');if(closeButton)closeButton.hidden=!!on;
+}
+
 function openMatgoLobby(message=''){
  matgoGame=null;
+ matgoSetFullscreen(false);
  const carry=Math.max(1,Number(state?.minigames?.matgoCarry)||1);const money=Math.max(0,Number(state?.stats?.money)||0);
  showModal('후라보노AI 1:1 맞고',`<div class="matgo-lobby"><button id="matgoBackHub" class="community-back">← 대전 종목 선택</button><section class="matgo-intro"><div><small>HURABONO AI MATGO</small><h3>후라보노AI 1:1 맞고</h3><p>48장 화투로 실제 2인 맞고 방식에 가깝게 진행합니다. 점당 금액은 류현상 키우기의 가상 보유금과 연결됩니다.</p></div><span>🎴</span></section>${message?`<div class="online-quiz-notice">${matgoEsc(message)}</div>`:''}<div class="matgo-money"><span>현재 보유금</span><strong>${money.toLocaleString()}원</strong>${carry>1?`<em>이전 판 나가리: 다음 승부 ${carry}배</em>`:''}</div><section class="matgo-rate-grid">${MATGO_RATES.map(r=>`<button data-matgo-rate="${r}" ${money<r*MATGO_MIN_SCORE?'disabled':''}><span>점당</span><b>${r.toLocaleString()}원</b><small>최소 ${MATGO_MIN_SCORE}점 기준 ${(r*MATGO_MIN_SCORE).toLocaleString()}원 필요</small></button>`).join('')}</section><section class="matgo-rule-summary"><b>적용 룰</b><span>총통 · 흔들기 · 폭탄</span><span>뻑 · 자뻑 · 쪽 · 따닥 · 싹쓸이</span><span>홍단 · 청단 · 초단 · 고도리</span><span>피박 · 광박 · 멍따 · 고박</span><span>3고 이상 배수 · 나가리 이월</span><span>국진은 열끗/쌍피 중 유리한 쪽 자동 계산</span></section></div>`,'matgo');
  $('#matgoBackHub').onclick=()=>{matgoGame=null;openOnlineBattleHub()};$$('[data-matgo-rate]').forEach(b=>b.onclick=()=>startMatgo(Number(b.dataset.matgoRate)));
@@ -234,7 +241,8 @@ function matgoFinish(winner,reason='stop',extra={}){
 }
 
 function renderMatgo(){
- if(!matgoGame)return;const g=matgoGame,turnPlayer=g.turn==='player',ps=matgoCurrentScore('player'),as=matgoCurrentScore('ai'),pendingChoice=g.pending?.type==='choose',pendingDecision=g.pending?.type==='decision';
+ if(!matgoGame)return;
+ matgoSetFullscreen(true);const g=matgoGame,turnPlayer=g.turn==='player',ps=matgoCurrentScore('player'),as=matgoCurrentScore('ai'),pendingChoice=g.pending?.type==='choose',pendingDecision=g.pending?.type==='decision';
  const canPlay=g.active&&turnPlayer&&!g.pending&&!g.busy;const playerHand=g.player.hand.map(id=>matgoCardHtml(id,{clickable:canPlay,selected:g.selectedCard===id})).join('');const aiBacks=g.ai.hand.map(()=>matgoCardHtml(0,{back:true,small:true})).join('');
  const bombMonths=canPlay?matgoBombMonths('player'):[];const shakeMonths=canPlay?[...new Set(g.player.hand.map(matgoMonth))].filter(m=>matgoCanShake('player',m)):[];
  const choiceHtml=pendingChoice?`<div class="matgo-overlay-choice"><div><b>${matgoEsc(g.pending.label)}</b><div class="matgo-choice-cards">${g.pending.candidates.map(id=>matgoCardHtml(id,{clickable:false})).join('')}</div><div class="matgo-choice-buttons">${g.pending.candidates.map(id=>`<button data-matgo-choice="${id}">${matgoMonth(id)}월 ${MATGO_KIND_TEXT[matgoKind(id)]}</button>`).join('')}</div></div></div>`:'';
@@ -246,5 +254,5 @@ function renderMatgo(){
 }
 
 function matgoIsActive(){return !!(matgoGame?.active&&!matgoGame?.finished)}
-function matgoRequestClose(){if(!matgoIsActive()){matgoGame=null;closeModal(true);return}if(!confirm('맞고를 기권하면 현재 판은 후라보노의 7점 승리로 정산됩니다. 기권할까요?'))return;matgoFinish('ai','forfeit')}
+function matgoRequestClose(){if(!matgoIsActive()){matgoGame=null;matgoSetFullscreen(false);closeModal(true);return}if(!confirm('맞고를 기권하면 현재 판은 후라보노의 7점 승리로 정산됩니다. 기권할까요?'))return;matgoFinish('ai','forfeit')}
 window.matgoIsActive=matgoIsActive;window.matgoRequestClose=matgoRequestClose;window.openMatgoLobby=openMatgoLobby;
