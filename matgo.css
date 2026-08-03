@@ -509,3 +509,334 @@
   #modal.theme-matgo.matgo-fullscreen .matgo-board{grid-template-rows:auto auto minmax(74px,1fr) auto!important}
   #modal.theme-matgo.matgo-fullscreen .matgo-my-hand .matgo-card{width:36px!important;height:52px!important}
 }
+
+/* v172 · 온라인 2~3인 화투판 전체화면 + 3인 상대 먹은패 표시 + iPhone 내 먹은패 정렬 */
+
+/* 온라인 맞고/고스톱 실제 진행 화면도 후라보노 AI 맞고와 동일하게 전체 화면 사용 */
+#modal.theme-online.online-hwatu-modal{
+  width:100vw!important;
+  max-width:100vw!important;
+  height:100dvh!important;
+  max-height:100dvh!important;
+  margin:0!important;
+  border:0!important;
+  border-radius:0!important;
+  overflow:hidden!important;
+}
+#modal.theme-online.online-hwatu-modal .modal-head{display:none!important}
+#modal.theme-online.online-hwatu-modal .modal-body{
+  width:100%!important;
+  height:100dvh!important;
+  max-height:100dvh!important;
+  padding:0!important;
+  overflow:hidden!important;
+}
+#modal.theme-online.online-hwatu-modal .online-hwatu-board{
+  box-sizing:border-box!important;
+  width:100%!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  max-height:100dvh!important;
+  padding:6px!important;
+  gap:4px!important;
+  overflow:hidden!important;
+  grid-template-rows:auto auto minmax(92px,1fr) auto!important;
+}
+#modal.theme-online.online-hwatu-modal .matgo-board-top{padding:6px 8px!important}
+#modal.theme-online.online-hwatu-modal .online-hwatu-opponents{min-width:0!important}
+#modal.theme-online.online-hwatu-modal .online-hwatu-opponent,
+#modal.theme-online.online-hwatu-modal .online-hwatu-me{min-width:0!important}
+#modal.theme-online.online-hwatu-modal .matgo-center{min-height:92px!important;overflow:hidden!important}
+
+/* 데스크톱/가로화면에서도 상대가 먹은 실제 패를 유지 */
+#modal.theme-online.online-hwatu-modal .online-hwatu-opponent-captured .matgo-capture-group>div{
+  display:flex!important;
+}
+
+/* iPhone 세로 화면 */
+@media(max-width:540px) and (orientation:portrait){
+  #modal.theme-online.online-hwatu-modal{
+    width:100vw!important;
+    max-width:100vw!important;
+    height:100dvh!important;
+    max-height:100dvh!important;
+  }
+  #modal.theme-online.online-hwatu-modal .modal-body{
+    height:100dvh!important;
+    max-height:100dvh!important;
+  }
+  #modal.theme-online.online-hwatu-modal .online-hwatu-board{
+    height:100dvh!important;
+    min-height:100dvh!important;
+    max-height:100dvh!important;
+    padding:
+      max(3px,env(safe-area-inset-top))
+      max(4px,env(safe-area-inset-right))
+      max(3px,env(safe-area-inset-bottom))
+      max(4px,env(safe-area-inset-left))!important;
+    gap:3px!important;
+    grid-template-rows:auto auto minmax(68px,1fr) auto!important;
+    overflow:hidden!important;
+  }
+
+  /* 상단 상태/기권: 닫기 헤더 없이 기권 버튼만 유지 */
+  #modal.theme-online.online-hwatu-modal .matgo-board-top{
+    grid-template-columns:1fr auto!important;
+    gap:3px!important;
+    padding:4px 6px!important;
+    min-height:0!important;
+    border-radius:8px!important;
+  }
+  #modal.theme-online.online-hwatu-modal .matgo-board-top>div{gap:5px!important;flex-wrap:wrap!important}
+  #modal.theme-online.online-hwatu-modal .matgo-board-top b,
+  #modal.theme-online.online-hwatu-modal .matgo-board-top span{font-size:.66rem!important;line-height:1.1!important}
+  #modal.theme-online.online-hwatu-modal .matgo-board-top>strong{
+    grid-column:1/-1!important;
+    grid-row:2!important;
+    font-size:.64rem!important;
+    line-height:1.12!important;
+  }
+  #modal.theme-online.online-hwatu-modal .matgo-board-top button{
+    grid-column:2!important;
+    grid-row:1!important;
+    font-size:.67rem!important;
+    padding:.26rem .48rem!important;
+  }
+
+  /* 3인 상대 2명: 나란히 유지하면서 실제 먹은 카드도 보이게 */
+  #modal.theme-online.online-hwatu-modal .online-hwatu-opponents.three-player{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:3px!important;
+    min-height:0!important;
+  }
+  #modal.theme-online.online-hwatu-modal .online-hwatu-opponents.three-player .online-hwatu-opponent{
+    display:grid!important;
+    grid-template-columns:52px minmax(0,1fr)!important;
+    gap:2px!important;
+    padding:3px!important;
+    min-width:0!important;
+    border-radius:8px!important;
+    align-items:center!important;
+  }
+  #modal.theme-online.online-hwatu-modal .online-hwatu-opponents.three-player .matgo-player-info{
+    min-width:0!important;
+    gap:1px!important;
+  }
+  #modal.theme-online.online-hwatu-modal .online-hwatu-opponents.three-player .matgo-player-info span,
+  #modal.theme-online.online-hwatu-modal .online-hwatu-opponents.three-player .matgo-player-info small{
+    font-size:.52rem!important;
+    line-height:1.1!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    white-space:nowrap!important;
+  }
+  #modal.theme-online.online-hwatu-modal .online-hwatu-opponents.three-player .matgo-player-info strong{
+    font-size:.78rem!important;
+    line-height:1!important;
+  }
+  #modal.theme-online.online-hwatu-modal .online-hwatu-opponents.three-player .matgo-opponent-hand{
+    height:25px!important;
+    padding-left:0!important;
+    overflow:hidden!important;
+  }
+  #modal.theme-online.online-hwatu-modal .online-hwatu-opponents.three-player .matgo-opponent-hand .matgo-card.small{
+    width:19px!important;
+    height:27px!important;
+    margin-left:-12px!important;
+  }
+  #modal.theme-online.online-hwatu-modal .online-hwatu-opponents.three-player .matgo-opponent-hand .matgo-card.small:first-child{margin-left:0!important}
+
+  /* v170에서 숨겼던 상대 먹은패 실제 이미지 복구 */
+  #modal.theme-online.online-hwatu-modal .online-hwatu-opponents.three-player .online-hwatu-opponent-captured{
+    display:block!important;
+    grid-column:1/-1!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  #modal.theme-online.online-hwatu-modal .online-hwatu-opponents.three-player .online-hwatu-opponent-captured .matgo-captured-row{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:2px!important;
+    width:100%!important;
+    min-width:0!important;
+  }
+  #modal.theme-online.online-hwatu-modal .online-hwatu-opponents.three-player .online-hwatu-opponent-captured .matgo-capture-group{
+    display:block!important;
+    min-width:0!important;
+    min-height:43px!important;
+    max-height:58px!important;
+    padding:2px 3px!important;
+    border-radius:6px!important;
+    overflow:hidden!important;
+  }
+  #modal.theme-online.online-hwatu-modal .online-hwatu-opponents.three-player .online-hwatu-opponent-captured .matgo-capture-group>b{
+    display:flex!important;
+    font-size:.52rem!important;
+    line-height:1.05!important;
+    margin:0 0 2px!important;
+  }
+  #modal.theme-online.online-hwatu-modal .online-hwatu-opponents.three-player .online-hwatu-opponent-captured .matgo-capture-group>div{
+    display:flex!important;
+    flex-wrap:wrap!important;
+    align-items:flex-start!important;
+    align-content:flex-start!important;
+    gap:1px!important;
+    min-height:27px!important;
+    max-height:35px!important;
+    overflow:hidden!important;
+  }
+  #modal.theme-online.online-hwatu-modal .online-hwatu-opponents.three-player .online-hwatu-opponent-captured .matgo-card.small{
+    display:inline-block!important;
+    width:18px!important;
+    height:26px!important;
+    margin:0!important;
+    box-shadow:0 1px 2px #0004!important;
+  }
+  #modal.theme-online.online-hwatu-modal .online-hwatu-opponents.three-player .online-hwatu-opponent-captured .matgo-score-meta{
+    display:flex!important;
+    flex-wrap:wrap!important;
+    gap:2px!important;
+    margin:2px 0 0!important;
+  }
+  #modal.theme-online.online-hwatu-modal .online-hwatu-opponents.three-player .online-hwatu-opponent-captured .matgo-meta-chip{
+    font-size:.46rem!important;
+    padding:1px 3px!important;
+  }
+
+  /* 중앙 바닥패 영역 압축: 상대/내 먹은패 공간 확보 */
+  #modal.theme-online.online-hwatu-modal .matgo-center{min-height:68px!important;overflow:hidden!important}
+  #modal.theme-online.online-hwatu-modal .matgo-table-area{
+    grid-template-columns:minmax(0,1fr) 40px!important;
+    gap:2px!important;
+    padding:2px!important;
+    height:100%!important;
+  }
+  #modal.theme-online.online-hwatu-modal .matgo-table-cards{
+    min-height:66px!important;
+    max-height:78px!important;
+    gap:2px!important;
+    overflow:hidden!important;
+  }
+  #modal.theme-online.online-hwatu-modal .matgo-table-cards .matgo-card{width:29px!important;height:42px!important}
+  #modal.theme-online.online-hwatu-modal .matgo-deck-stack>.matgo-card{width:30px!important;height:43px!important}
+  #modal.theme-online.online-hwatu-modal .matgo-deck-stack>b{bottom:-11px!important;font-size:.6rem!important;padding:1px 4px!important}
+
+  /* 내 영역: 손패 위, 먹은패 아래를 전체 폭으로 사용 */
+  #modal.theme-online.online-hwatu-modal .online-hwatu-me{
+    display:grid!important;
+    grid-template-columns:62px minmax(0,1fr)!important;
+    grid-template-areas:
+      "handhead hand"
+      "captured captured"!important;
+    gap:3px!important;
+    width:100%!important;
+    min-width:0!important;
+    padding:3px 4px!important;
+    border-radius:8px!important;
+    overflow:visible!important;
+    align-items:start!important;
+  }
+  #modal.theme-online.online-hwatu-modal .online-hwatu-me>.matgo-hand-head{
+    grid-area:handhead!important;
+    grid-column:auto!important;
+    grid-row:auto!important;
+    min-width:0!important;
+    padding:0!important;
+  }
+  #modal.theme-online.online-hwatu-modal .online-hwatu-me>.matgo-hand-head strong{font-size:.82rem!important}
+  #modal.theme-online.online-hwatu-modal .online-hwatu-me>.matgo-hand-head span,
+  #modal.theme-online.online-hwatu-modal .online-hwatu-me>.matgo-hand-head small{font-size:.53rem!important;line-height:1.1!important}
+
+  #modal.theme-online.online-hwatu-modal .online-hwatu-me>.matgo-my-hand{
+    grid-area:hand!important;
+    grid-column:auto!important;
+    grid-row:auto!important;
+    display:grid!important;
+    grid-template-columns:repeat(var(--hand-count),minmax(0,1fr))!important;
+    justify-items:center!important;
+    align-items:end!important;
+    gap:2px!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:45px!important;
+    padding:0!important;
+    overflow:visible!important;
+  }
+  #modal.theme-online.online-hwatu-modal .online-hwatu-me>.matgo-my-hand .matgo-card{
+    width:min(36px,100%)!important;
+    height:auto!important;
+    aspect-ratio:64/92!important;
+    margin:0!important;
+  }
+  #modal.theme-online.online-hwatu-modal .online-hwatu-me>.matgo-my-hand button.matgo-card.selected{transform:translateY(-6px)!important}
+
+  /* iPhone 핵심 수정: 내 먹은패를 왼쪽 작은 칸이 아닌 화면 전체 폭으로 펼침 */
+  #modal.theme-online.online-hwatu-modal .online-hwatu-my-captured{
+    grid-area:captured!important;
+    grid-column:1/-1!important;
+    display:grid!important;
+    grid-template-rows:auto auto!important;
+    gap:2px!important;
+    box-sizing:border-box!important;
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    margin:0!important;
+    padding:0!important;
+    justify-self:stretch!important;
+    align-self:start!important;
+  }
+  #modal.theme-online.online-hwatu-modal .online-hwatu-my-captured>.matgo-captured-row{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:3px!important;
+    box-sizing:border-box!important;
+    width:100%!important;
+    min-width:0!important;
+    margin:0!important;
+  }
+  #modal.theme-online.online-hwatu-modal .online-hwatu-my-captured .matgo-capture-group{
+    box-sizing:border-box!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:61px!important;
+    max-height:82px!important;
+    padding:3px 4px!important;
+    border-radius:6px!important;
+    overflow:hidden!important;
+  }
+  #modal.theme-online.online-hwatu-modal .online-hwatu-my-captured .matgo-capture-group>b{
+    display:flex!important;
+    font-size:.61rem!important;
+    line-height:1.1!important;
+    margin:0 0 2px!important;
+  }
+  #modal.theme-online.online-hwatu-modal .online-hwatu-my-captured .matgo-capture-group>div{
+    display:flex!important;
+    flex-wrap:wrap!important;
+    justify-content:flex-start!important;
+    align-items:flex-start!important;
+    align-content:flex-start!important;
+    gap:2px!important;
+    width:100%!important;
+    min-height:44px!important;
+    max-height:55px!important;
+    overflow:hidden!important;
+  }
+  #modal.theme-online.online-hwatu-modal .online-hwatu-my-captured .matgo-card.small{
+    display:inline-block!important;
+    width:26px!important;
+    height:37px!important;
+    margin:0!important;
+    box-shadow:0 1px 3px #0005!important;
+  }
+  #modal.theme-online.online-hwatu-modal .online-hwatu-my-captured>.matgo-score-meta{
+    display:flex!important;
+    flex-wrap:wrap!important;
+    gap:2px!important;
+    width:100%!important;
+    margin:0!important;
+  }
+  #modal.theme-online.online-hwatu-modal .online-hwatu-my-captured .matgo-meta-chip{font-size:.48rem!important;padding:1px 4px!important}
+}
